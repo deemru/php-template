@@ -1,0 +1,42 @@
+name: PHPStan
+
+on: [ push, pull_request ]
+
+jobs:
+  phpstan:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest ]
+        php-versions: [ '8.1' ]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 1
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php-versions }}
+        extensions: xdebug
+
+    - name: PHP version
+      run: php -v
+
+    - name: Composer install
+      run: composer install
+
+    - name: PHPUnit coverage
+      env:
+        XDEBUG_MODE: coverage
+      run: php vendor/bin/phpunit tests --coverage-clover ./coverage.xml
+
+    - name: Codecov
+      uses: codecov/codecov-action@v2
+      with:
+        files: ./coverage.xml
+        
