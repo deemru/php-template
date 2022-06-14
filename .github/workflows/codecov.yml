@@ -1,9 +1,10 @@
-name: PHPStan
+name: Codecov
 
 on: [ push, pull_request ]
 
 jobs:
-  phpstan:
+  codecov:
+    name: Codecov
     strategy:
       fail-fast: false
       matrix:
