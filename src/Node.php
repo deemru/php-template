@@ -50,7 +50,7 @@ class Node
     /**
      * Return addresses of the node
      *
-     * @return array<Address>
+     * @return Address[]
      */
     public function getAddresses(): iterable
     {
