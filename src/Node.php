@@ -34,9 +34,9 @@ class Node
      * Fetch a custom REST API request
      *
      * @param string $uri
-     * @return iterable|array
+     * @return array<int, string>
      */
-    public function fetch( string $uri ): iterable|array
+    public function fetch( string $uri ): array
     {
         $fetch = $this->wk->fetch( $uri );
         if( $fetch === false )
@@ -50,7 +50,7 @@ class Node
     /**
      * Return addresses of the node
      *
-     * @return Address[]
+     * @return array<int, Address>
      */
     public function getAddresses(): iterable
     {
