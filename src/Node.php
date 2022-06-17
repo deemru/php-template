@@ -56,7 +56,7 @@ class Node
     {
         $addresses = [];
         foreach( $this->fetch( '/addresses' ) as $address )
-            $addresses[] = Address::fromString( $address );
+            $addresses[] = Address::fromString( (string)$address );
         return $addresses;
     }
 
