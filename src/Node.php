@@ -56,7 +56,11 @@ class Node
     {
         $addresses = [];
         foreach( $this->fetch( '/addresses' ) as $address )
-            $addresses[] = Address::fromString( (string)$address );
+        {
+            if( !is_string( $address ) )
+                throw new Exception( __FUNCTION__ . ' failed to get valid address' );
+            $addresses[] = Address::fromString( $address );
+        }
         return $addresses;
     }
 
