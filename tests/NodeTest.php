@@ -16,9 +16,10 @@ class NodeTest extends PHPUnit\Framework\TestCase
         $this->assertSame( 'W', $nodeW->chainId() );
         $this->assertSame( 'T', $nodeT->chainId() );
         $this->assertSame( 'S', $nodeS->chainId() );
+        $this->assertSame( '72k1xXWG59fYdzSNoA', deemru\base58Encode( 'Hello, World!' ) );
     }
 
-    private function catchExceptionOrFail( $code, $block )
+    private function catchExceptionOrFail( int $code, callable $block ): void
     {
         try
         {
