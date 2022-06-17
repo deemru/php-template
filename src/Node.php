@@ -14,6 +14,8 @@ class Node
     const LOCAL = "http://127.0.0.1:6869";
 
     private WavesKit $wk;
+    private string $chainId;
+    private string $uri;
 
     /**
      * Creates Node instance
@@ -40,7 +42,7 @@ class Node
         if( $fetch === false )
             throw new Exception( __FUNCTION__ . ' failed to fetch data at ' . $uri );
         $data = $this->wk->json_decode( $fetch );
-        if( $data === null )
+        if( $data === false )
             throw new Exception( __FUNCTION__ . ' failed to decode data at ' . $uri );
         return $data;
     }
