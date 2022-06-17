@@ -2,27 +2,47 @@
 
 require_once 'common.php';
 
+use deemru\ErrCode;
 use deemru\Node;
 
-use function PHPUnit\Framework\assertSame;
-
-function testConstruct(): void
+class NodeTest extends PHPUnit\Framework\TestCase
 {
-    $nodeW = new Node( Node::MAINNET );
-    $nodeT = new Node( Node::TESTNET );
-    $nodeS = new Node( Node::STAGENET );
+    public function testConstruct(): void
+    {
+        $nodeW = new Node( Node::MAINNET );
+        $nodeT = new Node( Node::TESTNET );
+        $nodeS = new Node( Node::STAGENET );
 
-    assertSame( 'W', $nodeW->chainId() );
-    assertSame( 'T', $nodeT->chainId() );
-    assertSame( 'S', $nodeS->chainId() );
+        $this->assertSame( 'W', $nodeW->chainId() );
+        $this->assertSame( 'T', $nodeT->chainId() );
+        $this->assertSame( 'S', $nodeS->chainId() );
+    }
+
+    private function catchExceptionOrFail( $code, $block )
+    {
+        try
+        {
+            $block();
+            $this->fail( 'Failed to catch exception with code:' . $code );
+        }
+        catch( Exception $e )
+        {
+            $this->assertEquals( $code, $e->getCode() );
+        }
+    }
+
+    public function testExceptions(): void
+    {
+        $this->catchExceptionOrFail( ErrCode::BASE58_DECODE, function()
+        {
+            deemru\base58Decode( 'ill' );
+        } );
+    }
 }
 
 if( DO_LOCAL_DEBUG )
 {
-    testConstruct();
-}
-
-class NodeTest extends PHPUnit\Framework\TestCase
-{
-    public function testConstruct(): void { testConstruct(); }
+    $test = new NodeTest;
+    $test->testConstruct();
+    $test->testExceptions();
 }

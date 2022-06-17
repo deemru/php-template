@@ -40,10 +40,10 @@ class Node
     {
         $fetch = $this->wk->fetch( $uri );
         if( $fetch === false )
-            throw new Exception( __FUNCTION__ . ' failed to fetch data at ' . $uri );
+            throw new Exception( __FUNCTION__ . ' failed to fetch data at ' . $uri, ErrCode::FETCH_URI );
         $data = $this->wk->json_decode( $fetch );
         if( $data === false )
-            throw new Exception( __FUNCTION__ . ' failed to decode data at ' . $uri );
+            throw new Exception( __FUNCTION__ . ' failed to decode data at ' . $uri, ErrCode::JSON_DECODE );
         return $data;
     }
 
@@ -58,7 +58,7 @@ class Node
         foreach( $this->fetch( '/addresses' ) as $address )
         {
             if( !is_string( $address ) )
-                throw new Exception( __FUNCTION__ . ' failed to get valid address' );
+                throw new Exception( __FUNCTION__ . ' failed to get valid address', ErrCode::STRING_EXPECTED );
             $addresses[] = Address::fromString( $address );
         }
         return $addresses;

@@ -11,7 +11,7 @@ function base58Decode( string $string ): string
 {
     $decoded = ABCode::base58()->decode( $string );
     if( $decoded === false )
-        throw new Exception( __FUNCTION__ . ' failed to decode string: ' . $string );
+        throw new Exception( __FUNCTION__ . ' failed to decode string: ' . $string, ErrCode::BASE58_DECODE );
     return $decoded;
 }
 
@@ -19,6 +19,7 @@ function base58Encode( string $bytes ): string
 {
     $encoded = ABCode::base58()->encode( $bytes );
     if( $encoded === false )
-        throw new Exception( __FUNCTION__ . ' failed to encode bytes: ' . bin2hex( $bytes ) );
+        // Unreachable for binary encodings
+        throw new Exception( __FUNCTION__ . ' failed to encode bytes: ' . bin2hex( $bytes ), ErrCode::BASE58_ENCODE ); // @codeCoverageIgnore
     return $encoded;
 }
