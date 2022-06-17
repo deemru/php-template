@@ -34,7 +34,7 @@ class Node
      * Fetch a custom REST API request
      *
      * @param string $uri
-     * @return array<int, string>
+     * @return array<mixed, mixed>
      */
     public function fetch( string $uri ): array
     {
@@ -52,7 +52,7 @@ class Node
      *
      * @return array<int, Address>
      */
-    public function getAddresses(): iterable
+    public function getAddresses(): array
     {
         $addresses = [];
         foreach( $this->fetch( '/addresses' ) as $address )
