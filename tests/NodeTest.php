@@ -6,7 +6,7 @@ use deemru\Node;
 
 use function PHPUnit\Framework\assertSame;
 
-function testConstruct()
+function testConstruct(): void
 {
     $nodeW = new Node( Node::MAINNET );
     $nodeT = new Node( Node::TESTNET );

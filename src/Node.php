@@ -34,9 +34,9 @@ class Node
      * Fetch a custom REST API request
      *
      * @param string $uri
-     * @return array
+     * @return iterable|array
      */
-    public function fetch( string $uri ): array
+    public function fetch( string $uri ): iterable|array
     {
         $fetch = $this->wk->fetch( $uri );
         if( $fetch === false )
@@ -52,7 +52,7 @@ class Node
      *
      * @return array<Address>
      */
-    public function getAddresses(): array
+    public function getAddresses(): iterable
     {
         $addresses = [];
         foreach( $this->fetch( '/addresses' ) as $address )
@@ -63,5 +63,10 @@ class Node
     public function chainId(): string
     {
         return $this->chainId;
+    }
+
+    public function uri(): string
+    {
+        return $this->uri;
     }
 }
