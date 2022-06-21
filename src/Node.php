@@ -17,8 +17,8 @@ class Node
     private string $chainId;
     private string $uri;
 
-    private string $wklevel;
-    private string $wkmessage;
+    private string $wklevel = '';
+    private string $wkmessage = '';
 
     /**
      * Creates Node instance
@@ -35,7 +35,7 @@ class Node
         } );
         $this->wk->setNodeAddress( $uri, 0 );
         $this->chainId = $this->getAddresses()[0]->chainId();
-        $this->wk->chainId = $this->chainId;
+        $this->wk->chainId = $this->chainId; // @phpstan-ignore-line // accept workaround
     }
 
     public function chainId(): string
@@ -60,7 +60,7 @@ class Node
         if( $fetch === false )
         {
             $message = __FUNCTION__ . ' failed at `' . $uri . '`';
-            if( isset( $this->wkmessage ) && isset( $this->wkmessage ) && $this->wklevel === 'e' )
+            if( $this->wklevel === 'e' )
                 $message .= ' (WavesKit: ' . $this->wkmessage . ')';
             throw new Exception( $message, ErrCode::FETCH_URI );
         }
