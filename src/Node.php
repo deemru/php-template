@@ -17,6 +17,9 @@ class Node
     private string $chainId;
     private string $uri;
 
+    private string $wklevel;
+    private string $wkmessage;
+
     /**
      * Creates Node instance
      *
@@ -25,9 +28,24 @@ class Node
     public function __construct( string $uri )
     {
         $this->uri = $uri;
-        $this->wk = new \deemru\WavesKit;
+        $this->wk = new \deemru\WavesKit( '?', function( string $wklevel, string $wkmessage )
+        {
+            $this->wklevel = $wklevel;
+            $this->wkmessage = $wkmessage;
+        } );
         $this->wk->setNodeAddress( $uri, 0 );
         $this->chainId = $this->getAddresses()[0]->chainId();
+        $this->wk->chainId = $this->chainId;
+    }
+
+    public function chainId(): string
+    {
+        return $this->chainId;
+    }
+
+    public function uri(): string
+    {
+        return $this->uri;
     }
 
     /**
@@ -40,12 +58,21 @@ class Node
     {
         $fetch = $this->wk->fetch( $uri );
         if( $fetch === false )
-            throw new Exception( __FUNCTION__ . ' failed to fetch data at ' . $uri, ErrCode::FETCH_URI );
-        $data = $this->wk->json_decode( $fetch );
-        if( $data === false )
-            throw new Exception( __FUNCTION__ . ' failed to decode data at ' . $uri, ErrCode::JSON_DECODE );
-        return $data;
+        {
+            $message = __FUNCTION__ . ' failed at `' . $uri . '`';
+            if( isset( $this->wkmessage ) )
+                $message .= ' (WavesKit: ' . $this->wkmessage . ')';
+            throw new Exception( $message, ErrCode::FETCH_URI );
+        }
+        $fetch = $this->wk->json_decode( $fetch );
+        if( $fetch === false )
+            throw new Exception( __FUNCTION__ . ' failed to decode `' . $uri . '`', ErrCode::JSON_DECODE );
+        return $fetch;
     }
+
+    //===============
+    // ADDRESSES
+    //===============
 
     /**
      * Return addresses of the node
@@ -64,13 +91,29 @@ class Node
         return $addresses;
     }
 
-    public function chainId(): string
+    //===============
+    // BLOCKS
+    //===============
+
+    public function getHeight(): int
     {
-        return $this->chainId;
+        return asInt( $this->fetch( '/blocks/height' ), 'height' );
     }
 
-    public function uri(): string
-    {
-        return $this->uri;
+/*
+    public int getBlockHeight(Base58String blockId) throws IOException, NodeException {
+        return asJson(get("/blocks/height/" + blockId.toString()))
+                .get("height").asInt();
     }
+
+    public int getBlockHeight(long timestamp) throws IOException, NodeException {
+        return asJson(get("/blocks/heightByTimestamp/" + timestamp))
+                .get("height").asInt();
+    }
+
+    public int getBlocksDelay(Base58String startBlockId, int blocksNum) throws IOException, NodeException {
+        return asJson(get("/blocks/delay/" + startBlockId.toString() + "/" + blocksNum))
+                .get("delay").asInt();
+    }
+*/
 }
