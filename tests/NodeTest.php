@@ -16,7 +16,7 @@ class NodeTest extends PHPUnit\Framework\TestCase
         }
         catch( Exception $e )
         {
-            $this->assertEquals( $code, $e->getCode() );
+            $this->assertEquals( $code, $e->getCode(), $e->getMessage() );
         }
     }
 
