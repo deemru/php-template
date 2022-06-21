@@ -11,6 +11,8 @@ class ErrCode
     const BASE58_ENCODE =   ErrCode::BASE | 2;
     const FETCH_URI =       ErrCode::BASE | 3;
     const JSON_DECODE =     ErrCode::BASE | 4;
-    const STRING_EXPECTED = ErrCode::BASE | 5;
-    const FIELD_MISSING =   ErrCode::BASE | 6;
+    const KEY_MISSING =     ErrCode::BASE | 5;
+    const STRING_EXPECTED = ErrCode::BASE | 6;
+    const INT_EXPECTED =    ErrCode::BASE | 7;
+
 }

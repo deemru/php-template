@@ -30,6 +30,10 @@ class NodeTest extends PHPUnit\Framework\TestCase
         $this->assertSame( 'T', $nodeT->chainId() );
         $this->assertSame( 'S', $nodeS->chainId() );
 
+        $this->assertSame( $nodeW->uri(), Node::MAINNET );
+        $this->assertSame( $nodeT->uri(), Node::TESTNET );
+        $this->assertSame( $nodeS->uri(), Node::STAGENET );
+
         $heightW = $nodeW->getHeight();
         $heightT = $nodeT->getHeight();
         $heightS = $nodeS->getHeight();
@@ -56,6 +60,16 @@ class NodeTest extends PHPUnit\Framework\TestCase
         $this->catchExceptionOrFail( ErrCode::JSON_DECODE, function()
         {
             ( new Node( Node::MAINNET ) )->fetch( '/api-docs/favicon-16x16.png' );
+        } );
+
+        $this->catchExceptionOrFail( ErrCode::KEY_MISSING, function()
+        {
+            deemru\asInt( ( new Node( Node::MAINNET ) )->fetch( '/addresses' ), '123' );
+        } );
+
+        $this->catchExceptionOrFail( ErrCode::INT_EXPECTED, function()
+        {
+            deemru\asInt( ( new Node( Node::MAINNET ) )->fetch( '/blocks/headers/last' ), 'signature' );
         } );
     }
 }

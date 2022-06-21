@@ -24,12 +24,19 @@ function base58Encode( string $bytes ): string
     return $encoded;
 }
 
-function asInt( array $array, string $field ): int
+/**
+ * Gets an integer value from a key-value array by its key
+ *
+ * @param array<mixed, mixed> $array
+ * @param string $key
+ * @return int
+ */
+function asInt( array $array, string $key ): int
 {
-    if( !isset( $array[$field] ) )
-        throw new Exception( __FUNCTION__ . ' failed to find field `' . $field . '`', ErrCode::FIELD_MISSING );
-    $int = $array[$field];
+    if( !isset( $array[$key] ) )
+        throw new Exception( __FUNCTION__ . ' failed to find key `' . $key . '`', ErrCode::KEY_MISSING );
+    $int = $array[$key];
     if( !is_int( $int ) )
-        throw new Exception( __FUNCTION__ . ' failed to detect integer at `' . $field . '`', ErrCode::STRING_EXPECTED );
+        throw new Exception( __FUNCTION__ . ' failed to detect integer at `' . $key . '`', ErrCode::INT_EXPECTED );
     return $int;
 }

@@ -60,7 +60,7 @@ class Node
         if( $fetch === false )
         {
             $message = __FUNCTION__ . ' failed at `' . $uri . '`';
-            if( isset( $this->wkmessage ) )
+            if( isset( $this->wkmessage ) && isset( $this->wkmessage ) && $this->wklevel === 'e' )
                 $message .= ' (WavesKit: ' . $this->wkmessage . ')';
             throw new Exception( $message, ErrCode::FETCH_URI );
         }
