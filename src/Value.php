@@ -8,9 +8,15 @@ use Exception;
 
 class Value
 {
-    private mixed $value;
+    /**
+     * @var mixed
+     */
+    private $value;
 
-    public function __construct( mixed $value )
+    /**
+     * @param mixed $value
+     */
+    public function __construct( $value )
     {
         $this->value = $value;
     }

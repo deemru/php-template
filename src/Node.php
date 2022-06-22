@@ -70,7 +70,7 @@ class Node
      * Gets a custom REST API request
      *
      * @param string $uri
-     * @return array<int|string, mixed>
+     * @return array<mixed, mixed>
      */
     public function get( string $uri ): array
     {

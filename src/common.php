@@ -39,7 +39,7 @@ function base58Encode( string $bytes ): string
 /**
  * Json function constructor
  *
- * @param array<int|string, mixed> $json
+ * @param array<mixed, mixed> $json
  * @return Json
  */
 function asJson( array $json ): Json
@@ -47,7 +47,13 @@ function asJson( array $json ): Json
     return new Json( $json );
 }
 
-function asValue( mixed $value ): Value
+/**
+ * Value function constructor
+ *
+ * @param mixed $value
+ * @return Value
+ */
+function asValue( $value ): Value
 {
     return new Value( $value );
 }

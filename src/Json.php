@@ -9,14 +9,14 @@ use Exception;
 class Json
 {
     /**
-     * @var array<int|string, mixed>
+     * @var array<mixed, mixed>
      */
     private array $json = [];
 
     /**
     * Json constructor
     *
-    * @param array<int|string, mixed> $json
+    * @param array<mixed, mixed> $json
     */
     public function __construct( array $json )
     {
@@ -26,10 +26,10 @@ class Json
     /**
      * Gets Value by key
      *
-     * @param int|string $key
+     * @param mixed $key
      * @return Value
      */
-    public function get( int|string $key ): Value
+    public function get( $key ): Value
     {
         if( !isset( $this->json[$key] ) )
             throw new Exception( __FUNCTION__ . ' failed to find key `' . $key . '`', ErrCode::KEY_MISSING );
