@@ -18,19 +18,9 @@ class Json
     *
     * @param array<int|string, mixed> $json
     */
-    private function __construct( array $json )
+    public function __construct( array $json )
     {
         $this->json = $json;
-    }
-
-    /**
-    * Json static constructor
-    *
-    * @param array<int|string, mixed> $json
-    */
-    static public function asJson( array $json ): Json
-    {
-        return new Json( $json );
     }
 
     /**
