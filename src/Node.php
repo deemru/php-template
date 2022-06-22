@@ -67,12 +67,12 @@ class Node
     }
 
     /**
-     * Fetch a custom REST API request
+     * Gets a custom REST API request
      *
      * @param string $uri
      * @return array<mixed, mixed>
      */
-    public function fetch( string $uri ): array
+    public function get( string $uri ): array
     {
         $fetch = $this->wk->fetch( $uri );
         if( $fetch === false )
@@ -100,8 +100,8 @@ class Node
     public function getAddresses(): array
     {
         $addresses = [];
-        foreach( $this->fetch( '/addresses' ) as $address )
-            $addresses[] = Address::fromString( asString( $address ) );
+        foreach( $this->get( '/addresses' ) as $address )
+            $addresses[] = Address::fromString( asValue( $address )->asString() );
         return $addresses;
     }
 
@@ -111,23 +111,21 @@ class Node
 
     public function getHeight(): int
     {
-        return getInt( $this->fetch( '/blocks/height' ), 'height' );
+        return asJson( $this->get( '/blocks/height' ) )->get( 'height' )->asInt();
     }
 
-/*
-    public int getBlockHeight(Base58String blockId) throws IOException, NodeException {
-        return asJson(get("/blocks/height/" + blockId.toString()))
-                .get("height").asInt();
+    public function getBlockHeightById( string $blockId ): int
+    {
+        return asJson( $this->get( '/blocks/height/' . $blockId ) )->get( 'height' )->asInt();
     }
 
-    public int getBlockHeight(long timestamp) throws IOException, NodeException {
-        return asJson(get("/blocks/heightByTimestamp/" + timestamp))
-                .get("height").asInt();
+    public function getBlockHeightByTimestamp( int $timestamp ): int
+    {
+        return asJson( $this->get( "/blocks/heightByTimestamp/" . $timestamp ) )->get( "height" )->asInt();
     }
 
-    public int getBlocksDelay(Base58String startBlockId, int blocksNum) throws IOException, NodeException {
-        return asJson(get("/blocks/delay/" + startBlockId.toString() + "/" + blocksNum))
-                .get("delay").asInt();
+    public function getBlocksDelay( string $startBlockId, int $blocksNum ): int
+    {
+        return asJson( $this->get( "/blocks/delay/" . $startBlockId . "/" + $blocksNum ) )->get( "delay" )->asInt();
     }
-*/
 }

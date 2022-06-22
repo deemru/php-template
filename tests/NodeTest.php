@@ -1,11 +1,12 @@
 <?php
 
+namespace deemru;
+
 require_once 'common.php';
 
-use deemru\ErrCode;
-use deemru\Node;
+use Exception;
 
-class NodeTest extends PHPUnit\Framework\TestCase
+class NodeTest extends \PHPUnit\Framework\TestCase
 {
     private function catchExceptionOrFail( int $code, callable $block ): void
     {
@@ -42,7 +43,7 @@ class NodeTest extends PHPUnit\Framework\TestCase
         $this->assertLessThan( $heightT, $heightS );
         $this->assertLessThan( $heightS, 1 );
 
-        $this->assertSame( '72k1xXWG59fYdzSNoA', deemru\base58Encode( 'Hello, World!' ) );
+        $this->assertSame( '72k1xXWG59fYdzSNoA', base58Encode( 'Hello, World!' ) );
     }
 
     public function testMoreCoverage(): void
@@ -57,15 +58,14 @@ class NodeTest extends PHPUnit\Framework\TestCase
     public function testExceptions(): void
     {
         $node = new Node( Node::MAINNET );
-        $json = $node->fetch( '/blocks/headers/last' );
+        $json = $node->get( '/blocks/headers/last' );
 
-        $this->catchExceptionOrFail( ErrCode::BASE58_DECODE, function(){ deemru\base58Decode( 'ill' ); } );
-        $this->catchExceptionOrFail( ErrCode::FETCH_URI, function() use ( $node ){ $node->fetch( '/test' ); } );
-        $this->catchExceptionOrFail( ErrCode::JSON_DECODE, function() use ( $node ){ $node->fetch( '/api-docs/favicon-16x16.png' ); } );
-        $this->catchExceptionOrFail( ErrCode::KEY_MISSING, function() use ( $json ){ deemru\getInt( $json, 'x' ); } );
-        $this->catchExceptionOrFail( ErrCode::KEY_MISSING, function() use ( $json ){ deemru\getString( $json, 'x' ); } );
-        $this->catchExceptionOrFail( ErrCode::INT_EXPECTED, function() use ( $json ){ deemru\getInt( $json, 'signature' ); } );
-        $this->catchExceptionOrFail( ErrCode::STRING_EXPECTED, function() use ( $json ){ deemru\getString( $json, 'height' ); } );
+        $this->catchExceptionOrFail( ErrCode::BASE58_DECODE, function(){ base58Decode( 'ill' ); } );
+        $this->catchExceptionOrFail( ErrCode::FETCH_URI, function() use ( $node ){ $node->get( '/test' ); } );
+        $this->catchExceptionOrFail( ErrCode::JSON_DECODE, function() use ( $node ){ $node->get( '/api-docs/favicon-16x16.png' ); } );
+        $this->catchExceptionOrFail( ErrCode::KEY_MISSING, function() use ( $json ){ asJson( $json )->get( 'x' ); } );
+        $this->catchExceptionOrFail( ErrCode::INT_EXPECTED, function() use ( $json ){ asJson( $json )->get( 'signature' )->asInt(); } );
+        $this->catchExceptionOrFail( ErrCode::STRING_EXPECTED, function() use ( $json ){ asJson( $json )->get( 'height' )->asString(); } );
     }
 }
 
