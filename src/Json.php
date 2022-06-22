@@ -8,12 +8,15 @@ use Exception;
 
 class Json
 {
+    /**
+     * @var array<int|string, mixed>
+     */
     private array $json = [];
 
     /**
     * Json constructor
     *
-    * @param array<mixed, mixed> $json
+    * @param array<int|string, mixed> $json
     */
     private function __construct( array $json )
     {
@@ -23,9 +26,9 @@ class Json
     /**
     * Json static constructor
     *
-    * @param array<mixed, mixed> $json
+    * @param array<int|string, mixed> $json
     */
-    static public function asJson( mixed $json ): Json
+    static public function asJson( array $json ): Json
     {
         return new Json( $json );
     }
@@ -33,10 +36,10 @@ class Json
     /**
      * Gets Value by key
      *
-     * @param string|int $key
+     * @param int|string $key
      * @return Value
      */
-    public function get( mixed $key ): Value
+    public function get( int|string $key ): Value
     {
         if( !isset( $this->json[$key] ) )
             throw new Exception( __FUNCTION__ . ' failed to find key `' . $key . '`', ErrCode::KEY_MISSING );
