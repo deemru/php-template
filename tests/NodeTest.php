@@ -47,10 +47,11 @@ class NodeTest extends PHPUnit\Framework\TestCase
 
     public function testMoreCoverage(): void
     {
-        $node1 = new Node( Node::MAINNET, '?' );
-        $node2 = new Node( str_replace( 'https', 'http', Node::MAINNET ) );
-
+        $node1 = new Node( Node::MAINNET, 'W' );
+        $node2 = new Node( Node::MAINNET, '?' );
+        $node3 = new Node( str_replace( 'https', 'http', Node::MAINNET ) );
         $this->assertSame( $node1->chainId(), $node2->chainId() );
+        $this->assertSame( $node2->chainId(), $node3->chainId() );
     }
 
     public function testExceptions(): void
