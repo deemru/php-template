@@ -22,7 +22,7 @@ class NodeTest extends PHPUnit\Framework\TestCase
 
     public function testConstruct(): void
     {
-        $nodeW = new Node( Node::MAINNET, '?' );
+        $nodeW = new Node( Node::MAINNET );
         $nodeT = new Node( Node::TESTNET );
         $nodeS = new Node( Node::STAGENET );
 
@@ -43,6 +43,12 @@ class NodeTest extends PHPUnit\Framework\TestCase
         $this->assertLessThan( $heightS, 1 );
 
         $this->assertSame( '72k1xXWG59fYdzSNoA', deemru\base58Encode( 'Hello, World!' ) );
+    }
+
+    public function testMoreCoverage(): void
+    {
+        $node = new Node( Node::MAINNET, '?' );
+        $node = new Node( str_replace( 'https', 'http', Node::MAINNET ) );
     }
 
     public function testExceptions(): void
@@ -78,5 +84,6 @@ if( DO_LOCAL_DEBUG )
 {
     $test = new NodeTest;
     $test->testConstruct();
+    $test->testMoreCoverage();
     $test->testExceptions();
 }
