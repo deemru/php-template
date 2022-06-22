@@ -56,36 +56,15 @@ class NodeTest extends PHPUnit\Framework\TestCase
     public function testExceptions(): void
     {
         $node = new Node( Node::MAINNET );
+        $json = $node->fetch( '/blocks/headers/last' );
 
-        $this->catchExceptionOrFail( ErrCode::BASE58_DECODE, function()
-        {
-            deemru\base58Decode( 'ill' );
-        } );
-
-        $this->catchExceptionOrFail( ErrCode::FETCH_URI, function() use ( $node )
-        {
-            $node->fetch( '/test' );
-        } );
-
-        $this->catchExceptionOrFail( ErrCode::JSON_DECODE, function() use ( $node )
-        {
-            $node->fetch( '/api-docs/favicon-16x16.png' );
-        } );
-
-        $this->catchExceptionOrFail( ErrCode::KEY_MISSING, function() use ( $node )
-        {
-            deemru\getInt( $node->fetch( '/addresses' ), '123' );
-        } );
-
-        $this->catchExceptionOrFail( ErrCode::INT_EXPECTED, function() use ( $node )
-        {
-            deemru\getInt( $node->fetch( '/blocks/headers/last' ), 'signature' );
-        } );
-
-        $this->catchExceptionOrFail( ErrCode::STRING_EXPECTED, function() use ( $node )
-        {
-            deemru\getString( $node->fetch( '/blocks/height' ), 'height' );
-        } );
+        $this->catchExceptionOrFail( ErrCode::BASE58_DECODE, function(){ deemru\base58Decode( 'ill' ); } );
+        $this->catchExceptionOrFail( ErrCode::FETCH_URI, function() use ( $node ){ $node->fetch( '/test' ); } );
+        $this->catchExceptionOrFail( ErrCode::JSON_DECODE, function() use ( $node ){ $node->fetch( '/api-docs/favicon-16x16.png' ); } );
+        $this->catchExceptionOrFail( ErrCode::KEY_MISSING, function() use ( $json ){ deemru\getInt( $json, 'x' ); } );
+        $this->catchExceptionOrFail( ErrCode::KEY_MISSING, function() use ( $json ){ deemru\getString( $json, 'x' ); } );
+        $this->catchExceptionOrFail( ErrCode::INT_EXPECTED, function() use ( $json ){ deemru\getInt( $json, 'signature' ); } );
+        $this->catchExceptionOrFail( ErrCode::STRING_EXPECTED, function() use ( $json ){ deemru\getString( $json, 'height' ); } );
     }
 }
 
