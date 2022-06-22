@@ -25,18 +25,55 @@ function base58Encode( string $bytes ): string
 }
 
 /**
+ * Gets an integer value from a mixed value
+ *
+ * @param mixed $value
+ * @return int
+ */
+function asInt( mixed $value ): int
+{
+    if( !is_int( $value ) )
+        throw new Exception( __FUNCTION__ . ' failed to detect integer at `' . $value . '`', ErrCode::INT_EXPECTED );
+    return $value;
+}
+
+/**
  * Gets an integer value from a key-value array by its key
  *
  * @param array<mixed, mixed> $array
- * @param string $key
+ * @param mixed $key
  * @return int
  */
-function asInt( array $array, string $key ): int
+function getInt( array $array, mixed $key ): int
 {
     if( !isset( $array[$key] ) )
         throw new Exception( __FUNCTION__ . ' failed to find key `' . $key . '`', ErrCode::KEY_MISSING );
-    $int = $array[$key];
-    if( !is_int( $int ) )
-        throw new Exception( __FUNCTION__ . ' failed to detect integer at `' . $key . '`', ErrCode::INT_EXPECTED );
-    return $int;
+    return asInt( $array[$key] );
+}
+
+/**
+ * Gets a string value from a mixed value
+ *
+ * @param mixed $value
+ * @return string
+ */
+function asString( mixed $value ): string
+{
+    if( !is_string( $value ) )
+        throw new Exception( __FUNCTION__ . ' failed to detect integer at `' . $value . '`', ErrCode::STRING_EXPECTED );
+    return $value;
+}
+
+/**
+ * Gets a string value from a key-value array by its key
+ *
+ * @param array<mixed, mixed> $array
+ * @param mixed $key
+ * @return string
+ */
+function getString( array $array, mixed $key ): string
+{
+    if( !isset( $array[$key] ) )
+        throw new Exception( __FUNCTION__ . ' failed to find key `' . $key . '`', ErrCode::KEY_MISSING );
+    return asString( $array[$key] );
 }

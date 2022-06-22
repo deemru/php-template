@@ -104,7 +104,7 @@ class Node
         {
             if( !is_string( $address ) )
                 throw new Exception( __FUNCTION__ . ' failed to get valid address', ErrCode::STRING_EXPECTED );
-            $addresses[] = Address::fromString( $address );
+            $addresses[] = Address::fromString( asString( $address ) );
         }
         return $addresses;
     }
@@ -115,7 +115,7 @@ class Node
 
     public function getHeight(): int
     {
-        return asInt( $this->fetch( '/blocks/height' ), 'height' );
+        return getInt( $this->fetch( '/blocks/height' ), 'height' );
     }
 
 /*

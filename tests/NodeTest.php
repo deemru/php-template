@@ -55,29 +55,36 @@ class NodeTest extends PHPUnit\Framework\TestCase
 
     public function testExceptions(): void
     {
+        $node = new Node( Node::MAINNET );
+
         $this->catchExceptionOrFail( ErrCode::BASE58_DECODE, function()
         {
             deemru\base58Decode( 'ill' );
         } );
 
-        $this->catchExceptionOrFail( ErrCode::FETCH_URI, function()
+        $this->catchExceptionOrFail( ErrCode::FETCH_URI, function() use ( $node )
         {
-            ( new Node( Node::MAINNET ) )->fetch( '/test' );
+            $node->fetch( '/test' );
         } );
 
-        $this->catchExceptionOrFail( ErrCode::JSON_DECODE, function()
+        $this->catchExceptionOrFail( ErrCode::JSON_DECODE, function() use ( $node )
         {
-            ( new Node( Node::MAINNET ) )->fetch( '/api-docs/favicon-16x16.png' );
+            $node->fetch( '/api-docs/favicon-16x16.png' );
         } );
 
-        $this->catchExceptionOrFail( ErrCode::KEY_MISSING, function()
+        $this->catchExceptionOrFail( ErrCode::KEY_MISSING, function() use ( $node )
         {
-            deemru\asInt( ( new Node( Node::MAINNET ) )->fetch( '/addresses' ), '123' );
+            deemru\getInt( $node->fetch( '/addresses' ), '123' );
         } );
 
-        $this->catchExceptionOrFail( ErrCode::INT_EXPECTED, function()
+        $this->catchExceptionOrFail( ErrCode::INT_EXPECTED, function() use ( $node )
         {
-            deemru\asInt( ( new Node( Node::MAINNET ) )->fetch( '/blocks/headers/last' ), 'signature' );
+            deemru\getInt( $node->fetch( '/blocks/headers/last' ), 'signature' );
+        } );
+
+        $this->catchExceptionOrFail( ErrCode::STRING_EXPECTED, function() use ( $node )
+        {
+            deemru\getString( $node->fetch( '/blocks/height' ), 'height' );
         } );
     }
 }
