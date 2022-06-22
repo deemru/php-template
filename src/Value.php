@@ -16,9 +16,8 @@ class Value
     }
 
     /**
-    * Gets an integer value from a mixed value
+    * Gets an integer value
     *
-    * @param mixed $value
     * @return int
     */
     function asInt(): int
@@ -29,9 +28,8 @@ class Value
     }
 
     /**
-    * Gets a string value from a mixed value
+    * Gets a string value
     *
-    * @param mixed $value
     * @return string
     */
     function asString(): string

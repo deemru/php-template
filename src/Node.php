@@ -126,6 +126,6 @@ class Node
 
     public function getBlocksDelay( string $startBlockId, int $blocksNum ): int
     {
-        return asJson( $this->get( "/blocks/delay/" . $startBlockId . "/" + $blocksNum ) )->get( "delay" )->asInt();
+        return asJson( $this->get( "/blocks/delay/" . $startBlockId . "/" . $blocksNum ) )->get( "delay" )->asInt();
     }
 }

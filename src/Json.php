@@ -8,18 +8,34 @@ use Exception;
 
 class Json
 {
-    private $json = [];
+    private array $json = [];
 
+    /**
+    * Json constructor
+    *
+    * @param array<mixed, mixed> $json
+    */
     private function __construct( array $json )
     {
         $this->json = $json;
     }
 
+    /**
+    * Json static constructor
+    *
+    * @param array<mixed, mixed> $json
+    */
     static public function asJson( mixed $json ): Json
     {
         return new Json( $json );
     }
 
+    /**
+     * Gets Value by key
+     *
+     * @param string|int $key
+     * @return Value
+     */
     public function get( mixed $key ): Value
     {
         if( !isset( $this->json[$key] ) )
