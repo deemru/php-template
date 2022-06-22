@@ -22,7 +22,7 @@ class NodeTest extends PHPUnit\Framework\TestCase
 
     public function testConstruct(): void
     {
-        $nodeW = new Node( Node::MAINNET );
+        $nodeW = new Node( Node::MAINNET, '?' );
         $nodeT = new Node( Node::TESTNET );
         $nodeS = new Node( Node::STAGENET );
 

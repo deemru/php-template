@@ -24,8 +24,9 @@ class Node
      * Creates Node instance
      *
      * @param string $uri Node REST API address
+     * @param string $chainId Chain ID or "?" to set automatically (Default: "")
      */
-    public function __construct( string $uri )
+    public function __construct( string $uri, string $chainId = '' )
     {
         $this->uri = $uri;
         $this->wk = new \deemru\WavesKit( '?', function( string $wklevel, string $wkmessage )
@@ -34,7 +35,24 @@ class Node
             $this->wkmessage = $wkmessage;
         } );
         $this->wk->setNodeAddress( $uri, 0 );
-        $this->chainId = $this->getAddresses()[0]->chainId();
+
+        if( $chainId === '?' )
+            $this->chainId = $this->getAddresses()[0]->chainId();
+        else
+        if( strlen( $chainId ) === 1 )
+            $this->chainId = $chainId;
+        else
+        if( $uri === Node::MAINNET )
+            $this->chainId = 'W';
+        else
+        if( $uri === Node::TESTNET )
+            $this->chainId = 'T';
+        else
+        if( $uri === Node::STAGENET )
+            $this->chainId = 'S';
+        else
+            $this->chainId = $this->getAddresses()[0]->chainId();
+
         $this->wk->chainId = $this->chainId; // @phpstan-ignore-line // accept workaround
     }
 
