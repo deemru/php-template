@@ -63,7 +63,7 @@ class Json
     {
         $array = [];
         foreach( $this->array as $headers )
-            $array[] = asJson( $headers )->asBlockHeaders();
+            $array[] = asValue( $headers )->asJson()->asBlockHeaders();
         return $array;
     }
 
