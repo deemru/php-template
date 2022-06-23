@@ -14,5 +14,5 @@ class ErrCode
     const KEY_MISSING =     ErrCode::BASE | 5;
     const STRING_EXPECTED = ErrCode::BASE | 6;
     const INT_EXPECTED =    ErrCode::BASE | 7;
-
+    const ARRAY_EXPECTED =  ErrCode::BASE | 8;
 }

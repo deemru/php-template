@@ -35,4 +35,27 @@ class Json
             throw new Exception( __FUNCTION__ . ' failed to find key `' . $key . '`', ErrCode::KEY_MISSING );
         return new Value( $this->json[$key] );
     }
+
+    /**
+    * Gets an BlockHeaders value
+    *
+    * @return BlockHeaders
+    */
+    function asBlockHeaders(): BlockHeaders
+    {
+        return new BlockHeaders( $this );
+    }
+
+    /**
+    * Gets an array value
+    *
+    * @return array<int, Address>
+    */
+    function asArrayAddress(): array
+    {
+        $addresses = [];
+        foreach( $this->json as $address )
+            $addresses[] = Address::fromString( asValue( $address )->asString() );
+        return $addresses;
+    }
 }

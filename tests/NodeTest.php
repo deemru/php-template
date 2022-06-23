@@ -21,7 +21,7 @@ class NodeTest extends \PHPUnit\Framework\TestCase
         }
     }
 
-    public function testConstruct(): void
+    public function testNode(): void
     {
         $nodeW = new Node( Node::MAINNET );
         $nodeT = new Node( Node::TESTNET );
@@ -44,6 +44,26 @@ class NodeTest extends \PHPUnit\Framework\TestCase
         $this->assertLessThan( $heightS, 1 );
 
         $this->assertSame( '72k1xXWG59fYdzSNoA', base58Encode( 'Hello, World!' ) );
+
+        $headers = $nodeW->getLastBlockHeaders();
+
+        $headers->baseTarget();
+        $headers->desiredReward();
+        $headers->features();
+        $headers->generationSignature();
+        $headers->generator();
+        $headers->height();
+        $headers->id();
+        $headers->reference();
+        $headers->reward();
+        $headers->signature();
+        $headers->size();
+        $headers->timestamp();
+        $headers->totalFee();
+        $headers->transactionsCount();
+        $headers->transactionsRoot();
+        $headers->version();
+        $headers->vrf();
     }
 
     public function testMoreCoverage(): void
@@ -63,16 +83,16 @@ class NodeTest extends \PHPUnit\Framework\TestCase
         $this->catchExceptionOrFail( ErrCode::BASE58_DECODE, function(){ base58Decode( 'ill' ); } );
         $this->catchExceptionOrFail( ErrCode::FETCH_URI, function() use ( $node ){ $node->get( '/test' ); } );
         $this->catchExceptionOrFail( ErrCode::JSON_DECODE, function() use ( $node ){ $node->get( '/api-docs/favicon-16x16.png' ); } );
-        $this->catchExceptionOrFail( ErrCode::KEY_MISSING, function() use ( $json ){ asJson( $json )->get( 'x' ); } );
-        $this->catchExceptionOrFail( ErrCode::INT_EXPECTED, function() use ( $json ){ asJson( $json )->get( 'signature' )->asInt(); } );
-        $this->catchExceptionOrFail( ErrCode::STRING_EXPECTED, function() use ( $json ){ asJson( $json )->get( 'height' )->asString(); } );
+        $this->catchExceptionOrFail( ErrCode::KEY_MISSING, function() use ( $json ){ $json->get( 'x' ); } );
+        $this->catchExceptionOrFail( ErrCode::INT_EXPECTED, function() use ( $json ){ $json->get( 'signature' )->asInt(); } );
+        $this->catchExceptionOrFail( ErrCode::STRING_EXPECTED, function() use ( $json ){ $json->get( 'height' )->asString(); } );
     }
 }
 
 if( DO_LOCAL_DEBUG )
 {
     $test = new NodeTest;
-    $test->testConstruct();
+    $test->testNode();
     $test->testMoreCoverage();
     $test->testExceptions();
 }

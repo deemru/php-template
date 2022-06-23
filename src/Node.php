@@ -70,9 +70,9 @@ class Node
      * Gets a custom REST API request
      *
      * @param string $uri
-     * @return array<mixed, mixed>
+     * @return Json
      */
-    public function get( string $uri ): array
+    public function get( string $uri ): Json
     {
         $fetch = $this->wk->fetch( $uri );
         if( $fetch === false )
@@ -85,7 +85,7 @@ class Node
         $fetch = $this->wk->json_decode( $fetch );
         if( $fetch === false )
             throw new Exception( __FUNCTION__ . ' failed to decode `' . $uri . '`', ErrCode::JSON_DECODE );
-        return $fetch;
+        return asJson( $fetch );
     }
 
     //===============
@@ -99,10 +99,7 @@ class Node
      */
     public function getAddresses(): array
     {
-        $addresses = [];
-        foreach( $this->get( '/addresses' ) as $address )
-            $addresses[] = Address::fromString( asValue( $address )->asString() );
-        return $addresses;
+        return $this->get( '/addresses' )->asArrayAddress();
     }
 
     //===============
@@ -111,21 +108,41 @@ class Node
 
     public function getHeight(): int
     {
-        return asJson( $this->get( '/blocks/height' ) )->get( 'height' )->asInt();
+        return $this->get( '/blocks/height' )->get( 'height' )->asInt();
     }
 
     public function getBlockHeightById( string $blockId ): int
     {
-        return asJson( $this->get( '/blocks/height/' . $blockId ) )->get( 'height' )->asInt();
+        return $this->get( '/blocks/height/' . $blockId )->get( 'height' )->asInt();
     }
 
     public function getBlockHeightByTimestamp( int $timestamp ): int
     {
-        return asJson( $this->get( "/blocks/heightByTimestamp/" . $timestamp ) )->get( "height" )->asInt();
+        return $this->get( "/blocks/heightByTimestamp/" . $timestamp )->get( "height" )->asInt();
     }
 
     public function getBlocksDelay( string $startBlockId, int $blocksNum ): int
     {
-        return asJson( $this->get( "/blocks/delay/" . $startBlockId . "/" . $blocksNum ) )->get( "delay" )->asInt();
+        return $this->get( "/blocks/delay/" . $startBlockId . "/" . $blocksNum )->get( "delay" )->asInt();
+    }
+
+    public function getBlockHeadersByHeight( int $height ): BlockHeaders
+    {
+        return $this->get( "/blocks/headers/at/" . $height )->asBlockHeaders();
+    }
+
+    public function getBlockHeadersById( string $blockId ): BlockHeaders
+    {
+        return $this->get( "/blocks/headers/" . $blockId )->asBlockHeaders();
+    }
+
+    public function getBlocksHeaders( int $fromHeight, int $toHeight ): BlockHeaders
+    {
+        return $this->get( "/blocks/headers/seq/" . $fromHeight . "/" . $toHeight )->asBlockHeaders();
+    }
+
+    public function getLastBlockHeaders(): BlockHeaders
+    {
+        return $this->get( "/blocks/headers/last" )->asBlockHeaders();
     }
 }
