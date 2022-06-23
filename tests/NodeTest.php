@@ -46,6 +46,7 @@ class NodeTest extends \PHPUnit\Framework\TestCase
         $this->assertSame( '72k1xXWG59fYdzSNoA', base58Encode( 'Hello, World!' ) );
 
         $headers = $nodeW->getLastBlockHeaders();
+        $headers = $nodeW->getBlockHeadersByHeight( $headers->height() - 10 );
 
         $headers->baseTarget();
         $headers->desiredReward();
