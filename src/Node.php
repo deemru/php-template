@@ -136,9 +136,16 @@ class Node
         return $this->get( "/blocks/headers/" . $blockId )->asBlockHeaders();
     }
 
-    public function getBlocksHeaders( int $fromHeight, int $toHeight ): BlockHeaders
+    /**
+     * Get an array of BlockHeaders from fromHeight to toHeight
+     *
+     * @param integer $fromHeight
+     * @param integer $toHeight
+     * @return array<int, BlockHeaders>
+     */
+    public function getBlocksHeaders( int $fromHeight, int $toHeight ): array
     {
-        return $this->get( "/blocks/headers/seq/" . $fromHeight . "/" . $toHeight )->asBlockHeaders();
+        return $this->get( "/blocks/headers/seq/" . $fromHeight . "/" . $toHeight )->asArrayBlockHeaders();
     }
 
     public function getLastBlockHeaders(): BlockHeaders

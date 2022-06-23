@@ -29,7 +29,7 @@ class Value
     function asInt(): int
     {
         if( !is_int( $this->value ) )
-            throw new Exception( __FUNCTION__ . ' failed to detect integer at `' . $this->value . '`', ErrCode::INT_EXPECTED );
+            throw new Exception( __FUNCTION__ . ' failed to detect integer at `' . json_encode( $this->value ) . '`', ErrCode::INT_EXPECTED );
         return $this->value;
     }
 
@@ -41,7 +41,7 @@ class Value
     function asString(): string
     {
         if( !is_string( $this->value ) )
-            throw new Exception( __FUNCTION__ . ' failed to detect integer at `' . $this->value . '`', ErrCode::STRING_EXPECTED );
+            throw new Exception( __FUNCTION__ . ' failed to detect string at `' . json_encode( $this->value ) . '`', ErrCode::STRING_EXPECTED );
         return $this->value;
     }
 
@@ -53,7 +53,7 @@ class Value
     function asJson(): Json
     {
         if( !is_array( $this->value ) )
-            throw new Exception( __FUNCTION__ . ' failed to detect Json at `' . $this->value . '`', ErrCode::ARRAY_EXPECTED );
+            throw new Exception( __FUNCTION__ . ' failed to detect Json at `' . json_encode( $this->value ) . '`', ErrCode::ARRAY_EXPECTED );
         return asJson( $this->value );
     }
 
@@ -65,7 +65,7 @@ class Value
     function asArrayInt(): array
     {
         if( !is_array( $this->value ) )
-            throw new Exception( __FUNCTION__ . ' failed to detect integer at `' . $this->value . '`', ErrCode::STRING_EXPECTED );
+            throw new Exception( __FUNCTION__ . ' failed to detect array at `' . json_encode( $this->value ) . '`', ErrCode::ARRAY_EXPECTED );
         $ints = [];
         foreach( $this->value as $value )
             $ints[] = asValue( $value )->asInt();

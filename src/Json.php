@@ -11,16 +11,24 @@ class Json
     /**
      * @var array<mixed, mixed>
      */
-    private array $json = [];
+    private array $array = [];
 
     /**
     * Json constructor
     *
-    * @param array<mixed, mixed> $json
+    * @param array<mixed, mixed> $array
     */
-    public function __construct( array $json )
+    public function __construct( array $array )
     {
-        $this->json = $json;
+        $this->array = $array;
+    }
+
+    public function toString(): string
+    {
+        $string = json_encode( $this->array );
+        if( $string === false )
+            throw new Exception( __FUNCTION__ . ' failed to encode internal array `' . serialize( $this->array ) . '`', ErrCode::JSON_ENCODE );
+        return $string;
     }
 
     /**
@@ -31,13 +39,13 @@ class Json
      */
     public function get( $key ): Value
     {
-        if( !isset( $this->json[$key] ) )
+        if( !isset( $this->array[$key] ) )
             throw new Exception( __FUNCTION__ . ' failed to find key `' . $key . '`', ErrCode::KEY_MISSING );
-        return new Value( $this->json[$key] );
+        return new Value( $this->array[$key] );
     }
 
     /**
-    * Gets an BlockHeaders value
+    * Gets a BlockHeaders value
     *
     * @return BlockHeaders
     */
@@ -47,15 +55,28 @@ class Json
     }
 
     /**
+    * Gets an array of BlockHeaders value
+    *
+    * @return array<int, BlockHeaders>
+    */
+    function asArrayBlockHeaders(): array
+    {
+        $array = [];
+        foreach( $this->array as $headers )
+            $array[] = asJson( $headers )->asBlockHeaders();
+        return $array;
+    }
+
+    /**
     * Gets an array value
     *
     * @return array<int, Address>
     */
     function asArrayAddress(): array
     {
-        $addresses = [];
-        foreach( $this->json as $address )
-            $addresses[] = Address::fromString( asValue( $address )->asString() );
-        return $addresses;
+        $array = [];
+        foreach( $this->array as $address )
+            $array[] = Address::fromString( asValue( $address )->asString() );
+        return $array;
     }
 }

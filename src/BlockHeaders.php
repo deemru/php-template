@@ -35,4 +35,6 @@ class BlockHeaders
     public function totalFee(): int { return $this->json->get( 'totalFee' )->asInt(); }
     public function reward(): int { return $this->json->get( 'reward' )->asInt(); }
     public function vrf(): string { return $this->json->get( 'VRF' )->asString(); }
+
+    public function toString(): string { return $this->json->toString(); }
 }

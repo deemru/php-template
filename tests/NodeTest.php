@@ -64,6 +64,23 @@ class NodeTest extends \PHPUnit\Framework\TestCase
         $headers->transactionsRoot();
         $headers->version();
         $headers->vrf();
+
+        $height1 = $nodeW->getBlockHeightById( $headers->id() );
+        $height2 = $nodeW->getBlockHeightByTimestamp( $headers->timestamp() );
+
+        $this->assertSame( $headers->height(), $height1 );
+        $this->assertSame( $headers->height(), $height2 );
+
+        $headers1 = $nodeW->getBlockHeadersByHeight( $headers->height() );
+        $headers2 = $nodeW->getBlockHeadersById( $headers->id() );
+        $headers3 = $nodeW->getBlocksHeaders( $headers->height() - 1, $headers->height() )[1];
+        $this->assertSame( $headers->toString(), $headers1->toString() );
+        $this->assertSame( $headers->toString(), $headers2->toString() );
+        $this->assertSame( $headers->toString(), $headers3->toString() );
+
+        $delay = $nodeW->getBlocksDelay( $nodeW->getBlockHeadersByHeight( $headers->height() - 200 )->id(), 100 );
+        $this->assertLessThan( 70 * 1000, $delay );
+        $this->assertLessThan( $delay, 50 * 1000 );
     }
 
     public function testMoreCoverage(): void
@@ -86,6 +103,7 @@ class NodeTest extends \PHPUnit\Framework\TestCase
         $this->catchExceptionOrFail( ErrCode::KEY_MISSING, function() use ( $json ){ $json->get( 'x' ); } );
         $this->catchExceptionOrFail( ErrCode::INT_EXPECTED, function() use ( $json ){ $json->get( 'signature' )->asInt(); } );
         $this->catchExceptionOrFail( ErrCode::STRING_EXPECTED, function() use ( $json ){ $json->get( 'height' )->asString(); } );
+        $this->catchExceptionOrFail( ErrCode::ARRAY_EXPECTED, function() use ( $json ){ $json->get( 'height' )->asArrayInt(); } );
     }
 }
 
