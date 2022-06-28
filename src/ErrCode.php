@@ -16,4 +16,7 @@ class ErrCode
     const STRING_EXPECTED = ErrCode::BASE | 7;
     const INT_EXPECTED =    ErrCode::BASE | 8;
     const ARRAY_EXPECTED =  ErrCode::BASE | 9;
+    const UNKNOWN_TYPE =    ErrCode::BASE | 10;
+    const BOOL_EXPECTED =   ErrCode::BASE | 11;
+    const BASE64_DECODE =   ErrCode::BASE | 12;
 }

@@ -45,6 +45,17 @@ class Json
     }
 
     /**
+     * Checks key exists
+     *
+     * @param mixed $key
+     * @return bool
+     */
+    public function exists( $key ): bool
+    {
+        return isset( $this->array[$key] );
+    }
+
+    /**
      * Puts value by key
      *
      * @param mixed $key
@@ -88,6 +99,16 @@ class Json
     }
 
     /**
+    * Gets a DataEntry value
+    *
+    * @return DataEntry
+    */
+    function asDataEntry(): DataEntry
+    {
+        return new DataEntry( $this );
+    }
+
+    /**
     * Gets an array of BlockHeaders value
     *
     * @return array<int, BlockHeaders>
@@ -123,6 +144,19 @@ class Json
         $array = [];
         foreach( $this->array as $balance )
             $array[] = asValue( $balance )->asJson()->asBalance();
+        return $array;
+    }
+
+    /**
+    * Gets an array value
+    *
+    * @return array<int, DataEntry>
+    */
+    function asArrayDataEntry(): array
+    {
+        $array = [];
+        foreach( $this->array as $data )
+            $array[] = asValue( $data )->asJson()->asDataEntry();
         return $array;
     }
 }

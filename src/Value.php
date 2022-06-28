@@ -22,6 +22,18 @@ class Value
     }
 
     /**
+    * Gets an boolean value
+    *
+    * @return bool
+    */
+    function asBoolean(): bool
+    {
+        if( !is_bool( $this->value ) )
+            throw new Exception( __FUNCTION__ . ' failed to detect boolean at `' . json_encode( $this->value ) . '`', ErrCode::BOOL_EXPECTED );
+        return $this->value;
+    }
+
+    /**
     * Gets an integer value
     *
     * @return int
@@ -43,6 +55,23 @@ class Value
         if( !is_string( $this->value ) )
             throw new Exception( __FUNCTION__ . ' failed to detect string at `' . json_encode( $this->value ) . '`', ErrCode::STRING_EXPECTED );
         return $this->value;
+    }
+
+    /**
+    * Gets a base64 decoded string value
+    *
+    * @return string
+    */
+    function asBase64Decoded(): string
+    {
+        if( !is_string( $this->value ) )
+            throw new Exception( __FUNCTION__ . ' failed to detect string at `' . json_encode( $this->value ) . '`', ErrCode::STRING_EXPECTED );
+        if( substr( $this->value, 0, 7 ) !== 'base64:' )
+            throw new Exception( __FUNCTION__ . ' failed to detect base64 `' . $this->value . '`', ErrCode::BASE64_DECODE );
+        $decoded = base64_decode( substr( $this->value, 7 ) );
+        if( $decoded === false )
+            throw new Exception( __FUNCTION__ . ' failed to decode base64 `' . substr( $this->value, 7 ) . '`', ErrCode::BASE64_DECODE );
+        return $decoded;
     }
 
     /**

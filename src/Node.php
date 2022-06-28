@@ -151,7 +151,7 @@ class Node
      * Gets addresses balances
      *
      * @param array<int, Address> $addresses
-     * @param int|null $height
+     * @param int|null $height (default: null)
      * @return array<int, Balance>
      */
     public function getBalances( array $addresses, int $height = null ): array
@@ -174,6 +174,64 @@ class Node
         return $this->get( '/addresses/balance/details/' . $address->toString() )->asBalanceDetails();
     }
 
+    /**
+     * Gets DataEntry array of address
+     *
+     * @param Address $address
+     * @param string|null $regex (default: null)
+     * @return array<int, DataEntry>
+     */
+    public function getData( Address $address, string $regex = null ): array
+    {
+        $uri = '/addresses/data/' . $address->toString();
+        if( isset( $regex ) )
+            $uri .= '?matches=' . urlencode( $regex );
+        return $this->get( $uri )->asArrayDataEntry();
+    }
+
+    /**
+     * Gets DataEntry array of address by keys
+     *
+     * @param Address $address
+     * @param array<int, string> $keys
+     * @return array<int, DataEntry>
+     */
+    public function getDataByKeys( Address $address, array $keys ): array
+    {
+        $json = new Json;
+
+        $array = [];
+        foreach( $keys as $key )
+            $array[] = $key;
+        $json->put( 'keys', $array );
+
+        return $this->post( '/addresses/data/' . $address->toString(), $json )->asArrayDataEntry();
+    }
+
+    /**
+     * Gets a single DataEntry of address by a key
+     *
+     * @param Address $address
+     * @param string $key
+     * @return DataEntry
+     */
+    public function getDataByKey( Address $address, string $key ): DataEntry
+    {
+        return $this->get( '/addresses/data/' . $address->toString() . '/' . $key )->asDataEntry();
+    }
+/*
+    public ScriptInfo getScriptInfo(Address address) throws IOException, NodeException {
+        return asType(get("/addresses/scriptInfo/" + address.toString()), TypeRef.SCRIPT_INFO);
+    }
+
+    public ScriptMeta getScriptMeta(Address address) throws IOException, NodeException {
+        JsonNode json = asJson(get("/addresses/scriptInfo/" + address.toString() + "/meta"));
+        if (json.hasNonNull("meta"))
+            return mapper.convertValue(json.get("meta"), TypeRef.SCRIPT_META);
+        else
+            return new ScriptMeta(0, new HashMap<>());
+    }
+*/
     //===============
     // BLOCKS
     //===============

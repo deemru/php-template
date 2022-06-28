@@ -26,5 +26,16 @@ class JsonTemplate
         return $this->json->get( $key );
     }
 
+    /**
+     * Checks key exists
+     *
+     * @param mixed $key
+     * @return bool
+     */
+    public function exists( $key ): bool
+    {
+        return $this->json->exists( $key );
+    }
+
     public function toString(): string { return $this->json->toString(); }
 }

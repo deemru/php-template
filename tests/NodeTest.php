@@ -27,6 +27,23 @@ class NodeTest extends \PHPUnit\Framework\TestCase
         $nodeT = new Node( Node::TESTNET );
         $nodeS = new Node( Node::STAGENET );
 
+        $addressT = Address::fromString( '3NAV8CuN5Zn6TT1gChFM2wXRtdhUBDUtCVt' );
+        $dataEntries1 = $nodeT->getData( $addressT, 'key_\d' );
+        $dataEntries2 = $nodeT->getData( $addressT );
+
+        $this->assertLessThan( count( $dataEntries2 ), count( $dataEntries1 ) );
+
+        $keys = [];
+        foreach( $dataEntries1 as $dataEntry )
+            $keys[] = $dataEntry->key();
+
+        $dataEntries2 = $nodeT->getDataByKeys( $addressT, $keys );
+        $this->assertSame( count( $dataEntries1 ), count( $dataEntries2 ) );
+
+        $n = count( $dataEntries1 );
+        for( $i = 0; $i < $n; ++$i )
+            $this->assertSame( $dataEntries1[$i]->value(), $dataEntries2[$i]->value() );
+
         $this->assertSame( 'W', $nodeW->chainId() );
         $this->assertSame( 'T', $nodeT->chainId() );
         $this->assertSame( 'S', $nodeS->chainId() );
