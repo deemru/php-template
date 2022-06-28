@@ -129,6 +129,11 @@ class Node
         return $this->get( '/addresses' )->asArrayAddress();
     }
 
+    /**
+     * Return addresses of the node by indexes
+     *
+     * @return array<int, Address>
+     */
     public function getAddressesByIndexes( int $fromIndex, int $toIndex ): array
     {
         return $this->get( '/addresses/seq/' . $fromIndex . '/' . $toIndex )->asArrayAddress();

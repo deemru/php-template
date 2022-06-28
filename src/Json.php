@@ -51,9 +51,10 @@ class Json
      * @param mixed $value
      * @return Json
      */
-    public function put( $key, $value )
+    public function put( $key, $value ): Json
     {
         $this->array[$key] = $value;
+        return $this;
     }
 
     /**
