@@ -29,7 +29,7 @@ class DataEntry extends JsonTemplate
      *
      * @return bool|int|string|null
      */
-    public function value(): mixed
+    public function value()
     {
         switch( $this->type() )
         {
