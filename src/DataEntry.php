@@ -39,5 +39,7 @@ class DataEntry extends JsonTemplate
             case EntryType::STRING: return $this->get( 'value' )->asString();
             case EntryType::DELETE: return null;
         }
+
+        throw new Exception( __FUNCTION__ . ' failed to detect type `' . serialize( $this->get( 'type' ) ) . '`', ErrCode::UNKNOWN_TYPE ); // @codeCoverageIgnore
     }
 }

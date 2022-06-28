@@ -69,7 +69,7 @@ class Value
         if( substr( $this->value, 0, 7 ) !== 'base64:' )
             throw new Exception( __FUNCTION__ . ' failed to detect base64 `' . $this->value . '`', ErrCode::BASE64_DECODE );
         $decoded = base64_decode( substr( $this->value, 7 ) );
-        if( $decoded === false )
+        if( !is_string( $decoded ) )
             throw new Exception( __FUNCTION__ . ' failed to decode base64 `' . substr( $this->value, 7 ) . '`', ErrCode::BASE64_DECODE );
         return $decoded;
     }
