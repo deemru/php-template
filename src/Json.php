@@ -11,14 +11,14 @@ class Json
     /**
      * @var array<mixed, mixed>
      */
-    private array $array = [];
+    private array $array;
 
     /**
     * Json constructor
     *
     * @param array<mixed, mixed> $array
     */
-    public function __construct( array $array )
+    public function __construct( array $array = [] )
     {
         $this->array = $array;
     }
@@ -45,6 +45,18 @@ class Json
     }
 
     /**
+     * Puts value by key
+     *
+     * @param mixed $key
+     * @param mixed $value
+     * @return Json
+     */
+    public function put( $key, $value )
+    {
+        $this->array[$key] = $value;
+    }
+
+    /**
     * Gets a BlockHeaders value
     *
     * @return BlockHeaders
@@ -52,6 +64,16 @@ class Json
     function asBlockHeaders(): BlockHeaders
     {
         return new BlockHeaders( $this );
+    }
+
+    /**
+    * Gets a Balance value
+    *
+    * @return Balance
+    */
+    function asBalance(): Balance
+    {
+        return new Balance( $this );
     }
 
     /**
@@ -77,6 +99,19 @@ class Json
         $array = [];
         foreach( $this->array as $address )
             $array[] = Address::fromString( asValue( $address )->asString() );
+        return $array;
+    }
+
+    /**
+    * Gets an array value
+    *
+    * @return array<int, Balance>
+    */
+    function asArrayBalance(): array
+    {
+        $array = [];
+        foreach( $this->array as $balance )
+            $array[] = asValue( $balance )->asJson()->asBalance();
         return $array;
     }
 }

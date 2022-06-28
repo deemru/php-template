@@ -67,14 +67,18 @@ class Node
     }
 
     /**
-     * Gets a custom REST API request
+     * Fetches a custom REST API request
      *
      * @param string $uri
+     * @param Json|null $json
      * @return Json
      */
-    public function get( string $uri ): Json
+    private function fetch( string $uri, Json $json = null )
     {
-        $fetch = $this->wk->fetch( $uri );
+        if( isset( $json ) )
+            $fetch = $this->wk->fetch( $uri, true, $json->toString() );
+        else
+            $fetch = $this->wk->fetch( $uri );
         if( $fetch === false )
         {
             $message = __FUNCTION__ . ' failed at `' . $uri . '`';
@@ -86,6 +90,29 @@ class Node
         if( $fetch === false )
             throw new Exception( __FUNCTION__ . ' failed to decode `' . $uri . '`', ErrCode::JSON_DECODE );
         return asJson( $fetch );
+    }
+
+    /**
+     * GETs a custom REST API request
+     *
+     * @param string $uri
+     * @return Json
+     */
+    public function get( string $uri ): Json
+    {
+        return $this->fetch( $uri );
+    }
+
+    /**
+     * POSTs a custom REST API request
+     *
+     * @param string $uri
+     * @param Json $json
+     * @return Json
+     */
+    public function post( string $uri, Json $json ): Json
+    {
+        return $this->fetch( $uri, $json );
     }
 
     //===============
@@ -100,6 +127,41 @@ class Node
     public function getAddresses(): array
     {
         return $this->get( '/addresses' )->asArrayAddress();
+    }
+
+    public function getAddressesByIndexes( int $fromIndex, int $toIndex ): array
+    {
+        return $this->get( '/addresses/seq/' . $fromIndex . '/' . $toIndex )->asArrayAddress();
+    }
+
+    public function getBalance( Address $address, int $confirmations = null ): int
+    {
+        $uri = '/addresses/balance/' . $address->toString();
+        if( isset( $confirmations ) )
+            $uri .= '/' . $confirmations;
+        return $this->get( $uri )->get( 'balance' )->asInt();
+    }
+
+    /**
+     * Gets addresses balances
+     *
+     * @param array<int, Address> $addresses
+     * @param int|null $height
+     * @return array<int, Balance>
+     */
+    public function getBalances( array $addresses, int $height = null ): array
+    {
+        $json = new Json;
+
+        $array = [];
+        foreach( $addresses as $address )
+            $array[] = $address->toString();
+        $json->put( 'addresses', $array );
+
+        if( isset( $height ) )
+            $json->put( 'height', $height );
+
+        return $this->post( '/addresses/balance', $json )->asArrayBalance();
     }
 
     //===============

@@ -43,7 +43,25 @@ class NodeTest extends \PHPUnit\Framework\TestCase
         $this->assertLessThan( $heightT, $heightS );
         $this->assertLessThan( $heightS, 1 );
 
-        $this->assertSame( '72k1xXWG59fYdzSNoA', base58Encode( 'Hello, World!' ) );
+        $addresses = $nodeW->getAddresses();
+
+        $address1 = $addresses[0];
+        $address2 = $nodeW->getAddressesByIndexes( 0, 1 )[0];
+
+        $this->assertSame( $address1->encoded(), base58Encode( $address2->bytes() ) );
+
+        $balance1 = $nodeW->getBalance( $address1 );
+        $balance2 = $nodeW->getBalance( $address2, 0 );
+
+        $this->assertSame( $balance1, $balance2 );
+
+        $balances = $nodeW->getBalances( $addresses );
+
+        $balance1 = $balances[0];
+        $balance2 = $nodeW->getBalances( $addresses, $heightW )[0];
+
+        $this->assertSame( $balance1->getAddress(), $balance2->getAddress() );
+        $this->assertSame( $balance1->getBalance(), $balance2->getBalance() );
 
         $headers = $nodeW->getLastBlockHeaders();
         $headers = $nodeW->getBlockHeadersByHeight( $headers->height() - 10 );

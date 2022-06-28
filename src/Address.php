@@ -41,4 +41,9 @@ class Address
     {
         return $this->encoded;
     }
+
+    public function toString(): string
+    {
+        return $this->encoded;
+    }
 }
