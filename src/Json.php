@@ -78,6 +78,16 @@ class Json
     }
 
     /**
+    * Gets a BalanceDetails value
+    *
+    * @return BalanceDetails
+    */
+    function asBalanceDetails(): BalanceDetails
+    {
+        return new BalanceDetails( $this );
+    }
+
+    /**
     * Gets an array of BlockHeaders value
     *
     * @return array<int, BlockHeaders>

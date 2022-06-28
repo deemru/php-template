@@ -63,6 +63,14 @@ class NodeTest extends \PHPUnit\Framework\TestCase
         $this->assertSame( $balance1->getAddress(), $balance2->getAddress() );
         $this->assertSame( $balance1->getBalance(), $balance2->getBalance() );
 
+        $balanceDetails = $nodeW->getBalanceDetails( $address1 );
+
+        $this->assertSame( $balanceDetails->address(), $address1->toString() );
+        $this->assertSame( $balanceDetails->available(), $balance1->getBalance() );
+        $balanceDetails->effective();
+        $balanceDetails->generating();
+        $balanceDetails->regular();        
+
         $headers = $nodeW->getLastBlockHeaders();
         $headers = $nodeW->getBlockHeadersByHeight( $headers->height() - 10 );
 

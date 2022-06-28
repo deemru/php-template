@@ -169,6 +169,11 @@ class Node
         return $this->post( '/addresses/balance', $json )->asArrayBalance();
     }
 
+    public function getBalanceDetails( Address $address ): BalanceDetails
+    {
+        return $this->get( '/addresses/balance/details/' . $address->toString() )->asBalanceDetails();
+    }
+
     //===============
     // BLOCKS
     //===============
