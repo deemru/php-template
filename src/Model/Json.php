@@ -17,7 +17,7 @@ class Json
     *
     * @param array<mixed, mixed> $array
     */
-    public function __construct( array $array = [] )
+    function __construct( array $array = [] )
     {
         $this->array = $array;
     }
@@ -33,7 +33,7 @@ class Json
         return new Json( $json );
     }
 
-    public function toString(): string
+    function toString(): string
     {
         $string = json_encode( $this->array );
         if( $string === false )
@@ -47,7 +47,7 @@ class Json
      * @param mixed $key
      * @return Value
      */
-    public function get( $key ): Value
+    function get( $key ): Value
     {
         if( !isset( $this->array[$key] ) )
             throw new Exception( __FUNCTION__ . ' failed to find key `' . $key . '`', ExceptionCode::KEY_MISSING );
@@ -60,7 +60,7 @@ class Json
      * @param mixed $key
      * @return bool
      */
-    public function exists( $key ): bool
+    function exists( $key ): bool
     {
         return isset( $this->array[$key] );
     }
@@ -72,7 +72,7 @@ class Json
      * @param mixed $value
      * @return Json
      */
-    public function put( $key, $value ): Json
+    function put( $key, $value ): Json
     {
         $this->array[$key] = $value;
         return $this;
@@ -151,6 +151,19 @@ class Json
         $array = [];
         foreach( $this->array as $address )
             $array[] = Address::fromString( Value::asValue( $address )->asString() );
+        return $array;
+    }
+
+    /**
+    * Gets an array value
+    *
+    * @return array<int, Alias>
+    */
+    function asArrayAlias(): array
+    {
+        $array = [];
+        foreach( $this->array as $alias )
+            $array[] = Alias::fromFullAlias( Value::asValue( $alias )->asString() );
         return $array;
     }
 

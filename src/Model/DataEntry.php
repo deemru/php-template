@@ -7,9 +7,9 @@ use wavesplatform\ExceptionCode;
 
 class DataEntry extends JsonTemplate
 {
-    public function key(): string { return $this->get( 'key' )->asString(); }
+    function key(): string { return $this->get( 'key' )->asString(); }
 
-    public function type(): int
+    function type(): int
     {
         if( !$this->exists( 'type' ) )
             return EntryType::DELETE;
@@ -28,7 +28,7 @@ class DataEntry extends JsonTemplate
      *
      * @return bool|int|string|null
      */
-    public function value()
+    function value()
     {
         switch( $this->type() )
         {

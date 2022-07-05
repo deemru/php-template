@@ -9,6 +9,7 @@ use wavesplatform\ExceptionCode;
 
 use wavesplatform\API\Node;
 use wavesplatform\Model\Address;
+use wavesplatform\Model\ChainId;
 use wavesplatform\Util\Functions;
 
 class NodeTest extends \PHPUnit\Framework\TestCase
@@ -26,11 +27,22 @@ class NodeTest extends \PHPUnit\Framework\TestCase
         }
     }
 
-    public function testNode(): void
+    function testNode(): void
     {
         $nodeW = new Node( Node::MAINNET );
         $nodeT = new Node( Node::TESTNET );
         $nodeS = new Node( Node::STAGENET );
+
+        
+        $addressT = Address::fromString( '3N9WtaPoD1tMrDZRG26wA142Byd35tLhnLU' );
+        $aliases = $nodeT->getAliasesByAddress( $addressT );
+        foreach( $aliases as $alias )
+        {
+            $alias->name();
+            $alias->bytes();
+            $this->assertSame( $addressT->encoded(), $nodeT->getAddressByAlias( $alias )->encoded() );
+            $alias->toString();
+        }
 
         $addressT = Address::fromString( '3N7uoMNjqNt1jf9q9f9BSr7ASk1QtzJABEY' );
 
@@ -69,9 +81,9 @@ class NodeTest extends \PHPUnit\Framework\TestCase
         for( $i = 0; $i < $n; ++$i )
             $this->assertSame( $dataEntries1[$i]->value(), $dataEntries2[$i]->value() );
 
-        $this->assertSame( 'W', $nodeW->chainId() );
-        $this->assertSame( 'T', $nodeT->chainId() );
-        $this->assertSame( 'S', $nodeS->chainId() );
+        $this->assertSame( ChainId::MAINNET, $nodeW->chainId() );
+        $this->assertSame( ChainId::TESTNET, $nodeT->chainId() );
+        $this->assertSame( ChainId::STAGENET, $nodeS->chainId() );
 
         $this->assertSame( $nodeW->uri(), Node::MAINNET );
         $this->assertSame( $nodeT->uri(), Node::TESTNET );
@@ -152,7 +164,7 @@ class NodeTest extends \PHPUnit\Framework\TestCase
         $this->assertLessThan( $delay, 50 * 1000 );
     }
 
-    public function testMoreCoverage(): void
+    function testMoreCoverage(): void
     {
         $node1 = new Node( Node::MAINNET, 'W' );
         $node2 = new Node( Node::MAINNET, '?' );
@@ -161,7 +173,7 @@ class NodeTest extends \PHPUnit\Framework\TestCase
         $this->assertSame( $node2->chainId(), $node3->chainId() );
     }
 
-    public function testExceptions(): void
+    function testExceptions(): void
     {
         $node = new Node( Node::MAINNET );
         $json = $node->get( '/blocks/headers/last' );

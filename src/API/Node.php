@@ -9,9 +9,11 @@ use deemru\WavesKit;
 
 use wavesplatform\Model\Json;
 use wavesplatform\Model\Address;
+use wavesplatform\Model\Alias;
 use wavesplatform\Model\Balance;
 use wavesplatform\Model\BalanceDetails;
 use wavesplatform\Model\BlockHeaders;
+use wavesplatform\Model\ChainId;
 use wavesplatform\Model\DataEntry;
 use wavesplatform\Model\ScriptInfo;
 use wavesplatform\Model\ScriptMeta;
@@ -36,7 +38,7 @@ class Node
      * @param string $uri Node REST API address
      * @param string $chainId Chain ID or "?" to set automatically (Default: "")
      */
-    public function __construct( string $uri, string $chainId = '' )
+    function __construct( string $uri, string $chainId = '' )
     {
         $this->uri = $uri;
         $this->wk = new WavesKit( '?', function( string $wklevel, string $wkmessage )
@@ -53,25 +55,25 @@ class Node
             $this->chainId = $chainId;
         else
         if( $uri === Node::MAINNET )
-            $this->chainId = 'W';
+            $this->chainId = ChainId::MAINNET;
         else
         if( $uri === Node::TESTNET )
-            $this->chainId = 'T';
+            $this->chainId = ChainId::TESTNET;
         else
         if( $uri === Node::STAGENET )
-            $this->chainId = 'S';
+            $this->chainId = ChainId::STAGENET;
         else
             $this->chainId = $this->getAddresses()[0]->chainId();
 
         $this->wk->chainId = $this->chainId; // @phpstan-ignore-line // accept workaround
     }
 
-    public function chainId(): string
+    function chainId(): string
     {
         return $this->chainId;
     }
 
-    public function uri(): string
+    function uri(): string
     {
         return $this->uri;
     }
@@ -108,7 +110,7 @@ class Node
      * @param string $uri
      * @return Json
      */
-    public function get( string $uri ): Json
+    function get( string $uri ): Json
     {
         return $this->fetch( $uri );
     }
@@ -120,7 +122,7 @@ class Node
      * @param Json $json
      * @return Json
      */
-    public function post( string $uri, Json $json ): Json
+    function post( string $uri, Json $json ): Json
     {
         return $this->fetch( $uri, $json );
     }
@@ -134,7 +136,7 @@ class Node
      *
      * @return array<int, Address>
      */
-    public function getAddresses(): array
+    function getAddresses(): array
     {
         return $this->get( '/addresses' )->asArrayAddress();
     }
@@ -144,12 +146,12 @@ class Node
      *
      * @return array<int, Address>
      */
-    public function getAddressesByIndexes( int $fromIndex, int $toIndex ): array
+    function getAddressesByIndexes( int $fromIndex, int $toIndex ): array
     {
         return $this->get( '/addresses/seq/' . $fromIndex . '/' . $toIndex )->asArrayAddress();
     }
 
-    public function getBalance( Address $address, int $confirmations = null ): int
+    function getBalance( Address $address, int $confirmations = null ): int
     {
         $uri = '/addresses/balance/' . $address->toString();
         if( isset( $confirmations ) )
@@ -164,7 +166,7 @@ class Node
      * @param int|null $height (default: null)
      * @return array<int, Balance>
      */
-    public function getBalances( array $addresses, int $height = null ): array
+    function getBalances( array $addresses, int $height = null ): array
     {
         $json = new Json;
 
@@ -179,7 +181,7 @@ class Node
         return $this->post( '/addresses/balance', $json )->asArrayBalance();
     }
 
-    public function getBalanceDetails( Address $address ): BalanceDetails
+    function getBalanceDetails( Address $address ): BalanceDetails
     {
         return $this->get( '/addresses/balance/details/' . $address->toString() )->asBalanceDetails();
     }
@@ -191,7 +193,7 @@ class Node
      * @param string|null $regex (default: null)
      * @return array<int, DataEntry>
      */
-    public function getData( Address $address, string $regex = null ): array
+    function getData( Address $address, string $regex = null ): array
     {
         $uri = '/addresses/data/' . $address->toString();
         if( isset( $regex ) )
@@ -206,7 +208,7 @@ class Node
      * @param array<int, string> $keys
      * @return array<int, DataEntry>
      */
-    public function getDataByKeys( Address $address, array $keys ): array
+    function getDataByKeys( Address $address, array $keys ): array
     {
         $json = new Json;
 
@@ -225,17 +227,17 @@ class Node
      * @param string $key
      * @return DataEntry
      */
-    public function getDataByKey( Address $address, string $key ): DataEntry
+    function getDataByKey( Address $address, string $key ): DataEntry
     {
         return $this->get( '/addresses/data/' . $address->toString() . '/' . $key )->asDataEntry();
     }
 
-    public function getScriptInfo( Address $address ): ScriptInfo
+    function getScriptInfo( Address $address ): ScriptInfo
     {
         return $this->get( '/addresses/scriptInfo/' . $address->toString() )->asScriptInfo();
     }
 
-    public function getScriptMeta( Address $address ): ScriptMeta
+    function getScriptMeta( Address $address ): ScriptMeta
     {
         $json = $this->get( '/addresses/scriptInfo/' . $address->toString() . '/meta' );
         if( !$json->exists( 'meta' ) )
@@ -244,35 +246,55 @@ class Node
     }
 
     //===============
+    // ALIAS
+    //===============
+
+    /**
+     * Gets an array of aliases by address
+     *
+     * @param Address $address
+     * @return array<int, Alias>
+     */
+    function getAliasesByAddress( Address $address ): array
+    {
+        return $this->get( '/alias/by-address/' . $address->toString() )->asArrayAlias();
+    }
+
+    function getAddressByAlias( Alias $alias ): Address
+    {
+        return $this->get( '/alias/by-alias/' . $alias->name() )->get( 'address' )->asAddress();
+    }
+
+    //===============
     // BLOCKS
     //===============
 
-    public function getHeight(): int
+    function getHeight(): int
     {
         return $this->get( '/blocks/height' )->get( 'height' )->asInt();
     }
 
-    public function getBlockHeightById( string $blockId ): int
+    function getBlockHeightById( string $blockId ): int
     {
         return $this->get( '/blocks/height/' . $blockId )->get( 'height' )->asInt();
     }
 
-    public function getBlockHeightByTimestamp( int $timestamp ): int
+    function getBlockHeightByTimestamp( int $timestamp ): int
     {
         return $this->get( "/blocks/heightByTimestamp/" . $timestamp )->get( "height" )->asInt();
     }
 
-    public function getBlocksDelay( string $startBlockId, int $blocksNum ): int
+    function getBlocksDelay( string $startBlockId, int $blocksNum ): int
     {
         return $this->get( "/blocks/delay/" . $startBlockId . "/" . $blocksNum )->get( "delay" )->asInt();
     }
 
-    public function getBlockHeadersByHeight( int $height ): BlockHeaders
+    function getBlockHeadersByHeight( int $height ): BlockHeaders
     {
         return $this->get( "/blocks/headers/at/" . $height )->asBlockHeaders();
     }
 
-    public function getBlockHeadersById( string $blockId ): BlockHeaders
+    function getBlockHeadersById( string $blockId ): BlockHeaders
     {
         return $this->get( "/blocks/headers/" . $blockId )->asBlockHeaders();
     }
@@ -284,12 +306,12 @@ class Node
      * @param integer $toHeight
      * @return array<int, BlockHeaders>
      */
-    public function getBlocksHeaders( int $fromHeight, int $toHeight ): array
+    function getBlocksHeaders( int $fromHeight, int $toHeight ): array
     {
         return $this->get( "/blocks/headers/seq/" . $fromHeight . "/" . $toHeight )->asArrayBlockHeaders();
     }
 
-    public function getLastBlockHeaders(): BlockHeaders
+    function getLastBlockHeaders(): BlockHeaders
     {
         return $this->get( "/blocks/headers/last" )->asBlockHeaders();
     }
