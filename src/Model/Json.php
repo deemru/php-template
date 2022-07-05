@@ -1,10 +1,9 @@
 <?php declare( strict_types = 1 );
 
-namespace deemru;
-
-require_once __DIR__ . '/common.php';
+namespace wavesplatform\Model;
 
 use Exception;
+use wavesplatform\ExceptionCode;
 
 class Json
 {
@@ -23,11 +22,22 @@ class Json
         $this->array = $array;
     }
 
+    /**
+    * Json function constructor
+    *
+    * @param array<mixed, mixed> $json
+    * @return Json
+    */
+    static function asJson( array $json ): Json
+    {
+        return new Json( $json );
+    }
+
     public function toString(): string
     {
         $string = json_encode( $this->array );
         if( $string === false )
-            throw new Exception( __FUNCTION__ . ' failed to encode internal array `' . serialize( $this->array ) . '`', ErrCode::JSON_ENCODE );
+            throw new Exception( __FUNCTION__ . ' failed to encode internal array `' . serialize( $this->array ) . '`', ExceptionCode::JSON_ENCODE );
         return $string;
     }
 
@@ -40,7 +50,7 @@ class Json
     public function get( $key ): Value
     {
         if( !isset( $this->array[$key] ) )
-            throw new Exception( __FUNCTION__ . ' failed to find key `' . $key . '`', ErrCode::KEY_MISSING );
+            throw new Exception( __FUNCTION__ . ' failed to find key `' . $key . '`', ExceptionCode::KEY_MISSING );
         return new Value( $this->array[$key] );
     }
 
@@ -108,6 +118,16 @@ class Json
         return new DataEntry( $this );
     }
 
+    function asScriptMeta(): ScriptMeta
+    {
+        return new ScriptMeta( $this );
+    }
+
+    function asScriptInfo(): ScriptInfo
+    {
+        return new ScriptInfo( $this );
+    }
+
     /**
     * Gets an array of BlockHeaders value
     *
@@ -117,7 +137,7 @@ class Json
     {
         $array = [];
         foreach( $this->array as $headers )
-            $array[] = asValue( $headers )->asJson()->asBlockHeaders();
+            $array[] = Value::asValue( $headers )->asJson()->asBlockHeaders();
         return $array;
     }
 
@@ -130,7 +150,7 @@ class Json
     {
         $array = [];
         foreach( $this->array as $address )
-            $array[] = Address::fromString( asValue( $address )->asString() );
+            $array[] = Address::fromString( Value::asValue( $address )->asString() );
         return $array;
     }
 
@@ -143,7 +163,7 @@ class Json
     {
         $array = [];
         foreach( $this->array as $balance )
-            $array[] = asValue( $balance )->asJson()->asBalance();
+            $array[] = Value::asValue( $balance )->asJson()->asBalance();
         return $array;
     }
 
@@ -156,7 +176,7 @@ class Json
     {
         $array = [];
         foreach( $this->array as $data )
-            $array[] = asValue( $data )->asJson()->asDataEntry();
+            $array[] = Value::asValue( $data )->asJson()->asDataEntry();
         return $array;
     }
 }

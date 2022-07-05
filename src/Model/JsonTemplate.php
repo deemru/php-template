@@ -1,10 +1,9 @@
 <?php declare( strict_types = 1 );
 
-namespace deemru;
-
-require_once __DIR__ . '/common.php';
+namespace wavesplatform\Model;
 
 use Exception;
+use wavesplatform\ExceptionCode;
 
 class JsonTemplate
 {

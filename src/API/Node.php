@@ -1,10 +1,20 @@
 <?php declare( strict_types = 1 );
 
-namespace deemru;
-
-require_once __DIR__ . '/common.php';
+namespace wavesplatform\API;
 
 use Exception;
+use wavesplatform\ExceptionCode;
+
+use deemru\WavesKit;
+
+use wavesplatform\Model\Json;
+use wavesplatform\Model\Address;
+use wavesplatform\Model\Balance;
+use wavesplatform\Model\BalanceDetails;
+use wavesplatform\Model\BlockHeaders;
+use wavesplatform\Model\DataEntry;
+use wavesplatform\Model\ScriptInfo;
+use wavesplatform\Model\ScriptMeta;
 
 class Node
 {
@@ -29,7 +39,7 @@ class Node
     public function __construct( string $uri, string $chainId = '' )
     {
         $this->uri = $uri;
-        $this->wk = new \deemru\WavesKit( '?', function( string $wklevel, string $wkmessage )
+        $this->wk = new WavesKit( '?', function( string $wklevel, string $wkmessage )
         {
             $this->wklevel = $wklevel;
             $this->wkmessage = $wkmessage;
@@ -84,12 +94,12 @@ class Node
             $message = __FUNCTION__ . ' failed at `' . $uri . '`';
             if( $this->wklevel === 'e' )
                 $message .= ' (WavesKit: ' . $this->wkmessage . ')';
-            throw new Exception( $message, ErrCode::FETCH_URI );
+            throw new Exception( $message, ExceptionCode::FETCH_URI );
         }
         $fetch = $this->wk->json_decode( $fetch );
         if( $fetch === false )
-            throw new Exception( __FUNCTION__ . ' failed to decode `' . $uri . '`', ErrCode::JSON_DECODE );
-        return asJson( $fetch );
+            throw new Exception( __FUNCTION__ . ' failed to decode `' . $uri . '`', ExceptionCode::JSON_DECODE );
+        return Json::asJson( $fetch );
     }
 
     /**
@@ -219,19 +229,20 @@ class Node
     {
         return $this->get( '/addresses/data/' . $address->toString() . '/' . $key )->asDataEntry();
     }
-/*
-    public ScriptInfo getScriptInfo(Address address) throws IOException, NodeException {
-        return asType(get("/addresses/scriptInfo/" + address.toString()), TypeRef.SCRIPT_INFO);
+
+    public function getScriptInfo( Address $address ): ScriptInfo
+    {
+        return $this->get( '/addresses/scriptInfo/' . $address->toString() )->asScriptInfo();
     }
 
-    public ScriptMeta getScriptMeta(Address address) throws IOException, NodeException {
-        JsonNode json = asJson(get("/addresses/scriptInfo/" + address.toString() + "/meta"));
-        if (json.hasNonNull("meta"))
-            return mapper.convertValue(json.get("meta"), TypeRef.SCRIPT_META);
-        else
-            return new ScriptMeta(0, new HashMap<>());
+    public function getScriptMeta( Address $address ): ScriptMeta
+    {
+        $json = $this->get( '/addresses/scriptInfo/' . $address->toString() . '/meta' );
+        if( !$json->exists( 'meta' ) )
+            $json->put( 'meta', [ 'version' => 0, 'callableFuncTypes' => [] ] );
+        return $json->get( 'meta' )->asJson()->asScriptMeta();
     }
-*/
+
     //===============
     // BLOCKS
     //===============

@@ -1,10 +1,6 @@
 <?php declare( strict_types = 1 );
 
-namespace deemru;
-
-require_once __DIR__ . '/common.php';
-
-use Exception;
+namespace wavesplatform\Model;
 
 class BlockHeaders extends JsonTemplate
 {

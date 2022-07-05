@@ -1,10 +1,9 @@
 <?php declare( strict_types = 1 );
 
-namespace deemru;
+namespace wavesplatform\Model;
 
 use Exception;
-
-require_once __DIR__ . '/common.php';
+use wavesplatform\ExceptionCode;
 
 class DataEntry extends JsonTemplate
 {
@@ -20,7 +19,7 @@ class DataEntry extends JsonTemplate
             case 'boolean': return EntryType::BOOLEAN;
             case 'integer': return EntryType::INTEGER;
             case 'string': return EntryType::STRING;
-            default: throw new Exception( __FUNCTION__ . ' failed to detect type `' . serialize( $this->get( 'type' ) ) . '`', ErrCode::UNKNOWN_TYPE );
+            default: throw new Exception( __FUNCTION__ . ' failed to detect type `' . serialize( $this->get( 'type' ) ) . '`', ExceptionCode::UNKNOWN_TYPE );
         }
     }
 
@@ -40,6 +39,6 @@ class DataEntry extends JsonTemplate
             case EntryType::DELETE: return null;
         }
 
-        throw new Exception( __FUNCTION__ . ' failed to detect type `' . serialize( $this->get( 'type' ) ) . '`', ErrCode::UNKNOWN_TYPE ); // @codeCoverageIgnore
+        throw new Exception( __FUNCTION__ . ' failed to detect type `' . serialize( $this->get( 'type' ) ) . '`', ExceptionCode::UNKNOWN_TYPE ); // @codeCoverageIgnore
     }
 }

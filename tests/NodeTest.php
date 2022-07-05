@@ -1,10 +1,15 @@
 <?php
 
-namespace deemru;
+namespace wavesplatform;
 
 require_once 'common.php';
 
 use Exception;
+use wavesplatform\ExceptionCode;
+
+use wavesplatform\API\Node;
+use wavesplatform\Model\Address;
+use wavesplatform\Util\Functions;
 
 class NodeTest extends \PHPUnit\Framework\TestCase
 {
@@ -27,7 +32,27 @@ class NodeTest extends \PHPUnit\Framework\TestCase
         $nodeT = new Node( Node::TESTNET );
         $nodeS = new Node( Node::STAGENET );
 
+        $addressT = Address::fromString( '3N7uoMNjqNt1jf9q9f9BSr7ASk1QtzJABEY' );
+
+        $scriptInfo = $nodeT->getScriptInfo( $addressT );
+        $scriptInfo->script();
+        $scriptInfo->complexity();
+        $scriptInfo->extraFee();
+        $scriptInfo->verifierComplexity();
+        $mapComplexities = $scriptInfo->callableComplexities();
+
+        $scriptMeta = $nodeT->getScriptMeta( $addressT );
+        $version = $scriptMeta->metaVersion();
+        $funcs = $scriptMeta->callableFunctions();
+        foreach( $funcs as $func => $args )
+            foreach( $args as $arg )
+            {
+                $arg->name();
+                $arg->type();
+            }
+
         $addressT = Address::fromString( '3NAV8CuN5Zn6TT1gChFM2wXRtdhUBDUtCVt' );
+
         $dataEntries1 = $nodeT->getData( $addressT, 'key_\d' );
         $dataEntries2 = $nodeT->getData( $addressT );
 
@@ -65,7 +90,7 @@ class NodeTest extends \PHPUnit\Framework\TestCase
         $address1 = $addresses[0];
         $address2 = $nodeW->getAddressesByIndexes( 0, 1 )[0];
 
-        $this->assertSame( $address1->encoded(), base58Encode( $address2->bytes() ) );
+        $this->assertSame( $address1->encoded(), Functions::base58Encode( $address2->bytes() ) );
 
         $balance1 = $nodeW->getBalance( $address1 );
         $balance2 = $nodeW->getBalance( $address2, 0 );
@@ -141,13 +166,13 @@ class NodeTest extends \PHPUnit\Framework\TestCase
         $node = new Node( Node::MAINNET );
         $json = $node->get( '/blocks/headers/last' );
 
-        $this->catchExceptionOrFail( ErrCode::BASE58_DECODE, function(){ base58Decode( 'ill' ); } );
-        $this->catchExceptionOrFail( ErrCode::FETCH_URI, function() use ( $node ){ $node->get( '/test' ); } );
-        $this->catchExceptionOrFail( ErrCode::JSON_DECODE, function() use ( $node ){ $node->get( '/api-docs/favicon-16x16.png' ); } );
-        $this->catchExceptionOrFail( ErrCode::KEY_MISSING, function() use ( $json ){ $json->get( 'x' ); } );
-        $this->catchExceptionOrFail( ErrCode::INT_EXPECTED, function() use ( $json ){ $json->get( 'signature' )->asInt(); } );
-        $this->catchExceptionOrFail( ErrCode::STRING_EXPECTED, function() use ( $json ){ $json->get( 'height' )->asString(); } );
-        $this->catchExceptionOrFail( ErrCode::ARRAY_EXPECTED, function() use ( $json ){ $json->get( 'height' )->asArrayInt(); } );
+        $this->catchExceptionOrFail( ExceptionCode::BASE58_DECODE, function(){ Functions::base58Decode( 'ill' ); } );
+        $this->catchExceptionOrFail( ExceptionCode::FETCH_URI, function() use ( $node ){ $node->get( '/test' ); } );
+        $this->catchExceptionOrFail( ExceptionCode::JSON_DECODE, function() use ( $node ){ $node->get( '/api-docs/favicon-16x16.png' ); } );
+        $this->catchExceptionOrFail( ExceptionCode::KEY_MISSING, function() use ( $json ){ $json->get( 'x' ); } );
+        $this->catchExceptionOrFail( ExceptionCode::INT_EXPECTED, function() use ( $json ){ $json->get( 'signature' )->asInt(); } );
+        $this->catchExceptionOrFail( ExceptionCode::STRING_EXPECTED, function() use ( $json ){ $json->get( 'height' )->asString(); } );
+        $this->catchExceptionOrFail( ExceptionCode::ARRAY_EXPECTED, function() use ( $json ){ $json->get( 'height' )->asArrayInt(); } );
     }
 }
 
