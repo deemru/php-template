@@ -9,7 +9,7 @@ class Base58String
     private string $bytes;
     private string $encoded;
 
-    static function fromString( string $encoded, $withDecode = false ): Base58String
+    static function fromString( string $encoded, bool $withDecode = false ): Base58String
     {
         $base58String = new Base58String;
         $base58String->encoded = $encoded;
