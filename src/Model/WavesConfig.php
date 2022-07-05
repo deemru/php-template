@@ -4,7 +4,7 @@ namespace wavesplatform\Model;
 
 class WavesConfig
 {
-    private static $chainId = ChainId::MAINNET;
+    private static string $chainId = ChainId::MAINNET;
 
     static function chainId( string $chainId = '' ): string
     {
