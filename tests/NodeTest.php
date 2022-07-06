@@ -52,6 +52,24 @@ class NodeTest extends \PHPUnit\Framework\TestCase
             $distribution = $nodeT->getAssetDistribution( $assetId, $nodeT->getHeight() - 10, 10 );
             if( $distribution->hasNext() )
                 $distribution = $nodeT->getAssetDistribution( $assetId, $nodeT->getHeight() - 10, 10, $distribution->lastItem() );
+
+            $details = $nodeT->getAssetDetails( $assetId );
+            $this->assertSame( $assetId->bytes(), $details->assetId()->bytes() );
+            $details->decimals();
+            $details->description();
+            $details->isReissuable();
+            $details->isScripted();
+            $details->issueHeight();
+            $details->issuer();
+            $details->issuerPublicKey();
+            $details->issueTimestamp();
+            $details->minSponsoredAssetFee();
+            $details->name();
+            $details->originTransactionId();
+            $details->quantity();
+            $scriptDetails = $details->scriptDetails();
+            $scriptDetails->complexity();
+            $scriptDetails->script();
         }
 
         $aliases = $nodeT->getAliasesByAddress( $addressT );

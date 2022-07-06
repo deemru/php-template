@@ -15,7 +15,7 @@ class AssetDetails extends JsonTemplate
     function isReissuable(): bool { return $this->get( 'reissuable' )->asBoolean(); }
     function quantity(): int { return $this->get( 'quantity' )->asInt(); }
     function isScripted(): bool { return $this->get( 'scripted' )->asBoolean(); }
-    function minSponsoredAssetFee(): int { return $this->get( 'minSponsoredAssetFee' )->asInt(); }
+    function minSponsoredAssetFee(): int { return $this->getOr( 'minSponsoredAssetFee', 0 )->asInt(); }
     function originTransactionId(): Id { return $this->get( 'originTransactionId' )->asId(); }
-    function scriptDetails(): ScriptDetails { return $this->get( 'scriptDetails' )->asJson()->asScriptDetails(); }
+    function scriptDetails(): ScriptDetails { return $this->getOr( 'scriptDetails', ScriptDetails::EMPTY )->asJson()->asScriptDetails(); }
 }   

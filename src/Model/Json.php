@@ -10,16 +10,16 @@ class Json
     /**
      * @var array<mixed, mixed>
      */
-    private array $array;
+    private array $json;
 
     /**
     * Json constructor
     *
-    * @param array<mixed, mixed> $array
+    * @param array<mixed, mixed> $json
     */
-    function __construct( array $array = [] )
+    function __construct( array $json = [] )
     {
-        $this->array = $array;
+        $this->json = $json;
     }
 
     /**
@@ -35,9 +35,9 @@ class Json
 
     function toString(): string
     {
-        $string = json_encode( $this->array );
+        $string = json_encode( $this->json );
         if( $string === false )
-            throw new Exception( __FUNCTION__ . ' failed to encode internal array `' . serialize( $this->array ) . '`', ExceptionCode::JSON_ENCODE );
+            throw new Exception( __FUNCTION__ . ' failed to encode internal array `' . serialize( $this->json ) . '`', ExceptionCode::JSON_ENCODE );
         return $string;
     }
 
@@ -49,9 +49,9 @@ class Json
      */
     function get( $key ): Value
     {
-        if( !isset( $this->array[$key] ) )
+        if( !isset( $this->json[$key] ) )
             throw new Exception( __FUNCTION__ . ' failed to find key `' . $key . '`', ExceptionCode::KEY_MISSING );
-        return new Value( $this->array[$key] );
+        return new Value( $this->json[$key] );
     }
 
     /**
@@ -62,7 +62,7 @@ class Json
      */
     function exists( $key ): bool
     {
-        return isset( $this->array[$key] );
+        return isset( $this->json[$key] );
     }
 
     /**
@@ -74,7 +74,7 @@ class Json
      */
     function put( $key, $value ): Json
     {
-        $this->array[$key] = $value;
+        $this->json[$key] = $value;
         return $this;
     }
 
@@ -106,6 +106,11 @@ class Json
     function asAssetBalance(): AssetBalance
     {
         return new AssetBalance( $this );
+    }
+
+    function asAssetDetails(): AssetDetails
+    {
+        return new AssetDetails( $this );
     }
 
     function asAssetDistribution(): AssetDistribution
@@ -156,7 +161,7 @@ class Json
     function asArrayBlockHeaders(): array
     {
         $array = [];
-        foreach( $this->array as $headers )
+        foreach( $this->json as $headers )
             $array[] = Value::asValue( $headers )->asJson()->asBlockHeaders();
         return $array;
     }
@@ -169,7 +174,7 @@ class Json
     function asArrayAddress(): array
     {
         $array = [];
-        foreach( $this->array as $address )
+        foreach( $this->json as $address )
             $array[] = Address::fromString( Value::asValue( $address )->asString() );
         return $array;
     }
@@ -182,7 +187,7 @@ class Json
     function asArrayAlias(): array
     {
         $array = [];
-        foreach( $this->array as $alias )
+        foreach( $this->json as $alias )
             $array[] = Alias::fromFullAlias( Value::asValue( $alias )->asString() );
         return $array;
     }
@@ -195,7 +200,7 @@ class Json
     function asArrayBalance(): array
     {
         $array = [];
-        foreach( $this->array as $balance )
+        foreach( $this->json as $balance )
             $array[] = Value::asValue( $balance )->asJson()->asBalance();
         return $array;
     }
@@ -208,7 +213,7 @@ class Json
     function asArrayAssetBalance(): array
     {
         $array = [];
-        foreach( $this->array as $balance )
+        foreach( $this->json as $balance )
             $array[] = Value::asValue( $balance )->asJson()->asAssetBalance();
         return $array;
     }
@@ -221,7 +226,7 @@ class Json
     function asArrayDataEntry(): array
     {
         $array = [];
-        foreach( $this->array as $data )
+        foreach( $this->json as $data )
             $array[] = Value::asValue( $data )->asJson()->asDataEntry();
         return $array;
     }

@@ -12,6 +12,7 @@ use wavesplatform\Model\Address;
 use wavesplatform\Model\AssetId;
 use wavesplatform\Model\AssetDistribution;
 use wavesplatform\Model\AssetBalance;
+use wavesplatform\Model\AssetDetails;
 use wavesplatform\Model\Alias;
 use wavesplatform\Model\Balance;
 use wavesplatform\Model\BalanceDetails;
@@ -296,6 +297,11 @@ class Node
         return $assetId->isWaves() ?
             $this->getBalance( $address ) :
             $this->get( '/assets/balance/' . $address->toString() . '/' . $assetId->toString() )->get( 'balance' )->asInt();
+    }
+
+    function getAssetDetails( AssetId $assetId ): AssetDetails
+    {
+        return $this->get( '/assets/details/' . $assetId->toString() . '?full=true' )->asAssetDetails();
     }
 /*
     public AssetDetails getAssetDetails(AssetId assetId) throws IOException, NodeException {
