@@ -304,7 +304,6 @@ class Node
         return $this->get( '/assets/details/' . $assetId->toString() . '?full=true' )->asAssetDetails();
     }
 
-
     /**
      * @param array<int, AssetId> $assetIds
      * @return array<int, AssetDetails>
@@ -320,22 +319,17 @@ class Node
 
         return $this->post( '/assets/details?full=true', $json )->asArrayAssetDetails();
     }
-/*
-    public List<AssetDetails> getNft(Address address) throws IOException, NodeException {
-        return this.getNft(address, 1000);
+
+    /**
+     * @return array<int, AssetDetails>
+     */
+    function getNft( Address $address, int $limit = 1000, AssetId $after = null ): array
+    {
+        $uri = '/assets/nft/' . $address->toString() . '/limit/' . $limit;
+        if( isset( $after ) )
+            $uri .= '?after=' . $after->toString();
+        return $this->get( $uri )->asArrayAssetDetails();
     }
-
-    public List<AssetDetails> getNft(Address address, int limit) throws IOException, NodeException {
-        return this.getNft(address, limit, null);
-    }
-
-    public List<AssetDetails> getNft(Address address, int limit, AssetId after) throws IOException, NodeException {
-        RequestBuilder request = get("/assets/nft/" + address.toString() + "/limit/" + limit);
-        if (after != null)
-            request.addParameter("after", after.toString());
-
-        return asType(request, TypeRef.ASSETS_DETAILS);
-    }*/
 
     //===============
     // BLOCKS

@@ -34,6 +34,11 @@ class NodeTest extends \PHPUnit\Framework\TestCase
         $nodeT = new Node( Node::TESTNET );
         $nodeS = new Node( Node::STAGENET );
 
+        $addressT = Address::fromString( '3N4q2D5bh5sAL3b4PighYyKw2WshKCiFD4F' );
+        $nfts1 = $nodeT->getNft( $addressT, 10 );
+        $nfts2 = $nodeT->getNft( $addressT, 10, $nfts1[0]->assetId() );
+        $this->assertSame( $nfts1[1]->toString(), $nfts2[0]->toString() );
+
         $addressT = Address::fromString( '3N9WtaPoD1tMrDZRG26wA142Byd35tLhnLU' );
         $assetId = AssetId::WAVES();
 
@@ -77,10 +82,13 @@ class NodeTest extends \PHPUnit\Framework\TestCase
                 break;
         }
 
-        $assetsDetails = $nodeT->getAssetsDetails( $assetIds );
-        foreach( $assetsDetails as $assetDetails )
-            if( $assetDetails->assetId()->toString() === $details->assetId()->toString() )
-                $this->assertSame( $assetDetails->toString(), $details->toString() );
+        if( isset( $details ) )
+        {
+            $assetsDetails = $nodeT->getAssetsDetails( $assetIds );
+            foreach( $assetsDetails as $assetDetails )
+                if( $assetDetails->assetId()->toString() === $details->assetId()->toString() )
+                    $this->assertSame( $assetDetails->toString(), $details->toString() );
+        }        
 
         $aliases = $nodeT->getAliasesByAddress( $addressT );
         foreach( $aliases as $alias )
