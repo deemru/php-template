@@ -38,16 +38,20 @@ class NodeTest extends \PHPUnit\Framework\TestCase
         $assetId = AssetId::WAVES();
 
         $balances = $nodeT->getAssetsBalance( $addressT );
-
         foreach( $balances as $balance )
         {
-            $addressBalance = $nodeT->getAssetBalance( $addressT, $balance->assetId() );
+            $assetId = $balance->assetId();
+            $addressBalance = $nodeT->getAssetBalance( $addressT, $assetId );
             $this->assertSame( $addressBalance, $balance->balance() );
             $balance->isReissuable();
             $balance->quantity();
             $balance->minSponsoredAssetFee();
             $balance->sponsorBalance();
             $balance->issueTransaction();
+
+            $distribution = $nodeT->getAssetDistribution( $assetId, $nodeT->getHeight() - 10, 10 );
+            if( $distribution->hasNext() )
+                $distribution = $nodeT->getAssetDistribution( $assetId, $nodeT->getHeight() - 10, 10, $distribution->lastItem() );
         }
 
         $aliases = $nodeT->getAliasesByAddress( $addressT );

@@ -108,6 +108,11 @@ class Json
         return new AssetBalance( $this );
     }
 
+    function asAssetDistribution(): AssetDistribution
+    {
+        return new AssetDistribution( $this );
+    }
+
     /**
     * Gets a BalanceDetails value
     *

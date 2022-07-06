@@ -10,6 +10,7 @@ use deemru\WavesKit;
 use wavesplatform\Model\Json;
 use wavesplatform\Model\Address;
 use wavesplatform\Model\AssetId;
+use wavesplatform\Model\AssetDistribution;
 use wavesplatform\Model\Alias;
 use wavesplatform\Model\Balance;
 use wavesplatform\Model\BalanceDetails;
@@ -269,22 +270,14 @@ class Node
     //===============
     // ASSETS
     //===============
-/*
-    public AssetDistribution getAssetDistribution(AssetId assetId, int height) throws IOException, NodeException {
-        return getAssetDistribution(assetId, height, 1000);
-    }
 
-    public AssetDistribution getAssetDistribution(AssetId assetId, int height, int limit) throws IOException, NodeException {
-        return getAssetDistribution(assetId, height, limit, null);
+    function getAssetDistribution( AssetId $assetId, int $height, int $limit = 1000, string $after = null ): AssetDistribution
+    {
+        $uri = '/assets/' . $assetId->toString() . '/distribution/' . $height . '/limit/' . $limit;
+        if( isset( $after ) )
+            $uri .= '?after=' . $after;
+        return $this->get( $uri )->asAssetDistribution();
     }
-
-    public AssetDistribution getAssetDistribution(AssetId assetId, int height, int limit, Address after) throws IOException, NodeException {
-        RequestBuilder request = get("/assets/" + assetId.toString() + "/distribution/" + height + "/limit/" + limit);
-        if (after != null)
-            request.addParameter("after", after.toString());
-        return asType(request, TypeRef.ASSET_DISTRIBUTION);
-    }
-*/
 
     /**
      * Gets an array of AssetBalance for an address
