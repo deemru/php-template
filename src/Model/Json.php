@@ -213,8 +213,21 @@ class Json
     function asArrayAssetBalance(): array
     {
         $array = [];
-        foreach( $this->json as $balance )
-            $array[] = Value::asValue( $balance )->asJson()->asAssetBalance();
+        foreach( $this->json as $assetBalance )
+            $array[] = Value::asValue( $assetBalance )->asJson()->asAssetBalance();
+        return $array;
+    }
+
+    /**
+    * Gets an array value
+    *
+    * @return array<int, AssetDetails>
+    */
+    function asArrayAssetDetails(): array
+    {
+        $array = [];
+        foreach( $this->json as $assetDetails )
+            $array[] = Value::asValue( $assetDetails )->asJson()->asAssetDetails();
         return $array;
     }
 

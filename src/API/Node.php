@@ -303,20 +303,24 @@ class Node
     {
         return $this->get( '/assets/details/' . $assetId->toString() . '?full=true' )->asAssetDetails();
     }
+
+
+    /**
+     * @param array<int, AssetId> $assetIds
+     * @return array<int, AssetDetails>
+     */
+    function getAssetsDetails( array $assetIds ): array
+    {
+        $json = new Json;
+
+        $array = [];
+        foreach( $assetIds as $assetId )
+            $array[] = $assetId->toString();
+        $json->put( 'ids', $array );
+
+        return $this->post( '/assets/details?full=true', $json )->asArrayAssetDetails();
+    }
 /*
-    public AssetDetails getAssetDetails(AssetId assetId) throws IOException, NodeException {
-        return asType(get("/assets/details/" + assetId.toString()).addParameter("full", "true"),
-                TypeRef.ASSET_DETAILS);
-    }
-
-    //todo what if some asset doesn't exist? (error json with code and message) Either in java?
-    public List<AssetDetails> getAssetsDetails(List<AssetId> assetIds) throws IOException, NodeException {
-        RequestBuilder request = get("/assets/details").addParameter("full", "true");
-        assetIds.forEach(id -> request.addParameter("id", id.toString()));
-
-        return asType(request, TypeRef.ASSETS_DETAILS);
-    }
-
     public List<AssetDetails> getNft(Address address) throws IOException, NodeException {
         return this.getNft(address, 1000);
     }

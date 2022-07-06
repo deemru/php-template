@@ -37,10 +37,13 @@ class NodeTest extends \PHPUnit\Framework\TestCase
         $addressT = Address::fromString( '3N9WtaPoD1tMrDZRG26wA142Byd35tLhnLU' );
         $assetId = AssetId::WAVES();
 
+        $assetIds = [];
         $balances = $nodeT->getAssetsBalance( $addressT );
+        $max = 10;
         foreach( $balances as $balance )
         {
             $assetId = $balance->assetId();
+            $assetIds[] = $assetId;
             $addressBalance = $nodeT->getAssetBalance( $addressT, $assetId );
             $this->assertSame( $addressBalance, $balance->balance() );
             $balance->isReissuable();
@@ -70,7 +73,14 @@ class NodeTest extends \PHPUnit\Framework\TestCase
             $scriptDetails = $details->scriptDetails();
             $scriptDetails->complexity();
             $scriptDetails->script();
+            if( --$max === 0 )
+                break;
         }
+
+        $assetsDetails = $nodeT->getAssetsDetails( $assetIds );
+        foreach( $assetsDetails as $assetDetails )
+            if( $assetDetails->assetId()->toString() === $details->assetId()->toString() )
+                $this->assertSame( $assetDetails->toString(), $details->toString() );
 
         $aliases = $nodeT->getAliasesByAddress( $addressT );
         foreach( $aliases as $alias )
