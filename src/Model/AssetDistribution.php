@@ -5,7 +5,7 @@ namespace wavesplatform\Model;
 class AssetDistribution extends JsonTemplate
 {
     /**
-     * @var array<string, int>
+     * @return array<string, int>
      */
     function items(): array { return $this->get( 'items' )->asMapStringInt(); }
     function lastItem(): string { return $this->get( 'lastItem' )->asString(); }

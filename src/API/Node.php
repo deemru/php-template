@@ -11,6 +11,7 @@ use wavesplatform\Model\Json;
 use wavesplatform\Model\Address;
 use wavesplatform\Model\AssetId;
 use wavesplatform\Model\AssetDistribution;
+use wavesplatform\Model\AssetBalance;
 use wavesplatform\Model\Alias;
 use wavesplatform\Model\Balance;
 use wavesplatform\Model\BalanceDetails;
