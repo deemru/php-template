@@ -99,6 +99,16 @@ class Json
     }
 
     /**
+    * Gets a AssetBalance value
+    *
+    * @return AssetBalance
+    */
+    function asAssetBalance(): AssetBalance
+    {
+        return new AssetBalance( $this );
+    }
+
+    /**
     * Gets a BalanceDetails value
     *
     * @return BalanceDetails
@@ -126,6 +136,11 @@ class Json
     function asScriptInfo(): ScriptInfo
     {
         return new ScriptInfo( $this );
+    }
+
+    function asScriptDetails(): ScriptDetails
+    {
+        return new ScriptDetails( $this );
     }
 
     /**
@@ -177,6 +192,19 @@ class Json
         $array = [];
         foreach( $this->array as $balance )
             $array[] = Value::asValue( $balance )->asJson()->asBalance();
+        return $array;
+    }
+
+    /**
+    * Gets an array value
+    *
+    * @return array<int, AssetBalance>
+    */
+    function asArrayAssetBalance(): array
+    {
+        $array = [];
+        foreach( $this->array as $balance )
+            $array[] = Value::asValue( $balance )->asJson()->asAssetBalance();
         return $array;
     }
 

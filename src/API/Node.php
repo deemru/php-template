@@ -9,6 +9,7 @@ use deemru\WavesKit;
 
 use wavesplatform\Model\Json;
 use wavesplatform\Model\Address;
+use wavesplatform\Model\AssetId;
 use wavesplatform\Model\Alias;
 use wavesplatform\Model\Balance;
 use wavesplatform\Model\BalanceDetails;
@@ -264,6 +265,73 @@ class Node
     {
         return $this->get( '/alias/by-alias/' . $alias->name() )->get( 'address' )->asAddress();
     }
+
+    //===============
+    // ASSETS
+    //===============
+/*
+    public AssetDistribution getAssetDistribution(AssetId assetId, int height) throws IOException, NodeException {
+        return getAssetDistribution(assetId, height, 1000);
+    }
+
+    public AssetDistribution getAssetDistribution(AssetId assetId, int height, int limit) throws IOException, NodeException {
+        return getAssetDistribution(assetId, height, limit, null);
+    }
+
+    public AssetDistribution getAssetDistribution(AssetId assetId, int height, int limit, Address after) throws IOException, NodeException {
+        RequestBuilder request = get("/assets/" + assetId.toString() + "/distribution/" + height + "/limit/" + limit);
+        if (after != null)
+            request.addParameter("after", after.toString());
+        return asType(request, TypeRef.ASSET_DISTRIBUTION);
+    }
+*/
+
+    /**
+     * Gets an array of AssetBalance for an address
+     *
+     * @param Address $address
+     * @return array<int, AssetBalance>
+     */
+    function getAssetsBalance( Address $address ): array
+    {
+        return $this->get( '/assets/balance/' . $address->toString() )->get( 'balances' )->asJson()->asArrayAssetBalance();
+    }
+
+    function getAssetBalance( Address $address, AssetId $assetId ): int
+    {
+        return $assetId->isWaves() ?
+            $this->getBalance( $address ) :
+            $this->get( '/assets/balance/' . $address->toString() . '/' . $assetId->toString() )->get( 'balance' )->asInt();
+    }
+/*
+    public AssetDetails getAssetDetails(AssetId assetId) throws IOException, NodeException {
+        return asType(get("/assets/details/" + assetId.toString()).addParameter("full", "true"),
+                TypeRef.ASSET_DETAILS);
+    }
+
+    //todo what if some asset doesn't exist? (error json with code and message) Either in java?
+    public List<AssetDetails> getAssetsDetails(List<AssetId> assetIds) throws IOException, NodeException {
+        RequestBuilder request = get("/assets/details").addParameter("full", "true");
+        assetIds.forEach(id -> request.addParameter("id", id.toString()));
+
+        return asType(request, TypeRef.ASSETS_DETAILS);
+    }
+
+    public List<AssetDetails> getNft(Address address) throws IOException, NodeException {
+        return this.getNft(address, 1000);
+    }
+
+    public List<AssetDetails> getNft(Address address, int limit) throws IOException, NodeException {
+        return this.getNft(address, limit, null);
+    }
+
+    public List<AssetDetails> getNft(Address address, int limit, AssetId after) throws IOException, NodeException {
+        RequestBuilder request = get("/assets/nft/" + address.toString() + "/limit/" + limit);
+        if (after != null)
+            request.addParameter("after", after.toString());
+
+        return asType(request, TypeRef.ASSETS_DETAILS);
+    }*/
 
     //===============
     // BLOCKS

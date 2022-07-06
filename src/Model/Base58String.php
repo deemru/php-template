@@ -9,11 +9,13 @@ class Base58String
     private string $bytes;
     private string $encoded;
 
-    static function fromString( string $encoded, bool $withDecode = false ): Base58String
+    private function __construct(){}
+
+    static function fromString( string $encoded, bool $selfcheck = false ): Base58String
     {
         $base58String = new Base58String;
         $base58String->encoded = $encoded;
-        if( $withDecode )
+        if( $selfcheck )
             $base58String->bytes = Functions::base58Decode( $encoded );
         return $base58String;
     }

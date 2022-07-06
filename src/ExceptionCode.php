@@ -18,4 +18,6 @@ class ExceptionCode
     const BOOL_EXPECTED =   ExceptionCode::BASE | 11;
     const BASE64_DECODE =   ExceptionCode::BASE | 12;
     const BAD_ALIAS =       ExceptionCode::BASE | 13;
+    const BAD_ASSET =       ExceptionCode::BASE | 14;
+    const BAD_ADDRESS =     ExceptionCode::BASE | 15;
 }

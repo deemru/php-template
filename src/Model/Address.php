@@ -2,19 +2,31 @@
 
 namespace wavesplatform\Model;
 
+use Exception;
+use wavesplatform\ExceptionCode;
+
 class Address
 {
+    const BYTE_LENGTH = 26;
+
     private Base58String $base58String;
+
+    private function __construct(){}
 
     static function fromString( string $encoded ): Address
     {
         $address = new Address;
-        $address->base58String = Base58String::fromString( $encoded, true );
+        $address->base58String = Base58String::fromString( $encoded );
+        $bytes = $address->base58String->bytes();
+        if( strlen( $bytes ) !== Address::BYTE_LENGTH )
+            throw new Exception( __FUNCTION__ . ' bad address length: ' . strlen( $bytes ), ExceptionCode::BAD_ADDRESS );
         return $address;
     }
 
     static function fromBytes( string $bytes ): Address
     {
+        if( strlen( $bytes ) !== Address::BYTE_LENGTH )
+            throw new Exception( __FUNCTION__ . ' bad address length: ' . strlen( $bytes ), ExceptionCode::BAD_ADDRESS );
         $address = new Address;
         $address->base58String = Base58String::fromBytes( $bytes );
         return $address;
@@ -37,6 +49,6 @@ class Address
 
     function toString(): string
     {
-        return $this->base58String->encoded();
+        return $this->encoded();
     }
 }

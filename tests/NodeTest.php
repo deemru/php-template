@@ -9,6 +9,7 @@ use wavesplatform\ExceptionCode;
 
 use wavesplatform\API\Node;
 use wavesplatform\Model\Address;
+use wavesplatform\Model\AssetId;
 use wavesplatform\Model\ChainId;
 use wavesplatform\Util\Functions;
 
@@ -33,15 +34,29 @@ class NodeTest extends \PHPUnit\Framework\TestCase
         $nodeT = new Node( Node::TESTNET );
         $nodeS = new Node( Node::STAGENET );
 
-        
         $addressT = Address::fromString( '3N9WtaPoD1tMrDZRG26wA142Byd35tLhnLU' );
+        $assetId = AssetId::WAVES();
+
+        $balances = $nodeT->getAssetsBalance( $addressT );
+
+        foreach( $balances as $balance )
+        {
+            $addressBalance = $nodeT->getAssetBalance( $addressT, $balance->assetId() );
+            $this->assertSame( $addressBalance, $balance->balance() );
+            $balance->isReissuable();
+            $balance->quantity();
+            $balance->minSponsoredAssetFee();
+            $balance->sponsorBalance();
+            $balance->issueTransaction();
+        }
+
         $aliases = $nodeT->getAliasesByAddress( $addressT );
         foreach( $aliases as $alias )
         {
             $alias->name();
             $alias->bytes();
-            $this->assertSame( $addressT->encoded(), $nodeT->getAddressByAlias( $alias )->encoded() );
             $alias->toString();
+            $this->assertSame( $addressT->encoded(), $nodeT->getAddressByAlias( $alias )->encoded() );
         }
 
         $addressT = Address::fromString( '3N7uoMNjqNt1jf9q9f9BSr7ASk1QtzJABEY' );

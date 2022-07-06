@@ -160,4 +160,24 @@ class Value
     {
         return Address::fromString( $this->asString() );
     }
+
+    /**
+    * Gets an AssetId value
+    *
+    * @return AssetId
+    */
+    function asAssetId(): AssetId
+    {
+        return AssetId::fromString( $this->asString() );
+    }
+
+    /**
+    * Gets an Id value
+    *
+    * @return Id
+    */
+    function asId(): Id
+    {
+        return Id::fromString( $this->asString() );
+    }
 }
