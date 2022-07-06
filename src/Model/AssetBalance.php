@@ -8,7 +8,7 @@ class AssetBalance extends JsonTemplate
     function balance(): int { return $this->get( 'balance' )->asInt(); }
     function isReissuable(): bool { return $this->get( 'reissuable' )->asBoolean(); }
     function quantity(): int { return $this->get( 'quantity' )->asInt(); }
-    function minSponsoredAssetFee(): int { return $this->get( 'minSponsoredAssetFee' )->asInt(); }
-    function sponsorBalance(): int { return $this->get( 'sponsorBalance' )->asInt(); }
+    function minSponsoredAssetFee(): int { return $this->getOr( 'minSponsoredAssetFee', 0 )->asInt(); }
+    function sponsorBalance(): int { return $this->getOr( 'sponsorBalance', 0 )->asInt(); }
     function issueTransaction(): Json { return $this->get( 'issueTransaction' )->asJson(); } // TODO: Transaction
 }

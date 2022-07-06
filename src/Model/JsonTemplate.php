@@ -33,5 +33,17 @@ class JsonTemplate
         return $this->json->exists( $key );
     }
 
+    /**
+     * Gets Value by key or returns fallback value
+     *
+     * @param mixed $key
+     * @param mixed $value
+     * @return Value
+     */
+    function getOr( $key, $value ): Value
+    {
+        return $this->exists( $key ) ? $this->json->get( $key ) : Value::asValue( $value );
+    }
+
     function toString(): string { return $this->json->toString(); }
 }
