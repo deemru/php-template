@@ -34,6 +34,23 @@ class NodeTest extends \PHPUnit\Framework\TestCase
         $nodeT = new Node( Node::TESTNET );
         $nodeS = new Node( Node::STAGENET );
 
+        $heightT = $nodeT->getHeight();
+        $blockchainRewards1 = $nodeT->getBlockchainRewards();
+        $blockchainRewards2 = $nodeT->getBlockchainRewards( 1600000 );
+        $this->assertNotEquals( $blockchainRewards1->toString(), $blockchainRewards2->toString() );
+        $blockchainRewards1->currentReward();
+        $blockchainRewards1->height();
+        $blockchainRewards1->minIncrement();
+        $blockchainRewards1->nextCheck();
+        $blockchainRewards1->term();
+        $blockchainRewards1->totalWavesAmount();
+        $blockchainRewards1->votes()->increase();
+        $blockchainRewards1->votes()->decrease();
+        $blockchainRewards1->votingInterval();
+        $blockchainRewards1->votingIntervalStart();
+        $blockchainRewards1->votingThreshold();
+
+
         $addressT = Address::fromString( '3N4q2D5bh5sAL3b4PighYyKw2WshKCiFD4F' );
         $nfts1 = $nodeT->getNft( $addressT, 10 );
         $nfts2 = $nodeT->getNft( $addressT, 10, $nfts1[0]->assetId() );

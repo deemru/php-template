@@ -128,6 +128,11 @@ class Json
         return new BalanceDetails( $this );
     }
 
+    function asBlockchainRewards(): BlockchainRewards
+    {
+        return new BlockchainRewards( $this );
+    }
+
     /**
     * Gets a DataEntry value
     *
@@ -151,6 +156,11 @@ class Json
     function asScriptDetails(): ScriptDetails
     {
         return new ScriptDetails( $this );
+    }
+
+    function asVotes(): Votes
+    {
+        return new Votes( $this );
     }
 
     /**

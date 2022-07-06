@@ -17,6 +17,7 @@ use wavesplatform\Model\Alias;
 use wavesplatform\Model\Balance;
 use wavesplatform\Model\BalanceDetails;
 use wavesplatform\Model\BlockHeaders;
+use wavesplatform\Model\BlockchainRewards;
 use wavesplatform\Model\ChainId;
 use wavesplatform\Model\DataEntry;
 use wavesplatform\Model\ScriptInfo;
@@ -329,6 +330,18 @@ class Node
         if( isset( $after ) )
             $uri .= '?after=' . $after->toString();
         return $this->get( $uri )->asArrayAssetDetails();
+    }
+
+    //===============
+    // BLOCKCHAIN
+    //===============
+
+    function getBlockchainRewards( int $height = null ): BlockchainRewards
+    {
+        $uri = '/blockchain/rewards';
+        if( isset( $height ) )
+            $uri .= '/' . $height;
+        return $this->get( $uri )->asBlockchainRewards();
     }
 
     //===============
