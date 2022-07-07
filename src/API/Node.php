@@ -407,22 +407,27 @@ class Node
     {
         return $this->get( '/blocks/' . $id->toString() )->asBlock();
     }
-/*
-    public List<Block> getBlocks(int fromHeight, int toHeight) throws IOException, NodeException {
-        return asType(get("/blocks/seq/" + fromHeight + "/" + toHeight), TypeRef.BLOCKS);
+
+    /**
+     * @return array<int, Block>
+     */
+    function getBlocks( int $fromHeight, int $toHeight ): array
+    {
+        return $this->get( '/blocks/seq/' . $fromHeight . '/' . $toHeight )->asArrayBlock();
     }
 
-    public Block getGenesisBlock() throws IOException, NodeException {
-        return asType(get("/blocks/first"), TypeRef.BLOCK);
+    function getGenesisBlock(): Block
+    {
+        return $this->get( '/blocks/first' )->asBlock();
     }
 
-    public Block getLastBlock() throws IOException, NodeException {
-        return asType(get("/blocks/last"), TypeRef.BLOCK);
+    function getLastBlock(): Block
+    {
+        return $this->get( '/blocks/last' )->asBlock();
     }
 
-    public List<Block> getBlocksGeneratedBy(Address generator, int fromHeight, int toHeight) throws IOException, NodeException {
-        return asType(get(
-                "/blocks/address/" + generator.toString() + "/" + fromHeight + "/" + toHeight), TypeRef.BLOCKS);
+    function getBlocksGeneratedBy( Address $generator, int $fromHeight, int $toHeight )
+    {
+        return $this->get( '/blocks/address/' . $generator->toString() . '/' . $fromHeight . '/' . $toHeight )->asArrayBlock();
     }
-    */
 }

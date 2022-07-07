@@ -187,6 +187,19 @@ class Json
     }
 
     /**
+    * Gets an array of Block value
+    *
+    * @return array<int, Block>
+    */
+    function asArrayBlock(): array
+    {
+        $array = [];
+        foreach( $this->json as $headers )
+            $array[] = Value::asValue( $headers )->asJson()->asBlock();
+        return $array;
+    }
+
+    /**
     * Gets an array value
     *
     * @return array<int, Address>

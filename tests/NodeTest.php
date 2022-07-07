@@ -36,6 +36,29 @@ class NodeTest extends \PHPUnit\Framework\TestCase
 
         $heightT = $nodeT->getHeight();
 
+        $heightW = $nodeW->getHeight();
+
+        $block = $nodeW->getGenesisBlock();
+        $block = $nodeW->getLastBlock();
+        $blocks = $nodeW->getBlocksGeneratedBy( $block->generator(), $heightW - 10, $heightW );
+
+        $blocks = $nodeW->getBlocks( $heightW - 4, $heightW );
+        $this->assertSame( 5, count( $blocks ) );
+        foreach( $blocks as $block )
+            foreach( $block->transactions() as $tx )
+            {
+                $tx->applicationStatus();
+                $tx->chainId();
+                $tx->fee();
+                $tx->id();
+                $tx->proofs();
+                $tx->sender();
+                $tx->senderPublicKey();
+                $tx->timestamp();
+                $tx->type();
+                $tx->version();
+            }
+
         $block1 = $nodeT->getBlockByHeight( 2126170 );
         $block2 = $nodeT->getBlockById( $block1->id() );
         $this->assertSame( $block1->toString(), $block2->toString() );
