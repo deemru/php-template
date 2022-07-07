@@ -426,7 +426,10 @@ class Node
         return $this->get( '/blocks/last' )->asBlock();
     }
 
-    function getBlocksGeneratedBy( Address $generator, int $fromHeight, int $toHeight )
+    /**
+     * @return array<int, Block>
+     */
+    function getBlocksGeneratedBy( Address $generator, int $fromHeight, int $toHeight ): array
     {
         return $this->get( '/blocks/address/' . $generator->toString() . '/' . $fromHeight . '/' . $toHeight )->asArrayBlock();
     }
