@@ -133,6 +133,11 @@ class Json
         return new BlockchainRewards( $this );
     }
 
+    function asBlock(): Block
+    {
+        return new Block( $this );
+    }
+
     /**
     * Gets a DataEntry value
     *
@@ -156,6 +161,11 @@ class Json
     function asScriptDetails(): ScriptDetails
     {
         return new ScriptDetails( $this );
+    }
+
+    function asTransactionWithStatus(): TransactionWithStatus
+    {
+        return new TransactionWithStatus( $this );
     }
 
     function asVotes(): Votes
@@ -251,6 +261,19 @@ class Json
         $array = [];
         foreach( $this->json as $data )
             $array[] = Value::asValue( $data )->asJson()->asDataEntry();
+        return $array;
+    }
+
+    /**
+    * Gets an array value
+    *
+    * @return array<int, TransactionWithStatus>
+    */
+    function asArrayTransactionWithStatus(): array
+    {
+        $array = [];
+        foreach( $this->json as $data )
+            $array[] = Value::asValue( $data )->asJson()->asTransactionWithStatus();
         return $array;
     }
 }

@@ -11,12 +11,10 @@ class Base58String
 
     private function __construct(){}
 
-    static function fromString( string $encoded, bool $selfcheck = false ): Base58String
+    static function fromString( string $encoded ): Base58String
     {
         $base58String = new Base58String;
         $base58String->encoded = $encoded;
-        if( $selfcheck )
-            $base58String->bytes = Functions::base58Decode( $encoded );
         return $base58String;
     }
 
@@ -39,5 +37,10 @@ class Base58String
         if( !isset( $this->encoded ) )
             $this->encoded = Functions::base58Encode( $this->bytes );
         return $this->encoded;
+    }
+
+    function toString(): string
+    {
+        return $this->encoded();
     }
 }

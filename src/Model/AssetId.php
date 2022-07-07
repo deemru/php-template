@@ -26,9 +26,6 @@ class AssetId
 
         $assetId = new AssetId;
         $assetId->base58String = Base58String::fromString( $encoded );
-        $bytes = $assetId->base58String->bytes();
-        if( strlen( $bytes ) !== AssetId::BYTE_LENGTH )
-            throw new Exception( __FUNCTION__ . ' bad asset length: ' . strlen( $bytes ), ExceptionCode::BAD_ASSET );
         return $assetId;
     }
 
@@ -51,7 +48,12 @@ class AssetId
 
     function bytes(): string
     {
-        return $this->isWaves() ? '' : $this->base58String->bytes();
+        if( $this->isWaves() )
+            return '';
+        $bytes = $this->base58String->bytes();
+        if( strlen( $bytes ) !== AssetId::BYTE_LENGTH )
+            throw new Exception( __FUNCTION__ . ' bad asset length: ' . strlen( $bytes ), ExceptionCode::BAD_ASSET );
+        return $bytes;
     }
 
     function encoded(): string

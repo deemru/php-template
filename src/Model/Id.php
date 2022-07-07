@@ -17,9 +17,6 @@ class Id
     {
         $id = new Id;
         $id->base58String = Base58String::fromString( $encoded );
-        $bytes = $id->base58String->bytes();
-        if( strlen( $bytes ) !== Id::BYTE_LENGTH )
-            throw new Exception( __FUNCTION__ . ' bad id length: ' . strlen( $bytes ), ExceptionCode::BAD_ASSET );
         return $id;
     }
 
@@ -34,7 +31,10 @@ class Id
 
     function bytes(): string
     {
-        return $this->base58String->bytes();
+        $bytes = $this->base58String->bytes();
+        if( strlen( $bytes ) !== Id::BYTE_LENGTH )
+            throw new Exception( __FUNCTION__ . ' bad id length: ' . strlen( $bytes ), ExceptionCode::BAD_ASSET );
+        return $bytes;
     }
 
     function encoded(): string

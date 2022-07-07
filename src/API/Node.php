@@ -16,6 +16,9 @@ use wavesplatform\Model\AssetDetails;
 use wavesplatform\Model\Alias;
 use wavesplatform\Model\Balance;
 use wavesplatform\Model\BalanceDetails;
+use wavesplatform\Model\Base58String;
+use wavesplatform\Model\Block;
+use wavesplatform\Model\Id;
 use wavesplatform\Model\BlockHeaders;
 use wavesplatform\Model\BlockchainRewards;
 use wavesplatform\Model\ChainId;
@@ -394,4 +397,32 @@ class Node
     {
         return $this->get( "/blocks/headers/last" )->asBlockHeaders();
     }
+
+    function getBlockByHeight( int $height ): Block
+    {
+        return $this->get( '/blocks/at/' . $height )->asBlock();
+    }
+
+    function getBlockById( Id $id ): Block
+    {
+        return $this->get( '/blocks/' . $id->toString() )->asBlock();
+    }
+/*
+    public List<Block> getBlocks(int fromHeight, int toHeight) throws IOException, NodeException {
+        return asType(get("/blocks/seq/" + fromHeight + "/" + toHeight), TypeRef.BLOCKS);
+    }
+
+    public Block getGenesisBlock() throws IOException, NodeException {
+        return asType(get("/blocks/first"), TypeRef.BLOCK);
+    }
+
+    public Block getLastBlock() throws IOException, NodeException {
+        return asType(get("/blocks/last"), TypeRef.BLOCK);
+    }
+
+    public List<Block> getBlocksGeneratedBy(Address generator, int fromHeight, int toHeight) throws IOException, NodeException {
+        return asType(get(
+                "/blocks/address/" + generator.toString() + "/" + fromHeight + "/" + toHeight), TypeRef.BLOCKS);
+    }
+    */
 }

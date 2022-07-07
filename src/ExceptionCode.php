@@ -20,4 +20,5 @@ class ExceptionCode
     const BAD_ALIAS =       ExceptionCode::BASE | 13;
     const BAD_ASSET =       ExceptionCode::BASE | 14;
     const BAD_ADDRESS =     ExceptionCode::BASE | 15;
+    const BAD_CHAINID =     ExceptionCode::BASE | 16;
 }

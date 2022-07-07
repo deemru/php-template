@@ -14,7 +14,7 @@ class BlockHeaders extends JsonTemplate
     function baseTarget(): int { return $this->get( 'nxt-consensus' )->asJson()->get( 'base-target' )->asInt(); }
     function generationSignature(): string { return $this->get( 'nxt-consensus' )->asJson()->get( 'generation-signature' )->asString(); }
     function transactionsRoot(): string { return $this->get( 'transactionsRoot' )->asString(); }
-    function id(): string { return $this->get( 'id' )->asString(); }
+    function id(): Id { return $this->get( 'id' )->asId(); }
     function desiredReward(): int { return $this->get( 'desiredReward' )->asInt(); }
     function generator(): Address { return $this->get( 'generator' )->asAddress(); }
     function signature(): string { return $this->get( 'signature' )->asString(); }

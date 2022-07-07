@@ -35,6 +35,26 @@ class NodeTest extends \PHPUnit\Framework\TestCase
         $nodeS = new Node( Node::STAGENET );
 
         $heightT = $nodeT->getHeight();
+
+        $block1 = $nodeT->getBlockByHeight( 2126170 );
+        $block2 = $nodeT->getBlockById( $block1->id() );
+        $this->assertSame( $block1->toString(), $block2->toString() );
+        $block1->fee();
+        $txs = $block1->transactions();
+        foreach( $txs as $tx )
+        {
+            $tx->applicationStatus();
+            $tx->chainId();
+            $tx->fee();
+            $tx->id();
+            $tx->proofs();
+            $tx->sender();
+            $tx->senderPublicKey();
+            $tx->timestamp();
+            $tx->type();
+            $tx->version();
+        }
+
         $blockchainRewards1 = $nodeT->getBlockchainRewards();
         $blockchainRewards2 = $nodeT->getBlockchainRewards( 1600000 );
         $this->assertNotEquals( $blockchainRewards1->toString(), $blockchainRewards2->toString() );
@@ -49,7 +69,6 @@ class NodeTest extends \PHPUnit\Framework\TestCase
         $blockchainRewards1->votingInterval();
         $blockchainRewards1->votingIntervalStart();
         $blockchainRewards1->votingThreshold();
-
 
         $addressT = Address::fromString( '3N4q2D5bh5sAL3b4PighYyKw2WshKCiFD4F' );
         $nfts1 = $nodeT->getNft( $addressT, 10 );
@@ -218,20 +237,20 @@ class NodeTest extends \PHPUnit\Framework\TestCase
         $headers->version();
         $headers->vrf();
 
-        $height1 = $nodeW->getBlockHeightById( $headers->id() );
+        $height1 = $nodeW->getBlockHeightById( $headers->id()->encoded() );
         $height2 = $nodeW->getBlockHeightByTimestamp( $headers->timestamp() );
 
         $this->assertSame( $headers->height(), $height1 );
         $this->assertSame( $headers->height(), $height2 );
 
         $headers1 = $nodeW->getBlockHeadersByHeight( $headers->height() );
-        $headers2 = $nodeW->getBlockHeadersById( $headers->id() );
+        $headers2 = $nodeW->getBlockHeadersById( $headers->id()->encoded() );
         $headers3 = $nodeW->getBlocksHeaders( $headers->height() - 1, $headers->height() )[1];
         $this->assertSame( $headers->toString(), $headers1->toString() );
         $this->assertSame( $headers->toString(), $headers2->toString() );
         $this->assertSame( $headers->toString(), $headers3->toString() );
 
-        $delay = $nodeW->getBlocksDelay( $nodeW->getBlockHeadersByHeight( $headers->height() - 200 )->id(), 100 );
+        $delay = $nodeW->getBlocksDelay( $nodeW->getBlockHeadersByHeight( $headers->height() - 200 )->id()->encoded(), 100 );
         $this->assertLessThan( 70 * 1000, $delay );
         $this->assertLessThan( $delay, 50 * 1000 );
     }

@@ -75,6 +75,13 @@ class Value
         return $this->value;
     }
 
+    function asChainId(): ChainId
+    {
+        if( is_int( $this->value ) )
+            return ChainId::fromInt( $this->value );
+        return ChainId::fromString( $this->asString() );
+    }
+
     /**
     * Gets a base64 decoded string value
     *

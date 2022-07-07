@@ -17,9 +17,6 @@ class Address
     {
         $address = new Address;
         $address->base58String = Base58String::fromString( $encoded );
-        $bytes = $address->base58String->bytes();
-        if( strlen( $bytes ) !== Address::BYTE_LENGTH )
-            throw new Exception( __FUNCTION__ . ' bad address length: ' . strlen( $bytes ), ExceptionCode::BAD_ADDRESS );
         return $address;
     }
 
@@ -34,12 +31,15 @@ class Address
 
     function chainId(): string
     {
-        return $this->base58String->bytes()[1];
+        return $this->bytes()[1];
     }
 
     function bytes(): string
     {
-        return $this->base58String->bytes();
+        $bytes = $this->base58String->bytes();
+        if( strlen( $bytes ) !== Address::BYTE_LENGTH )
+            throw new Exception( __FUNCTION__ . ' bad address length: ' . strlen( $bytes ), ExceptionCode::BAD_ADDRESS );
+        return $bytes;
     }
 
     function encoded(): string
