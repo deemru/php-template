@@ -8,7 +8,7 @@ class TransactionOrOrder extends JsonTemplate
     function version(): int { return $this->get( 'version' )->asInt(); }
     function sender(): Address { return $this->get( 'sender' )->asAddress(); } // TODO: PublicKey
     function senderPublicKey(): string { return $this->get( 'senderPublicKey' )->asString(); } // TODO: PublicKey
-    function chainId(): chainId { return $this->getOr( 'chainId', WavesConfig::chainId() )->asChainId(); }
+    function chainId(): ChainId { return $this->getOr( 'chainId', WavesConfig::chainId() )->asChainId(); }
     function fee(): int { return $this->get( 'fee' )->asInt(); } // TODO: Amount
     function feeAssetId(): string { return $this->get( 'feeAssetId' )->asString(); } // TODO: Amount
     function timestamp(): int { return $this->get( 'timestamp' )->asInt(); }

@@ -4,7 +4,7 @@ namespace wavesplatform\Model;
 
 class TransactionWithStatus extends Transaction
 {
-    function applicationStatus()
+    function applicationStatus(): int
     {
         $status = $this->getOr( 'applicationStatus', ApplicationStatus::SUCCEEDED_S )->asString();
         switch( $status )
