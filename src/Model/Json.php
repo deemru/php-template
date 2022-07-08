@@ -168,6 +168,11 @@ class Json
         return new ScriptDetails( $this );
     }
 
+    function asTransactionInfo(): TransactionInfo
+    {
+        return new TransactionInfo( $this );
+    }
+
     function asTransactionWithStatus(): TransactionWithStatus
     {
         return new TransactionWithStatus( $this );

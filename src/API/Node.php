@@ -26,6 +26,7 @@ use wavesplatform\Model\ChainId;
 use wavesplatform\Model\DataEntry;
 use wavesplatform\Model\ScriptInfo;
 use wavesplatform\Model\ScriptMeta;
+use wavesplatform\Model\TransactionInfo;
 
 class Node
 {
@@ -489,4 +490,100 @@ class Node
 
         return $this->post( '/leasing/info', $json )->asArrayLeaseInfo();
     }
+
+    //===============
+    // TRANSACTIONS
+    //===============
+
+/*
+    public <T extends Transaction> Amount calculateTransactionFee(T transaction) throws IOException, NodeException {
+        JsonNode json = asJson(post("/transactions/calculateFee").setEntity(new StringEntity(transaction.toJson(), ContentType.APPLICATION_JSON)));
+        return Amount.of(json.get("feeAmount").asLong(), JsonSerializer.assetIdFromJson(json.get("feeAssetId")));
+    }
+
+    public <T extends Transaction> T broadcast(T transaction) throws IOException, NodeException {
+        //noinspection unchecked
+        return (T) asType(post("/transactions/broadcast")
+                        .setEntity(new StringEntity(transaction.toJson(), ContentType.APPLICATION_JSON)),
+                TypeRef.TRANSACTION);
+    }
+
+    public EthRpcResponse broadcastEthTransaction(EthereumTransaction ethTransaction) throws IOException, NodeException {
+        HttpUriRequest rq = buildSendRawTransactionRq(ethTransaction.toRawHexString());
+        ObjectNode rs = sendEthRequest(rq);
+        return handleEthResponse(rs);
+    }
+*/
+
+    function getTransactionInfo( Id $txId ): TransactionInfo
+    {
+        return $this->get( '/transactions/info/' . $txId->toString() )->asTransactionInfo();
+    }
 }
+
+/*
+
+
+    
+
+    
+
+    
+
+    public <T extends TransactionInfo> T getTransactionInfo(Id txId, Class<T> transactionInfoClass) throws IOException, NodeException {
+        return transactionInfoClass.cast(
+                asType(get("/transactions/info/" + txId.toString()), TypeRef.TRANSACTION_INFO));
+    }
+
+    public List<TransactionInfo> getTransactionsByAddress(Address address) throws IOException, NodeException {
+        return getTransactionsByAddress(address, 1000);
+    }
+
+    public List<TransactionInfo> getTransactionsByAddress(Address address, int limit) throws IOException, NodeException {
+        return getTransactionsByAddress(address, limit, null);
+    }
+
+    public List<TransactionInfo> getTransactionsByAddress(Address address, int limit, Id afterTxId) throws IOException, NodeException {
+        RequestBuilder request = get("/transactions/address/" + address.toString() + "/limit/" + limit);
+        if (afterTxId != null)
+            request.addParameter("after", afterTxId.toString());
+
+        //because there is a bug in the Node api: the array of transactions is nested in another array:
+        // [ [ {}, {}, ... ] ]
+        return mapper
+                .readerFor(TypeRef.TRANSACTIONS_INFO)
+                .readValue(asJson(request).get(0));
+    }
+
+    public TransactionStatus getTransactionStatus(Id txId) throws IOException, NodeException {
+        return asType(get("/transactions/status").addParameter("id", txId.toString()),
+                TypeRef.TRANSACTIONS_STATUS).get(0);
+    }
+
+    public List<TransactionStatus> getTransactionsStatus(List<Id> txIds) throws IOException, NodeException {
+        ObjectNode jsonBody = JSON_MAPPER.createObjectNode();
+        ArrayNode jsonIds = jsonBody.putArray("ids");
+        txIds.forEach(id -> jsonIds.add(id.toString()));
+        StringEntity body = new StringEntity(JSON_MAPPER.writeValueAsString(jsonBody), StandardCharsets.UTF_8);
+
+        return asType(post("/transactions/status")
+                .addHeader("Content-Type", "application/json")
+                .setEntity(body), TypeRef.TRANSACTIONS_STATUS);
+    }
+
+    public List<TransactionStatus> getTransactionsStatus(Id... txIds) throws IOException, NodeException {
+        return getTransactionsStatus(asList(txIds));
+    }
+
+    public Transaction getUnconfirmedTransaction(Id txId) throws IOException, NodeException {
+        return asType(get("/transactions/unconfirmed/info/" + txId.toString()), TypeRef.TRANSACTION);
+    }
+
+    public List<Transaction> getUnconfirmedTransactions() throws IOException, NodeException {
+        return asType(get("/transactions/unconfirmed"), TypeRef.TRANSACTIONS);
+    }
+
+    public int getUtxSize() throws IOException, NodeException {
+        return asJson(get("/transactions/unconfirmed/size")).get("size").asInt();
+    }
+    */

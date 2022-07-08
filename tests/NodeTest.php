@@ -39,7 +39,6 @@ class NodeTest extends \PHPUnit\Framework\TestCase
         $version = $nodeS->getVersion();
 
         $address = Address::fromString( '3P5dg6PtSAQmdH1qCGKJWu7bkzRG27mny5i' );
-
         $leases = $nodeW->getActiveLeases( $address );
         foreach( $leases as $lease )
         {
@@ -68,6 +67,8 @@ class NodeTest extends \PHPUnit\Framework\TestCase
         {
             $lease->cancelHeight();
             $lease->cancelTransactionId();
+            $transactionInfo = $nodeW->getTransactionInfo( $lease->cancelTransactionId() );
+            $this->assertSame( $lease->cancelHeight(), $transactionInfo->height() );
         }
 
         $heightT = $nodeT->getHeight();
