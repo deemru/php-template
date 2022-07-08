@@ -148,6 +148,11 @@ class Json
         return new DataEntry( $this );
     }
 
+    function asLeaseInfo(): LeaseInfo
+    {
+        return new LeaseInfo( $this );
+    }
+
     function asScriptMeta(): ScriptMeta
     {
         return new ScriptMeta( $this );
@@ -196,6 +201,19 @@ class Json
         $array = [];
         foreach( $this->json as $headers )
             $array[] = Value::asValue( $headers )->asJson()->asBlock();
+        return $array;
+    }
+
+    /**
+    * Gets an array of LeaseInfo value
+    *
+    * @return array<int, LeaseInfo>
+    */
+    function asArrayLeaseInfo(): array
+    {
+        $array = [];
+        foreach( $this->json as $info )
+            $array[] = Value::asValue( $info )->asJson()->asLeaseInfo();
         return $array;
     }
 
@@ -285,8 +303,8 @@ class Json
     function asArrayTransactionWithStatus(): array
     {
         $array = [];
-        foreach( $this->json as $data )
-            $array[] = Value::asValue( $data )->asJson()->asTransactionWithStatus();
+        foreach( $this->json as $tx )
+            $array[] = Value::asValue( $tx )->asJson()->asTransactionWithStatus();
         return $array;
     }
 }

@@ -11,6 +11,8 @@ use wavesplatform\API\Node;
 use wavesplatform\Model\Address;
 use wavesplatform\Model\AssetId;
 use wavesplatform\Model\ChainId;
+use wavesplatform\Model\LeaseStatus;
+use wavesplatform\Model\Id;
 use wavesplatform\Util\Functions;
 
 class NodeTest extends \PHPUnit\Framework\TestCase
@@ -34,8 +36,41 @@ class NodeTest extends \PHPUnit\Framework\TestCase
         $nodeT = new Node( Node::TESTNET );
         $nodeS = new Node( Node::STAGENET );
 
-        $heightT = $nodeT->getHeight();
+        $version = $nodeS->getVersion();
 
+        $address = Address::fromString( '3P5dg6PtSAQmdH1qCGKJWu7bkzRG27mny5i' );
+
+        $leases = $nodeW->getActiveLeases( $address );
+        foreach( $leases as $lease )
+        {
+            $lease->amount();
+            $lease->height();
+            $lease->id();
+            $lease->originTransactionId();
+            $lease->recipient();
+            $lease->sender();
+            if( $lease->status() == LeaseStatus::CANCELED )
+            {
+                $lease->cancelHeight();
+                $lease->cancelTransactionId();
+            }
+        }
+
+        if( isset( $lease ) )
+        {
+            $this->assertSame( $lease->toString(), $nodeW->getLeaseInfo( $lease->id() )->toString() );
+            $this->assertSame( $lease->toString(), $nodeW->getLeasesInfo( [ $lease->id() ] )[0]->toString() );
+        }
+
+        $leaseId = Id::fromString( '45uZvPeDva4CyXXTsTkh7fhzqTJCe2eqnz1HFt4aYNdZ' );
+        $lease = $nodeW->getLeaseInfo( $leaseId );
+        if( $lease->status() == LeaseStatus::CANCELED )
+        {
+            $lease->cancelHeight();
+            $lease->cancelTransactionId();
+        }
+
+        $heightT = $nodeT->getHeight();
         $heightW = $nodeW->getHeight();
 
         $block = $nodeW->getGenesisBlock();

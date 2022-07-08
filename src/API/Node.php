@@ -19,6 +19,7 @@ use wavesplatform\Model\BalanceDetails;
 use wavesplatform\Model\Base58String;
 use wavesplatform\Model\Block;
 use wavesplatform\Model\Id;
+use wavesplatform\Model\LeaseInfo;
 use wavesplatform\Model\BlockHeaders;
 use wavesplatform\Model\BlockchainRewards;
 use wavesplatform\Model\ChainId;
@@ -432,5 +433,60 @@ class Node
     function getBlocksGeneratedBy( Address $generator, int $fromHeight, int $toHeight ): array
     {
         return $this->get( '/blocks/address/' . $generator->toString() . '/' . $fromHeight . '/' . $toHeight )->asArrayBlock();
+    }
+
+    //===============
+    // NODE
+    //===============
+
+    function getVersion(): string
+    {
+        return $this->get( '/node/version')->get( 'version' )->asString();
+    }
+
+    //===============
+    // DEBUG
+    //===============
+/*
+    public List<HistoryBalance> getBalanceHistory(Address address) throws IOException, NodeException {
+        return asType(get("/debug/balances/history/" + address.toString()), TypeRef.HISTORY_BALANCES);
+    }
+
+    public <T extends Transaction> Validation validateTransaction(T transaction) throws IOException, NodeException {
+        return asType(post("/debug/validate")
+                .setEntity(new StringEntity(transaction.toJson(), ContentType.APPLICATION_JSON)), TypeRef.VALIDATION);
+    }
+*/
+    //===============
+    // LEASING
+    //===============
+
+    /**
+     * @return array<int, LeaseInfo>
+     */
+    function getActiveLeases( Address $address ): array
+    {
+        return $this->get( '/leasing/active/' . $address->toString() )->asArrayLeaseInfo();
+    }
+
+    function getLeaseInfo( Id $leaseId ): LeaseInfo
+    {
+        return $this->get( '/leasing/info/' . $leaseId->toString() )->asLeaseInfo();
+    }
+
+    /**
+     * @param array<int, Id> $leaseIds
+     * @return array<int, LeaseInfo>
+     */
+    function getLeasesInfo( array $leaseIds ): array
+    {
+        $json = new Json;
+
+        $array = [];
+        foreach( $leaseIds as $leaseId )
+            $array[] = $leaseId->toString();
+        $json->put( 'ids', $array );
+
+        return $this->post( '/leasing/info', $json )->asArrayLeaseInfo();
     }
 }
