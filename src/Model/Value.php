@@ -187,4 +187,25 @@ class Value
     {
         return Id::fromString( $this->asString() );
     }
+
+    function asApplicationStatus(): int
+    {
+        switch( $this->asString() )
+        {
+            case ApplicationStatus::SUCCEEDED_S: return ApplicationStatus::SUCCEEDED;
+            case ApplicationStatus::SCRIPT_EXECUTION_FAILED_S: return ApplicationStatus::SCRIPT_EXECUTION_FAILED;
+            default: return ApplicationStatus::UNKNOWN;
+        }
+    }
+
+    function asStatus(): int
+    {
+        switch( $this->asString() )
+        {
+            case Status::CONFIRMED_S: return Status::CONFIRMED;
+            case Status::UNCONFIRMED_S: return Status::UNCONFIRMED;
+            case Status::NOT_FOUND_S: return Status::NOT_FOUND;
+            default: return Status::UNKNOWN;
+        }
+    }
 }

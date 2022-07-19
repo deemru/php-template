@@ -27,6 +27,9 @@ use wavesplatform\Model\DataEntry;
 use wavesplatform\Model\ScriptInfo;
 use wavesplatform\Model\ScriptMeta;
 use wavesplatform\Model\TransactionInfo;
+use wavesplatform\Model\TransactionWithStatus;
+use wavesplatform\Model\TransactionStatus;
+use wavesplatform\Model\Transaction;
 
 class Node
 {
@@ -519,71 +522,54 @@ class Node
     {
         return $this->get( '/transactions/info/' . $txId->toString() )->asTransactionInfo();
     }
+
+    /**
+     * @return array<int, TransactionInfo>
+     */
+    function getTransactionsByAddress( Address $address, int $limit = 100, Id $afterTxId = null ): array
+    {
+        $uri = '/transactions/address/' . $address->toString() . '/limit/' . $limit;
+        if( isset( $afterTxId ) )
+            $uri .= '?after=' . $afterTxId->toString();
+        return $this->get( $uri )->get( 0 )->asJson()->asArrayTransactionInfo();
+    }
+
+    function getTransactionStatus( Id $txId ): TransactionStatus
+    {
+        return $this->get( '/transactions/status?id=' . $txId->toString() )->get( 0 )->asJson()->asTransactionStatus();
+    }
+
+    /**
+     * @param array<int, Id> $txIds
+     * @return array<int, TransactionStatus>
+     */
+    function getTransactionsStatus( array $txIds ): array
+    {
+        $json = new Json;
+
+        $array = [];
+        foreach( $txIds as $txId )
+            $array[] = $txId->toString();
+        $json->put( 'ids', $array );
+
+        return $this->post( '/transactions/status', $json )->asArrayTransactionStatus();
+    }
+
+    function getUnconfirmedTransaction( Id $txId ): Transaction
+    {
+        return $this->get( '/transactions/unconfirmed/info/' . $txId->toString() )->asTransaction();
+    }
+
+    /**
+     * @return array<int, TransactionStatus>
+     */
+    function getUnconfirmedTransactions(): array
+    {
+        return $this->get( '/transactions/unconfirmed' )->asArrayTransaction();
+    }
+
+    function getUtxSize(): int
+    {
+        return $this->get( '/transactions/unconfirmed/size' )->get( 'size' )->asInt();
+    }
 }
-
-/*
-
-
-    
-
-    
-
-    
-
-    public <T extends TransactionInfo> T getTransactionInfo(Id txId, Class<T> transactionInfoClass) throws IOException, NodeException {
-        return transactionInfoClass.cast(
-                asType(get("/transactions/info/" + txId.toString()), TypeRef.TRANSACTION_INFO));
-    }
-
-    public List<TransactionInfo> getTransactionsByAddress(Address address) throws IOException, NodeException {
-        return getTransactionsByAddress(address, 1000);
-    }
-
-    public List<TransactionInfo> getTransactionsByAddress(Address address, int limit) throws IOException, NodeException {
-        return getTransactionsByAddress(address, limit, null);
-    }
-
-    public List<TransactionInfo> getTransactionsByAddress(Address address, int limit, Id afterTxId) throws IOException, NodeException {
-        RequestBuilder request = get("/transactions/address/" + address.toString() + "/limit/" + limit);
-        if (afterTxId != null)
-            request.addParameter("after", afterTxId.toString());
-
-        //because there is a bug in the Node api: the array of transactions is nested in another array:
-        // [ [ {}, {}, ... ] ]
-        return mapper
-                .readerFor(TypeRef.TRANSACTIONS_INFO)
-                .readValue(asJson(request).get(0));
-    }
-
-    public TransactionStatus getTransactionStatus(Id txId) throws IOException, NodeException {
-        return asType(get("/transactions/status").addParameter("id", txId.toString()),
-                TypeRef.TRANSACTIONS_STATUS).get(0);
-    }
-
-    public List<TransactionStatus> getTransactionsStatus(List<Id> txIds) throws IOException, NodeException {
-        ObjectNode jsonBody = JSON_MAPPER.createObjectNode();
-        ArrayNode jsonIds = jsonBody.putArray("ids");
-        txIds.forEach(id -> jsonIds.add(id.toString()));
-        StringEntity body = new StringEntity(JSON_MAPPER.writeValueAsString(jsonBody), StandardCharsets.UTF_8);
-
-        return asType(post("/transactions/status")
-                .addHeader("Content-Type", "application/json")
-                .setEntity(body), TypeRef.TRANSACTIONS_STATUS);
-    }
-
-    public List<TransactionStatus> getTransactionsStatus(Id... txIds) throws IOException, NodeException {
-        return getTransactionsStatus(asList(txIds));
-    }
-
-    public Transaction getUnconfirmedTransaction(Id txId) throws IOException, NodeException {
-        return asType(get("/transactions/unconfirmed/info/" + txId.toString()), TypeRef.TRANSACTION);
-    }
-
-    public List<Transaction> getUnconfirmedTransactions() throws IOException, NodeException {
-        return asType(get("/transactions/unconfirmed"), TypeRef.TRANSACTIONS);
-    }
-
-    public int getUtxSize() throws IOException, NodeException {
-        return asJson(get("/transactions/unconfirmed/size")).get("size").asInt();
-    }
-    */

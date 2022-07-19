@@ -39,6 +39,58 @@ class NodeTest extends \PHPUnit\Framework\TestCase
         $version = $nodeS->getVersion();
 
         $address = Address::fromString( '3P5dg6PtSAQmdH1qCGKJWu7bkzRG27mny5i' );
+
+        $txs = $nodeW->getTransactionsByAddress( $address, 2 );
+        foreach( $txs as $tx )
+        {
+            $status = $nodeW->getTransactionStatus( $tx->id() );
+            $status->status();
+            $status->confirmations();
+            $this->assertSame( $status->id()->toString(), $tx->id()->toString() );
+            $this->assertSame( $status->applicationStatus(), $tx->applicationStatus() );
+            $this->assertSame( $status->height(), $tx->height() );
+        }
+
+        if( isset( $txs[1] ) )
+        {
+            $tx = $txs[1];
+            $txs2 = $nodeW->getTransactionsByAddress( $address, 2, $tx->id() );
+            foreach( $txs2 as $tx2 )
+                $this->assertNotEquals( $tx->id()->toString(), $tx2->id()->toString() );
+
+            $statuses = $nodeW->getTransactionsStatus( [ $tx->id() ] );
+            foreach( $statuses as $status )
+                $this->assertSame( $status->id()->toString(), $tx->id()->toString() );
+        }
+
+        $doUtx = 0;
+        for( ; $doUtx; )
+        {
+            $utxSize = $nodeW->getUtxSize();
+            if( $utxSize > 0 )
+            {
+                $txs = $nodeW->getUnconfirmedTransactions();
+                if( isset( $txs[0] ) )
+                {
+                    $tx = $txs[0];
+                    try
+                    {
+                        $txUnconfirmed = $nodeW->getUnconfirmedTransaction( $tx->id() );
+                        $this->assertSame( $tx->id()->toString(), $txUnconfirmed->id()->toString() );
+                    }
+                    catch( Exception $e )
+                    {
+                        $this->assertEquals( ExceptionCode::FETCH_URI, $e->getCode(), $e->getMessage() );
+                    }
+                }
+
+                break;
+            }
+
+            sleep( 1 );
+        }
+
+
         $leases = $nodeW->getActiveLeases( $address );
         foreach( $leases as $lease )
         {

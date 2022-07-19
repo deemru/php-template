@@ -178,6 +178,16 @@ class Json
         return new TransactionWithStatus( $this );
     }
 
+    function asTransactionStatus(): TransactionStatus
+    {
+        return new TransactionStatus( $this );
+    }
+
+    function asTransaction(): Transaction
+    {
+        return new Transaction( $this );
+    }
+
     function asVotes(): Votes
     {
         return new Votes( $this );
@@ -310,6 +320,41 @@ class Json
         $array = [];
         foreach( $this->json as $tx )
             $array[] = Value::asValue( $tx )->asJson()->asTransactionWithStatus();
+        return $array;
+    }
+
+    /**
+    * Gets an array value
+    *
+    * @return array<int, TransactionInfo>
+    */
+    function asArrayTransactionInfo(): array
+    {
+        $array = [];
+        foreach( $this->json as $tx )
+            $array[] = Value::asValue( $tx )->asJson()->asTransactionInfo();
+        return $array;
+    }
+
+    /**
+    * @return array<int, TransactionStatus>
+    */
+    function asArrayTransactionStatus(): array
+    {
+        $array = [];
+        foreach( $this->json as $tx )
+            $array[] = Value::asValue( $tx )->asJson()->asTransactionStatus();
+        return $array;
+    }
+
+    /**
+    * @return array<int, Transaction>
+    */
+    function asArrayTransaction(): array
+    {
+        $array = [];
+        foreach( $this->json as $tx )
+            $array[] = Value::asValue( $tx )->asJson()->asTransaction();
         return $array;
     }
 }
