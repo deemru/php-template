@@ -561,7 +561,7 @@ class Node
     }
 
     /**
-     * @return array<int, TransactionStatus>
+     * @return array<int, Transaction>
      */
     function getUnconfirmedTransactions(): array
     {
