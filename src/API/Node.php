@@ -95,13 +95,18 @@ class Node
      * Fetches a custom REST API request
      *
      * @param string $uri
-     * @param Json|null $json
+     * @param Json|string|null $data
      * @return Json
      */
-    private function fetch( string $uri, Json $json = null )
+    private function fetch( string $uri, Json|string $data = null )
     {
-        if( isset( $json ) )
-            $fetch = $this->wk->fetch( $uri, true, $json->toString() );
+        if( isset( $data ) )
+        {
+            if( is_string( $data ) )
+                $fetch = $this->wk->fetch( $uri, true, $data, null, [ 'Content-Type: text/plain', 'Accept: application/json' ] );
+            else
+                $fetch = $this->wk->fetch( $uri, true, $data->toString() );
+        }
         else
             $fetch = $this->wk->fetch( $uri );
         if( $fetch === false )
@@ -132,12 +137,12 @@ class Node
      * POSTs a custom REST API request
      *
      * @param string $uri
-     * @param Json $json
+     * @param Json|string $data
      * @return Json
      */
-    function post( string $uri, Json $json ): Json
+    function post( string $uri, Json|string $data ): Json
     {
-        return $this->fetch( $uri, $json );
+        return $this->fetch( $uri, $data );
     }
 
     //===============
@@ -572,4 +577,137 @@ class Node
     {
         return $this->get( '/transactions/unconfirmed/size' )->get( 'size' )->asInt();
     }
+
+    //===============
+    // UTILS
+    //===============
+
+    function compileScript( string $source, bool $enableCompaction = null ): ScriptInfo
+    {
+        $uri = '/utils/script/compileCode';
+        if( isset( $enableCompaction ) )
+            $uri .= '?compact=' . ( $enableCompaction ? 'true' : 'false' );
+        return $this->post( $uri, $source )->asScriptInfo();
+    }
+
+    function ethToWavesAsset( string $asset ): string
+    {
+        return $this->get( '/eth/assets?id=' . $asset )->get( 0 )->asJson()->asAssetDetails()->assetId()->encoded();
+    }
 }
+
+/*
+
+    //===============
+    // WAITINGS
+    //===============
+
+    private final int blockInterval = 60;
+
+    public TransactionInfo waitForTransaction(Id id, int waitingInSeconds) throws IOException {
+        int pollingIntervalInMillis = 100;
+
+        if (waitingInSeconds < 1)
+            throw new IllegalStateException("waitForTransaction: waiting value must be positive. Current: " + waitingInSeconds);
+
+        Exception lastException = null;
+        for (long spentMillis = 0; spentMillis < waitingInSeconds * 1000L; spentMillis += pollingIntervalInMillis) {
+            try {
+                return this.getTransactionInfo(id);
+            } catch (Exception e) {
+                lastException = e;
+                try {
+                    Thread.sleep(pollingIntervalInMillis);
+                } catch (InterruptedException ignored) {
+                }
+            }
+        }
+        throw new IOException("Could not wait for transaction " + id + " in " + waitingInSeconds + " seconds", lastException);
+    }
+
+    public TransactionInfo waitForTransaction(Id id) throws IOException {
+        return waitForTransaction(id, blockInterval);
+    }
+
+    public <T extends TransactionInfo> T waitForTransaction(Id id, Class<T> infoClass) throws IOException {
+        return infoClass.cast(waitForTransaction(id));
+    }
+
+    public void waitForTransactions(List<Id> ids, int waitingInSeconds) throws IOException, NodeException {
+        int pollingIntervalInMillis = 1000;
+
+        if (waitingInSeconds < 1)
+            throw new IllegalStateException("waitForTransaction: waiting value must be positive. Current: " + waitingInSeconds);
+
+        Exception lastException = null;
+        for (long spentMillis = 0; spentMillis < waitingInSeconds * 1000L; spentMillis += pollingIntervalInMillis) {
+            try {
+                List<TransactionStatus> statuses = this.getTransactionsStatus(ids);
+                if (statuses.stream().allMatch(s -> CONFIRMED.equals(s.status())))
+                    return;
+            } catch (Exception e) {
+                lastException = e;
+                try {
+                    Thread.sleep(pollingIntervalInMillis);
+                } catch (InterruptedException ignored) {
+                }
+            }
+        }
+
+        List<TransactionStatus> statuses = this.getTransactionsStatus(ids);
+        List<TransactionStatus> unconfirmed =
+                statuses.stream().filter(s -> !CONFIRMED.equals(s.status())).collect(toList());
+        throw new IOException("Could not wait for " + unconfirmed.size() + " of " + ids.size() +
+                " transactions in " + waitingInSeconds + " seconds: " + unconfirmed, lastException);
+    }
+
+    public void waitForTransactions(List<Id> ids) throws IOException, NodeException {
+        waitForTransactions(ids, blockInterval);
+    }
+
+    public void waitForTransactions(Id... ids) throws IOException, NodeException {
+        waitForTransactions(asList(ids));
+    }
+
+    public int waitForHeight(int target, int waitingInSeconds) throws IOException, NodeException {
+        int start = this.getHeight();
+        int prev = start;
+        int pollingIntervalInMillis = 100;
+
+        if (waitingInSeconds < 1)
+            throw new IllegalStateException("waitForHeight: value must be positive. Current: " + waitingInSeconds);
+
+        for (long spentMillis = 0; spentMillis < waitingInSeconds * 1000L; spentMillis += pollingIntervalInMillis) {
+            int current = this.getHeight();
+
+            if (current >= target)
+                return current;
+            else if (current > prev) {
+                prev = current;
+                spentMillis = 0;
+            }
+
+            try {
+                Thread.sleep(pollingIntervalInMillis);
+            } catch (InterruptedException ignored) {
+            }
+        }
+        throw new IllegalStateException("Could not wait for the height to rise from " + start + " to " + target +
+                ": height " + prev + " did not grow for " + waitingInSeconds + " seconds");
+    }
+
+    public int waitForHeight(int expectedHeight) throws IOException, NodeException {
+        return waitForHeight(expectedHeight, blockInterval * 3);
+    }
+
+    public int waitBlocks(int blocksCount, int waitingInSeconds) throws IOException, NodeException {
+        if (waitingInSeconds < 1)
+            throw new IllegalStateException("waitBlocks: waiting value must be positive. Current: " + waitingInSeconds);
+        return waitForHeight(getHeight() + blocksCount, waitingInSeconds);
+    }
+
+    public int waitBlocks(int blocksCount) throws IOException, NodeException {
+        return waitBlocks(blocksCount, blockInterval * 3);
+    }
+}
+*/

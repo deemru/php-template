@@ -38,6 +38,17 @@ class NodeTest extends \PHPUnit\Framework\TestCase
 
         $version = $nodeS->getVersion();
 
+        $ethAsset = $nodeS->ethToWavesAsset( '0x7a087b3384447a48393eda243e630b07db443597' );
+
+        $someScript = file_get_contents( 'https://raw.githubusercontent.com/waves-exchange/neutrino-defo-contract/df334ea97952692983d1038a4818626ee01bfea6/factory.ride' );
+
+        $scriptInfo = $nodeW->compileScript( $someScript );
+        $script1 = $scriptInfo->script();
+        $scriptInfo = $nodeW->compileScript( $someScript, true );
+        $script2 = $scriptInfo->script();
+        $this->assertNotEquals( $script1, $script2 );
+        $this->assertLessThan( strlen( $script1 ), strlen( $script2 ) );
+
         $address = Address::fromString( '3P5dg6PtSAQmdH1qCGKJWu7bkzRG27mny5i' );
 
         $txs = $nodeW->getTransactionsByAddress( $address, 2 );
