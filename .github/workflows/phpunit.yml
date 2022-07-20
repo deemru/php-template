@@ -8,7 +8,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ ubuntu-latest, windows-latest, macos-latest ]
+        #os: [ ubuntu-latest, windows-latest, macos-latest ]
+        os: [ ubuntu-latest ]
         php-versions: [ '7.4', '8.1' ]
 
     runs-on: ${{ matrix.os }}
