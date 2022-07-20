@@ -98,7 +98,7 @@ class Node
      * @param Json|string|null $data
      * @return Json
      */
-    private function fetch( string $uri, Json|string $data = null )
+    private function fetch( string $uri, $data = null )
     {
         if( isset( $data ) )
         {
@@ -140,7 +140,7 @@ class Node
      * @param Json|string $data
      * @return Json
      */
-    function post( string $uri, Json|string $data ): Json
+    function post( string $uri, $data ): Json
     {
         return $this->fetch( $uri, $data );
     }

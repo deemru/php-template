@@ -39,6 +39,7 @@ class NodeTest extends \PHPUnit\Framework\TestCase
         $version = $nodeS->getVersion();
 
         $ethAsset = $nodeS->ethToWavesAsset( '0x7a087b3384447a48393eda243e630b07db443597' );
+        $this->assertEquals( '9DNEvLFSSnSSaNCb5WEYMz64hsadDjx1THZw3z2hiyJe', $ethAsset );
 
         $someScript = file_get_contents( 'https://raw.githubusercontent.com/waves-exchange/neutrino-defo-contract/df334ea97952692983d1038a4818626ee01bfea6/factory.ride' );
         if( $someScript === false )
