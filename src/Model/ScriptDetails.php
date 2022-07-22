@@ -2,6 +2,8 @@
 
 namespace wavesplatform\Model;
 
+use wavesplatform\Common\JsonTemplate;
+
 class ScriptDetails extends JsonTemplate
 {
     const EMPTY = [ 'script' => '', 'scriptComplexity' => 0 ];

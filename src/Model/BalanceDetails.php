@@ -2,6 +2,8 @@
 
 namespace wavesplatform\Model;
 
+use wavesplatform\Common\JsonTemplate;
+
 class BalanceDetails extends JsonTemplate
 {
     function address(): string { return $this->get( 'address' )->asString(); }

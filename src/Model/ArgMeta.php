@@ -2,6 +2,8 @@
 
 namespace wavesplatform\Model;
 
+use wavesplatform\Common\JsonTemplate;
+
 class ArgMeta extends JsonTemplate
 {
     function name(): string { return $this->get( 'name' )->asString(); }

@@ -1,11 +1,30 @@
 <?php declare( strict_types = 1 );
 
-namespace wavesplatform\Model;
+namespace wavesplatform\Common;
 
 use Exception;
-use wavesplatform\ExceptionCode;
+use wavesplatform\Common\ExceptionCode;
 
 use wavesplatform\Transactions\Transaction;
+use wavesplatform\Model\Address;
+use wavesplatform\Model\Alias;
+use wavesplatform\Model\BalanceDetails;
+use wavesplatform\Model\DataEntry;
+use wavesplatform\Model\ScriptInfo;
+use wavesplatform\Model\BlockHeaders;
+use wavesplatform\Model\Balance;
+use wavesplatform\Model\AssetBalance;
+use wavesplatform\Model\AssetDetails;
+use wavesplatform\Model\AssetDistribution;
+use wavesplatform\Model\BlockchainRewards;
+use wavesplatform\Model\Block;
+use wavesplatform\Model\ScriptDetails;
+use wavesplatform\Model\ScriptMeta;
+use wavesplatform\Model\LeaseInfo;
+use wavesplatform\Model\TransactionInfo;
+use wavesplatform\Model\TransactionWithStatus;
+use wavesplatform\Model\TransactionStatus;
+use wavesplatform\Model\Votes;
 
 class Json
 {

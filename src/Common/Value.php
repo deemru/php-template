@@ -1,9 +1,16 @@
 <?php declare( strict_types = 1 );
 
-namespace wavesplatform\Model;
+namespace wavesplatform\Common;
 
 use Exception;
 use wavesplatform\Common\ExceptionCode;
+use wavesplatform\Model\ArgMeta;
+use wavesplatform\Model\Address;
+use wavesplatform\Model\AssetId;
+use wavesplatform\Model\Id;
+use wavesplatform\Model\ChainId;
+use wavesplatform\Model\ApplicationStatus;
+use wavesplatform\Model\Status;
 
 class Value
 {

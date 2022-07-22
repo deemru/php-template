@@ -3,7 +3,7 @@
 namespace wavesplatform\Util;
 
 use Exception;
-use wavesplatform\ExceptionCode;
+use wavesplatform\Common\ExceptionCode;
 
 use deemru\ABCode;
 

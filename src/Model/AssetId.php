@@ -3,7 +3,8 @@
 namespace wavesplatform\Model;
 
 use Exception;
-use wavesplatform\ExceptionCode;
+use wavesplatform\Common\ExceptionCode;
+use wavesplatform\Common\Base58String;
 
 class AssetId
 {

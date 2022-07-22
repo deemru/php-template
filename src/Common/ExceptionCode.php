@@ -1,6 +1,6 @@
 <?php declare( strict_types = 1 );
 
-namespace wavesplatform\Model;
+namespace wavesplatform\Common;
 
 class ExceptionCode
 {
@@ -17,4 +17,8 @@ class ExceptionCode
     const UNKNOWN_TYPE =    ExceptionCode::BASE | 10;
     const BOOL_EXPECTED =   ExceptionCode::BASE | 11;
     const BASE64_DECODE =   ExceptionCode::BASE | 12;
+    const BAD_ALIAS =       ExceptionCode::BASE | 13;
+    const BAD_ASSET =       ExceptionCode::BASE | 14;
+    const BAD_ADDRESS =     ExceptionCode::BASE | 15;
+    const BAD_CHAINID =     ExceptionCode::BASE | 16;
 }

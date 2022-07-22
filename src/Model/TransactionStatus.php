@@ -2,6 +2,8 @@
 
 namespace wavesplatform\Model;
 
+use wavesplatform\Common\JsonTemplate;
+
 class TransactionStatus extends JsonTemplate
 {
     function id(): Id { return $this->get( 'id' )->asId(); }

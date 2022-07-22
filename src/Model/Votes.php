@@ -2,6 +2,8 @@
 
 namespace wavesplatform\Model;
 
+use wavesplatform\Common\JsonTemplate;
+
 class Votes extends JsonTemplate
 {
     function increase(): int { return $this->get( 'increase' )->asInt(); }

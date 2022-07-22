@@ -3,11 +3,11 @@
 namespace wavesplatform\API;
 
 use Exception;
-use wavesplatform\ExceptionCode;
+use wavesplatform\Common\ExceptionCode;
 
 use deemru\WavesKit;
 
-use wavesplatform\Model\Json;
+use wavesplatform\Common\Json;
 use wavesplatform\Model\Address;
 use wavesplatform\Model\AssetId;
 use wavesplatform\Model\AssetDistribution;

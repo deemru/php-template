@@ -3,7 +3,7 @@
 namespace wavesplatform\Model;
 
 use Exception;
-use wavesplatform\ExceptionCode;
+use wavesplatform\Common\ExceptionCode;
 
 class Alias
 {

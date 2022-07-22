@@ -2,6 +2,8 @@
 
 namespace wavesplatform\Model;
 
+use wavesplatform\Common\JsonTemplate;
+
 class AssetDetails extends JsonTemplate
 {
     function assetId(): AssetId { return $this->get( 'assetId' )->asAssetId(); }

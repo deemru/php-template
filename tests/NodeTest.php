@@ -5,7 +5,7 @@ namespace wavesplatform;
 require_once 'common.php';
 
 use Exception;
-use wavesplatform\ExceptionCode;
+use wavesplatform\Common\ExceptionCode;
 
 use wavesplatform\API\Node;
 use wavesplatform\Model\Address;

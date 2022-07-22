@@ -2,6 +2,8 @@
 
 namespace wavesplatform\Model;
 
+use wavesplatform\Common\JsonTemplate;
+
 class ScriptMeta extends JsonTemplate
 {
     function metaVersion(): int { return $this->get( 'version' )->asInt(); }

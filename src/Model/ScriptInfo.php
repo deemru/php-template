@@ -2,6 +2,8 @@
 
 namespace wavesplatform\Model;
 
+use wavesplatform\Common\JsonTemplate;
+
 class ScriptInfo extends JsonTemplate
 {
     function script(): string { return $this->get( 'script' )->asString(); }
