@@ -2,6 +2,8 @@
 
 namespace wavesplatform\Model;
 
+use wavesplatform\Transactions\Transaction;
+
 class TransactionWithStatus extends Transaction
 {
     function applicationStatus(): int

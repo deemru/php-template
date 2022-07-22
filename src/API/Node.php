@@ -16,7 +16,6 @@ use wavesplatform\Model\AssetDetails;
 use wavesplatform\Model\Alias;
 use wavesplatform\Model\Balance;
 use wavesplatform\Model\BalanceDetails;
-use wavesplatform\Model\Base58String;
 use wavesplatform\Model\Block;
 use wavesplatform\Model\Id;
 use wavesplatform\Model\LeaseInfo;
@@ -27,9 +26,8 @@ use wavesplatform\Model\DataEntry;
 use wavesplatform\Model\ScriptInfo;
 use wavesplatform\Model\ScriptMeta;
 use wavesplatform\Model\TransactionInfo;
-use wavesplatform\Model\TransactionWithStatus;
 use wavesplatform\Model\TransactionStatus;
-use wavesplatform\Model\Transaction;
+use wavesplatform\Transactions\Transaction;
 
 class Node
 {

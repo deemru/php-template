@@ -5,6 +5,8 @@ namespace wavesplatform\Model;
 use Exception;
 use wavesplatform\ExceptionCode;
 
+use wavesplatform\Transactions\Transaction;
+
 class Json
 {
     /**

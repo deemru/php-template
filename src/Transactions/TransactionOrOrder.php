@@ -1,6 +1,13 @@
 <?php declare( strict_types = 1 );
 
-namespace wavesplatform\Model;
+namespace wavesplatform\Transactions;
+
+use wavesplatform\Model\Address;
+use wavesplatform\Model\ChainId;
+use wavesplatform\Model\Json;
+use wavesplatform\Model\JsonTemplate;
+use wavesplatform\Model\Id;
+use wavesplatform\Model\WavesConfig;
 
 class TransactionOrOrder extends JsonTemplate
 {
