@@ -2,6 +2,7 @@
 
 namespace wavesplatform\Model;
 
+use wavesplatform\Common\Json;
 use wavesplatform\Common\JsonTemplate;
 
 class AssetBalance extends JsonTemplate
