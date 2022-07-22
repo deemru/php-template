@@ -3,6 +3,7 @@
 namespace wavesplatform\Model;
 
 use wavesplatform\Common\JsonTemplate;
+use wavesplatform\Common\Value;
 
 class ScriptMeta extends JsonTemplate
 {
