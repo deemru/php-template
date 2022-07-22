@@ -11,6 +11,7 @@ class PublicKey
     const ETH_BYTES_LENGTH = 64;
 
     private Base58String $key;
+    private Address $address;
 
     private function __construct(){}
 
@@ -35,6 +36,13 @@ class PublicKey
         $wk->setPrivateKey( $key->bytes(), true );
         $publicKey->key = Base58String::fromBytes( $wk->getPublicKey( true ) );
         return $publicKey;
+    }
+
+    function address(): Address
+    {
+        if( !isset( $this->address ) )
+            $this->address = Address::fromPublicKey( $this );
+        return $this->address;
     }
 
     function bytes(): string

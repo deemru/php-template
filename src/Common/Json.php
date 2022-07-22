@@ -76,6 +76,18 @@ class Json
     }
 
     /**
+     * Gets Value by key or returns fallback value
+     *
+     * @param mixed $key
+     * @param mixed $value
+     * @return Value
+     */
+    function getOr( $key, $value ): Value
+    {
+        return $this->exists( $key ) ? $this->get( $key ) : Value::asValue( $value );
+    }
+
+    /**
      * Checks key exists
      *
      * @param mixed $key
@@ -106,7 +118,7 @@ class Json
     */
     function asBlockHeaders(): BlockHeaders
     {
-        return new BlockHeaders( $this );
+        return new BlockHeaders( $this->json );
     }
 
     /**
@@ -116,7 +128,7 @@ class Json
     */
     function asBalance(): Balance
     {
-        return new Balance( $this );
+        return new Balance( $this->json );
     }
 
     /**
@@ -126,17 +138,17 @@ class Json
     */
     function asAssetBalance(): AssetBalance
     {
-        return new AssetBalance( $this );
+        return new AssetBalance( $this->json );
     }
 
     function asAssetDetails(): AssetDetails
     {
-        return new AssetDetails( $this );
+        return new AssetDetails( $this->json );
     }
 
     function asAssetDistribution(): AssetDistribution
     {
-        return new AssetDistribution( $this );
+        return new AssetDistribution( $this->json );
     }
 
     /**
@@ -146,17 +158,17 @@ class Json
     */
     function asBalanceDetails(): BalanceDetails
     {
-        return new BalanceDetails( $this );
+        return new BalanceDetails( $this->json );
     }
 
     function asBlockchainRewards(): BlockchainRewards
     {
-        return new BlockchainRewards( $this );
+        return new BlockchainRewards( $this->json );
     }
 
     function asBlock(): Block
     {
-        return new Block( $this );
+        return new Block( $this->json );
     }
 
     /**
@@ -166,52 +178,52 @@ class Json
     */
     function asDataEntry(): DataEntry
     {
-        return new DataEntry( $this );
+        return new DataEntry( $this->json );
     }
 
     function asLeaseInfo(): LeaseInfo
     {
-        return new LeaseInfo( $this );
+        return new LeaseInfo( $this->json );
     }
 
     function asScriptMeta(): ScriptMeta
     {
-        return new ScriptMeta( $this );
+        return new ScriptMeta( $this->json );
     }
 
     function asScriptInfo(): ScriptInfo
     {
-        return new ScriptInfo( $this );
+        return new ScriptInfo( $this->json );
     }
 
     function asScriptDetails(): ScriptDetails
     {
-        return new ScriptDetails( $this );
+        return new ScriptDetails( $this->json );
     }
 
     function asTransactionInfo(): TransactionInfo
     {
-        return new TransactionInfo( $this );
+        return new TransactionInfo( $this->json );
     }
 
     function asTransactionWithStatus(): TransactionWithStatus
     {
-        return new TransactionWithStatus( $this );
+        return new TransactionWithStatus( $this->json );
     }
 
     function asTransactionStatus(): TransactionStatus
     {
-        return new TransactionStatus( $this );
+        return new TransactionStatus( $this->json );
     }
 
     function asTransaction(): Transaction
     {
-        return new Transaction( $this );
+        return new Transaction( $this->json );
     }
 
     function asVotes(): Votes
     {
-        return new Votes( $this );
+        return new Votes( $this->json );
     }
 
     /**

@@ -3,9 +3,9 @@
 namespace wavesplatform\Model;
 
 use wavesplatform\Account\Address;
-use wavesplatform\Common\JsonTemplate;
+use wavesplatform\Common\Json;
 
-class BlockHeaders extends JsonTemplate
+class BlockHeaders extends Json
 {
     /**
      * @return array<int>

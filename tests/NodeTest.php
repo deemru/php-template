@@ -5,11 +5,11 @@ namespace wavesplatform;
 require_once 'common.php';
 
 use Exception;
+use wavesplatform\Common\ExceptionCode;
+
 use wavesplatform\Account\Address;
 use wavesplatform\Account\PrivateKey;
 use wavesplatform\Account\PublicKey;
-use wavesplatform\Common\ExceptionCode;
-
 use wavesplatform\API\Node;
 use wavesplatform\Model\Alias;
 use wavesplatform\Model\AssetId;
@@ -51,7 +51,9 @@ class NodeTest extends \PHPUnit\Framework\TestCase
 
         $recipient = Recipient::fromAlias( new Alias( 'test' ) );
         $amount = new Amount( 1, AssetId::WAVES() );
-        $tx = new TransferTransaction( $publicKey, $recipient, $amount );
+        //$tx = new TransferTransaction( $publicKey, $recipient, $amount );
+
+        //$fee = $nodeT->calculateTransactionFee( $tx );
 
         $version = $nodeS->getVersion();
 

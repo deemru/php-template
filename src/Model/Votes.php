@@ -2,9 +2,9 @@
 
 namespace wavesplatform\Model;
 
-use wavesplatform\Common\JsonTemplate;
+use wavesplatform\Common\Json;
 
-class Votes extends JsonTemplate
+class Votes extends Json
 {
     function increase(): int { return $this->get( 'increase' )->asInt(); }
     function decrease(): int { return $this->get( 'decrease' )->asInt(); }

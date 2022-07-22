@@ -2,9 +2,9 @@
 
 namespace wavesplatform\Model;
 
-use wavesplatform\Common\JsonTemplate;
+use wavesplatform\Common\Json;
 
-class BlockchainRewards extends JsonTemplate
+class BlockchainRewards extends Json
 {
     function height(): int { return $this->get( 'height' )->asInt(); }
     function currentReward(): int { return $this->get( 'currentReward' )->asInt(); }

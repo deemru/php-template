@@ -3,9 +3,9 @@
 namespace wavesplatform\Model;
 
 use wavesplatform\Account\Address;
-use wavesplatform\Common\JsonTemplate;
+use wavesplatform\Common\Json;
 
-class LeaseInfo extends JsonTemplate
+class LeaseInfo extends Json
 {
     function id(): Id { return $this->get( 'id' )->asId(); }
     function originTransactionId(): Id { return $this->get( 'originTransactionId' )->asId(); }

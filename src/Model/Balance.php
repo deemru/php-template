@@ -2,9 +2,9 @@
 
 namespace wavesplatform\Model;
 
-use wavesplatform\Common\JsonTemplate;
+use wavesplatform\Common\Json;
 
-class Balance extends JsonTemplate
+class Balance extends Json
 {
     function getAddress(): string { return $this->get( 'id' )->asString(); }
     function getBalance(): int { return $this->get( 'balance' )->asInt(); }

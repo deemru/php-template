@@ -3,9 +3,9 @@
 namespace wavesplatform\Model;
 
 use wavesplatform\Account\Address;
-use wavesplatform\Common\JsonTemplate;
+use wavesplatform\Common\Json;
 
-class AssetDetails extends JsonTemplate
+class AssetDetails extends Json
 {
     function assetId(): AssetId { return $this->get( 'assetId' )->asAssetId(); }
     function issueHeight(): int { return $this->get( 'issueHeight' )->asInt(); }

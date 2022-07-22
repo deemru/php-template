@@ -2,9 +2,9 @@
 
 namespace wavesplatform\Model;
 
-use wavesplatform\Common\JsonTemplate;
+use wavesplatform\Common\Json;
 
-class ScriptInfo extends JsonTemplate
+class ScriptInfo extends Json
 {
     function script(): string { return $this->get( 'script' )->asString(); }
     function complexity(): int { return $this->get( 'complexity' )->asInt(); }

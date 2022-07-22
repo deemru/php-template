@@ -4,9 +4,9 @@ namespace wavesplatform\Model;
 
 use Exception;
 use wavesplatform\Common\ExceptionCode;
-use wavesplatform\Common\JsonTemplate;
+use wavesplatform\Common\Json;
 
-class DataEntry extends JsonTemplate
+class DataEntry extends Json
 {
     function key(): string { return $this->get( 'key' )->asString(); }
 

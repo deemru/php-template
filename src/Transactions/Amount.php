@@ -15,6 +15,11 @@ class Amount
         $this->assetId = $assetId ?? AssetId::WAVES();
     }
 
+    static function of( int $amount, AssetId $assetId = null ): Amount
+    {
+        return new Amount( $amount, $assetId );
+    }
+
     function value(): int
     {
         return $this->amount;

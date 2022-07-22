@@ -3,9 +3,8 @@
 namespace wavesplatform\Model;
 
 use wavesplatform\Common\Json;
-use wavesplatform\Common\JsonTemplate;
 
-class AssetBalance extends JsonTemplate
+class AssetBalance extends Json
 {
     function assetId(): AssetId { return $this->get( 'assetId' )->asAssetId(); }
     function balance(): int { return $this->get( 'balance' )->asInt(); }

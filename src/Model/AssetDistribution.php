@@ -2,9 +2,9 @@
 
 namespace wavesplatform\Model;
 
-use wavesplatform\Common\JsonTemplate;
+use wavesplatform\Common\Json;
 
-class AssetDistribution extends JsonTemplate
+class AssetDistribution extends Json
 {
     /**
      * @return array<string, int>

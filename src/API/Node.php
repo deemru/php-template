@@ -27,6 +27,7 @@ use wavesplatform\Model\ScriptInfo;
 use wavesplatform\Model\ScriptMeta;
 use wavesplatform\Model\TransactionInfo;
 use wavesplatform\Model\TransactionStatus;
+use wavesplatform\Transactions\Amount;
 use wavesplatform\Transactions\Transaction;
 
 class Node
@@ -501,19 +502,17 @@ class Node
     // TRANSACTIONS
     //===============
 
+    function calculateTransactionFee( Transaction $transaction ): Amount
+    {
+        $json = $this->post( '/transactions/calculateFee', $transaction );
+        return Amount::of( $json->get( 'feeAmount' )->asInt(), $json->get( 'feeAssetId' )->asAssetId() );
+    }
+
+    function broadcast( Transaction $transaction ): Transaction
+    {
+        return $this->post( '/transactions/broadcast', $transaction )->asTransaction();
+    }
 /*
-    public <T extends Transaction> Amount calculateTransactionFee(T transaction) throws IOException, NodeException {
-        JsonNode json = asJson(post("/transactions/calculateFee").setEntity(new StringEntity(transaction.toJson(), ContentType.APPLICATION_JSON)));
-        return Amount.of(json.get("feeAmount").asLong(), JsonSerializer.assetIdFromJson(json.get("feeAssetId")));
-    }
-
-    public <T extends Transaction> T broadcast(T transaction) throws IOException, NodeException {
-        //noinspection unchecked
-        return (T) asType(post("/transactions/broadcast")
-                        .setEntity(new StringEntity(transaction.toJson(), ContentType.APPLICATION_JSON)),
-                TypeRef.TRANSACTION);
-    }
-
     public EthRpcResponse broadcastEthTransaction(EthereumTransaction ethTransaction) throws IOException, NodeException {
         HttpUriRequest rq = buildSendRawTransactionRq(ethTransaction.toRawHexString());
         ObjectNode rs = sendEthRequest(rq);

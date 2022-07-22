@@ -2,9 +2,9 @@
 
 namespace wavesplatform\Model;
 
-use wavesplatform\Common\JsonTemplate;
+use wavesplatform\Common\Json;
 
-class TransactionStatus extends JsonTemplate
+class TransactionStatus extends Json
 {
     function id(): Id { return $this->get( 'id' )->asId(); }
     function status(): int { return $this->get( 'status' )->asStatus(); }
