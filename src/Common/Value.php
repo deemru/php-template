@@ -5,7 +5,8 @@ namespace wavesplatform\Common;
 use Exception;
 use wavesplatform\Common\ExceptionCode;
 use wavesplatform\Model\ArgMeta;
-use wavesplatform\Model\Address;
+use wavesplatform\Account\Address;
+use wavesplatform\Account\PublicKey;
 use wavesplatform\Model\AssetId;
 use wavesplatform\Model\Id;
 use wavesplatform\Model\ChainId;
@@ -173,6 +174,11 @@ class Value
     function asAddress(): Address
     {
         return Address::fromString( $this->asString() );
+    }
+
+    function asPublicKey(): PublicKey
+    {
+        return PublicKey::fromString( $this->asString() );
     }
 
     /**

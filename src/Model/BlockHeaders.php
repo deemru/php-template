@@ -2,6 +2,7 @@
 
 namespace wavesplatform\Model;
 
+use wavesplatform\Account\Address;
 use wavesplatform\Common\JsonTemplate;
 
 class BlockHeaders extends JsonTemplate

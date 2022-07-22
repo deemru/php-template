@@ -9,10 +9,10 @@ class Amount
     private int $amount;
     private AssetId $assetId;
 
-    function __construct( int $amount, AssetId $assetId = AssetId::WAVES() )
+    function __construct( int $amount, AssetId $assetId = null )
     {
         $this->amount = $amount;
-        $this->assetId = $assetId;
+        $this->assetId = $assetId ?? AssetId::WAVES();
     }
 
     function value(): int

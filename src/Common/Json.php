@@ -6,7 +6,7 @@ use Exception;
 use wavesplatform\Common\ExceptionCode;
 
 use wavesplatform\Transactions\Transaction;
-use wavesplatform\Model\Address;
+use wavesplatform\Account\Address;
 use wavesplatform\Model\Alias;
 use wavesplatform\Model\BalanceDetails;
 use wavesplatform\Model\DataEntry;

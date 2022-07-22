@@ -5,14 +5,21 @@ namespace wavesplatform;
 require_once 'common.php';
 
 use Exception;
+use wavesplatform\Account\Address;
+use wavesplatform\Account\PrivateKey;
+use wavesplatform\Account\PublicKey;
 use wavesplatform\Common\ExceptionCode;
 
 use wavesplatform\API\Node;
-use wavesplatform\Model\Address;
+use wavesplatform\Model\Alias;
 use wavesplatform\Model\AssetId;
 use wavesplatform\Model\ChainId;
 use wavesplatform\Model\LeaseStatus;
 use wavesplatform\Model\Id;
+use wavesplatform\Model\WavesConfig;
+use wavesplatform\Transactions\Amount;
+use wavesplatform\Transactions\Recipient;
+use wavesplatform\Transactions\TransferTransaction;
 use wavesplatform\Util\Functions;
 
 class NodeTest extends \PHPUnit\Framework\TestCase
@@ -35,6 +42,16 @@ class NodeTest extends \PHPUnit\Framework\TestCase
         $nodeW = new Node( Node::MAINNET );
         $nodeT = new Node( Node::TESTNET );
         $nodeS = new Node( Node::STAGENET );
+
+        $chainId = WavesConfig::chainId( 'T' );
+        $privateKey = PrivateKey::fromSeed( '' );
+        $publicKey = PublicKey::fromPrivateKey( $privateKey );
+        $address = Address::fromPublicKey( $publicKey );
+        $address->toString();
+
+        $recipient = Recipient::fromAlias( new Alias( 'test' ) );
+        $amount = new Amount( 1, AssetId::WAVES() );
+        $tx = new TransferTransaction( $publicKey, $recipient, $amount );
 
         $version = $nodeS->getVersion();
 
@@ -158,7 +175,6 @@ class NodeTest extends \PHPUnit\Framework\TestCase
                 $tx->id();
                 $tx->proofs();
                 $tx->sender();
-                $tx->senderPublicKey();
                 $tx->timestamp();
                 $tx->type();
                 $tx->version();
@@ -177,7 +193,6 @@ class NodeTest extends \PHPUnit\Framework\TestCase
             $tx->id();
             $tx->proofs();
             $tx->sender();
-            $tx->senderPublicKey();
             $tx->timestamp();
             $tx->type();
             $tx->version();

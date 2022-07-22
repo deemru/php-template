@@ -4,7 +4,7 @@ namespace wavesplatform\Transactions;
 
 use wavesplatform\Common\Json;
 use wavesplatform\Common\JsonTemplate;
-use wavesplatform\Model\Address;
+use wavesplatform\Account\PublicKey;
 use wavesplatform\Model\ChainId;
 use wavesplatform\Model\Id;
 use wavesplatform\Model\WavesConfig;
@@ -13,8 +13,7 @@ class TransactionOrOrder extends JsonTemplate
 {
     function id(): Id { return $this->get( 'id' )->asId(); }
     function version(): int { return $this->get( 'version' )->asInt(); }
-    function sender(): Address { return $this->get( 'sender' )->asAddress(); } // TODO: PublicKey
-    function senderPublicKey(): string { return $this->get( 'senderPublicKey' )->asString(); } // TODO: PublicKey
+    function sender(): PublicKey { return $this->get( 'senderPublicKey' )->asPublicKey(); }
     function chainId(): ChainId { return $this->getOr( 'chainId', WavesConfig::chainId() )->asChainId(); }
     function fee(): int { return $this->get( 'fee' )->asInt(); } // TODO: Amount
     function feeAssetId(): string { return $this->get( 'feeAssetId' )->asString(); } // TODO: Amount

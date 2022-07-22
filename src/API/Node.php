@@ -8,7 +8,7 @@ use wavesplatform\Common\ExceptionCode;
 use deemru\WavesKit;
 
 use wavesplatform\Common\Json;
-use wavesplatform\Model\Address;
+use wavesplatform\Account\Address;
 use wavesplatform\Model\AssetId;
 use wavesplatform\Model\AssetDistribution;
 use wavesplatform\Model\AssetBalance;

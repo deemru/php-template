@@ -11,6 +11,14 @@ class Base58String
 
     private function __construct(){}
 
+    static function emptyString(): Base58String
+    {
+        $base58String = new Base58String;
+        $base58String->bytes = '';
+        $base58String->encoded = '';
+        return $base58String;
+    }
+
     static function fromString( string $encoded ): Base58String
     {
         $base58String = new Base58String;

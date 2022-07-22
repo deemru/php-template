@@ -2,7 +2,7 @@
 
 namespace wavesplatform\Transactions;
 
-use wavesplatform\Model\Address;
+use wavesplatform\Account\Address;
 use wavesplatform\Model\Alias;
 
 class Recipient
