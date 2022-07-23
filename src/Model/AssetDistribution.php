@@ -2,14 +2,14 @@
 
 namespace wavesplatform\Model;
 
-use wavesplatform\Common\Json;
+use wavesplatform\Common\JsonBase;
 
-class AssetDistribution extends Json
+class AssetDistribution extends JsonBase
 {
     /**
      * @return array<string, int>
      */
-    function items(): array { return $this->get( 'items' )->asMapStringInt(); }
-    function lastItem(): string { return $this->get( 'lastItem' )->asString(); }
-    function hasNext(): bool { return $this->getOr( 'hasNext', false )->asBoolean(); }
+    function items(): array { return $this->json->get( 'items' )->asMapStringInt(); }
+    function lastItem(): string { return $this->json->get( 'lastItem' )->asString(); }
+    function hasNext(): bool { return $this->json->getOr( 'hasNext', false )->asBoolean(); }
 }

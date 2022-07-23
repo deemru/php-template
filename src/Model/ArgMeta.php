@@ -2,10 +2,10 @@
 
 namespace wavesplatform\Model;
 
-use wavesplatform\Common\Json;
+use wavesplatform\Common\JsonBase;
 
-class ArgMeta extends Json
+class ArgMeta extends JsonBase
 {
-    function name(): string { return $this->get( 'name' )->asString(); }
-    function type(): string { return $this->get( 'type' )->asString(); }
+    function name(): string { return $this->json->get( 'name' )->asString(); }
+    function type(): string { return $this->json->get( 'type' )->asString(); }
 }

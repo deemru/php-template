@@ -38,7 +38,7 @@ class Node
     const LOCAL = "http://127.0.0.1:6869";
 
     private WavesKit $wk;
-    private string $chainId;
+    private ChainId $chainId;
     private string $uri;
 
     private string $wklevel = '';
@@ -64,23 +64,23 @@ class Node
             $this->chainId = $this->getAddresses()[0]->chainId();
         else
         if( strlen( $chainId ) === 1 )
-            $this->chainId = $chainId;
+            $this->chainId = ChainId::fromString( $chainId );
         else
         if( $uri === Node::MAINNET )
-            $this->chainId = ChainId::MAINNET;
+            $this->chainId = ChainId::MAINNET();
         else
         if( $uri === Node::TESTNET )
-            $this->chainId = ChainId::TESTNET;
+            $this->chainId = ChainId::TESTNET();
         else
         if( $uri === Node::STAGENET )
-            $this->chainId = ChainId::STAGENET;
+            $this->chainId = ChainId::STAGENET();
         else
             $this->chainId = $this->getAddresses()[0]->chainId();
 
         $this->wk->chainId = $this->chainId; // @phpstan-ignore-line // accept workaround
     }
 
-    function chainId(): string
+    function chainId(): ChainId
     {
         return $this->chainId;
     }

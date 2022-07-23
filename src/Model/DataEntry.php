@@ -4,23 +4,23 @@ namespace wavesplatform\Model;
 
 use Exception;
 use wavesplatform\Common\ExceptionCode;
-use wavesplatform\Common\Json;
+use wavesplatform\Common\JsonBase;
 
-class DataEntry extends Json
+class DataEntry extends JsonBase
 {
-    function key(): string { return $this->get( 'key' )->asString(); }
+    function key(): string { return $this->json->get( 'key' )->asString(); }
 
     function type(): int
     {
-        if( !$this->exists( 'type' ) )
+        if( !$this->json->exists( 'type' ) )
             return EntryType::DELETE;
-        switch( $this->get( 'type' )->asString() )
+        switch( $this->json->get( 'type' )->asString() )
         {
             case 'binary': return EntryType::BINARY;
             case 'boolean': return EntryType::BOOLEAN;
             case 'integer': return EntryType::INTEGER;
             case 'string': return EntryType::STRING;
-            default: throw new Exception( __FUNCTION__ . ' failed to detect type `' . serialize( $this->get( 'type' ) ) . '`', ExceptionCode::UNKNOWN_TYPE );
+            default: throw new Exception( __FUNCTION__ . ' failed to detect type `' . serialize( $this->json->get( 'type' ) ) . '`', ExceptionCode::UNKNOWN_TYPE );
         }
     }
 
@@ -33,13 +33,13 @@ class DataEntry extends Json
     {
         switch( $this->type() )
         {
-            case EntryType::BINARY: return $this->get( 'value' )->asBase64Decoded();
-            case EntryType::BOOLEAN: return $this->get( 'value' )->asBoolean();
-            case EntryType::INTEGER: return $this->get( 'value' )->asInt();
-            case EntryType::STRING: return $this->get( 'value' )->asString();
+            case EntryType::BINARY: return $this->json->get( 'value' )->asBase64Decoded();
+            case EntryType::BOOLEAN: return $this->json->get( 'value' )->asBoolean();
+            case EntryType::INTEGER: return $this->json->get( 'value' )->asInt();
+            case EntryType::STRING: return $this->json->get( 'value' )->asString();
             case EntryType::DELETE: return null;
         }
 
-        throw new Exception( __FUNCTION__ . ' failed to detect type `' . serialize( $this->get( 'type' ) ) . '`', ExceptionCode::UNKNOWN_TYPE ); // @codeCoverageIgnore
+        throw new Exception( __FUNCTION__ . ' failed to detect type `' . serialize( $this->json->get( 'type' ) ) . '`', ExceptionCode::UNKNOWN_TYPE ); // @codeCoverageIgnore
     }
 }

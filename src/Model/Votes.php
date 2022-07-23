@@ -2,10 +2,10 @@
 
 namespace wavesplatform\Model;
 
-use wavesplatform\Common\Json;
+use wavesplatform\Common\JsonBase;
 
-class Votes extends Json
+class Votes extends JsonBase
 {
-    function increase(): int { return $this->get( 'increase' )->asInt(); }
-    function decrease(): int { return $this->get( 'decrease' )->asInt(); }
+    function increase(): int { return $this->json->get( 'increase' )->asInt(); }
+    function decrease(): int { return $this->json->get( 'decrease' )->asInt(); }
 }   

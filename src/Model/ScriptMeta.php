@@ -2,12 +2,12 @@
 
 namespace wavesplatform\Model;
 
-use wavesplatform\Common\Json;
+use wavesplatform\Common\JsonBase;
 use wavesplatform\Common\Value;
 
-class ScriptMeta extends Json
+class ScriptMeta extends JsonBase
 {
-    function metaVersion(): int { return $this->get( 'version' )->asInt(); }
+    function metaVersion(): int { return $this->json->get( 'version' )->asInt(); }
     /**
      * Gets a map of callable functions with their arguments as ArgMeta
      *
@@ -16,7 +16,7 @@ class ScriptMeta extends Json
     function callableFunctions(): array
     {
         $map = [];
-        $arrayFuncs = $this->get( 'callableFuncTypes' )->asArray();
+        $arrayFuncs = $this->json->get( 'callableFuncTypes' )->asArray();
         foreach( $arrayFuncs as $key => $value )
         {
             $function = Value::asValue( $key )->asString();

@@ -4,5 +4,5 @@ namespace wavesplatform\Model;
 
 class TransactionInfo extends TransactionWithStatus
 {
-    function height(): int { return $this->get( 'height' )->asInt(); }
+    function height(): int { return $this->json->get( 'height' )->asInt(); }
 }

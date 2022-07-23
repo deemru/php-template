@@ -3,19 +3,19 @@
 namespace wavesplatform\Model;
 
 use wavesplatform\Account\Address;
-use wavesplatform\Common\Json;
+use wavesplatform\Common\JsonBase;
 
-class LeaseInfo extends Json
+class LeaseInfo extends JsonBase
 {
-    function id(): Id { return $this->get( 'id' )->asId(); }
-    function originTransactionId(): Id { return $this->get( 'originTransactionId' )->asId(); }
-    function sender(): Address { return $this->get( 'sender' )->asAddress(); }
-    function recipient(): string { return $this->get( 'recipient' )->asString(); } // TODO: Recipient
-    function amount(): int { return $this->get( 'amount' )->asInt(); }
-    function height(): int { return $this->get( 'height' )->asInt(); }
+    function id(): Id { return $this->json->get( 'id' )->asId(); }
+    function originTransactionId(): Id { return $this->json->get( 'originTransactionId' )->asId(); }
+    function sender(): Address { return $this->json->get( 'sender' )->asAddress(); }
+    function recipient(): string { return $this->json->get( 'recipient' )->asString(); } // TODO: Recipient
+    function amount(): int { return $this->json->get( 'amount' )->asInt(); }
+    function height(): int { return $this->json->get( 'height' )->asInt(); }
     function status(): int
     {
-        $status = $this->getOr( 'status', LeaseStatus::UNKNOWN_S )->asString();
+        $status = $this->json->getOr( 'status', LeaseStatus::UNKNOWN_S )->asString();
         switch( $status )
         {
             case LeaseStatus::ACTIVE_S: return LeaseStatus::ACTIVE;
@@ -23,6 +23,6 @@ class LeaseInfo extends Json
             default: return LeaseStatus::UNKNOWN;
         }
     }
-    function cancelHeight(): int { return $this->get( 'cancelHeight' )->asInt(); }
-    function cancelTransactionId(): Id { return $this->get( 'cancelTransactionId' )->asId(); }
+    function cancelHeight(): int { return $this->json->get( 'cancelHeight' )->asInt(); }
+    function cancelTransactionId(): Id { return $this->json->get( 'cancelTransactionId' )->asId(); }
 }

@@ -317,9 +317,9 @@ class NodeTest extends \PHPUnit\Framework\TestCase
         for( $i = 0; $i < $n; ++$i )
             $this->assertSame( $dataEntries1[$i]->value(), $dataEntries2[$i]->value() );
 
-        $this->assertSame( ChainId::MAINNET, $nodeW->chainId() );
-        $this->assertSame( ChainId::TESTNET, $nodeT->chainId() );
-        $this->assertSame( ChainId::STAGENET, $nodeS->chainId() );
+        $this->assertSame( ChainId::MAINNET, $nodeW->chainId()->asString() );
+        $this->assertSame( ChainId::TESTNET, $nodeT->chainId()->asString() );
+        $this->assertSame( ChainId::STAGENET, $nodeS->chainId()->asString() );
 
         $this->assertSame( $nodeW->uri(), Node::MAINNET );
         $this->assertSame( $nodeT->uri(), Node::TESTNET );
@@ -405,8 +405,8 @@ class NodeTest extends \PHPUnit\Framework\TestCase
         $node1 = new Node( Node::MAINNET, 'W' );
         $node2 = new Node( Node::MAINNET, '?' );
         $node3 = new Node( str_replace( 'https', 'http', Node::MAINNET ) );
-        $this->assertSame( $node1->chainId(), $node2->chainId() );
-        $this->assertSame( $node2->chainId(), $node3->chainId() );
+        $this->assertSame( $node1->chainId()->asString(), $node2->chainId()->asString() );
+        $this->assertSame( $node2->chainId()->asString(), $node3->chainId()->asString() );
     }
 
     function testExceptions(): void

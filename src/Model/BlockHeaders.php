@@ -4,27 +4,28 @@ namespace wavesplatform\Model;
 
 use wavesplatform\Account\Address;
 use wavesplatform\Common\Json;
+use wavesplatform\Common\JsonBase;
 
-class BlockHeaders extends Json
+class BlockHeaders extends JsonBase
 {
     /**
      * @return array<int>
      */
-    function features(): array { return $this->get( 'features' )->asArrayInt(); }
-    function version(): int { return $this->get( 'version' )->asInt(); }
-    function timestamp(): int { return $this->get( 'timestamp' )->asInt(); }
-    function reference(): string { return $this->get( 'reference' )->asString(); }
-    function baseTarget(): int { return $this->get( 'nxt-consensus' )->asJson()->get( 'base-target' )->asInt(); }
-    function generationSignature(): string { return $this->get( 'nxt-consensus' )->asJson()->get( 'generation-signature' )->asString(); }
-    function transactionsRoot(): string { return $this->get( 'transactionsRoot' )->asString(); }
-    function id(): Id { return $this->get( 'id' )->asId(); }
-    function desiredReward(): int { return $this->get( 'desiredReward' )->asInt(); }
-    function generator(): Address { return $this->get( 'generator' )->asAddress(); }
-    function signature(): string { return $this->get( 'signature' )->asString(); }
-    function size(): int { return $this->get( 'blocksize' )->asInt(); }
-    function transactionsCount(): int { return $this->get( 'transactionCount' )->asInt(); }
-    function height(): int { return $this->get( 'height' )->asInt(); }
-    function totalFee(): int { return $this->get( 'totalFee' )->asInt(); }
-    function reward(): int { return $this->get( 'reward' )->asInt(); }
-    function vrf(): string { return $this->get( 'VRF' )->asString(); }
+    function features(): array { return $this->json->get( 'features' )->asArrayInt(); }
+    function version(): int { return $this->json->get( 'version' )->asInt(); }
+    function timestamp(): int { return $this->json->get( 'timestamp' )->asInt(); }
+    function reference(): string { return $this->json->get( 'reference' )->asString(); }
+    function baseTarget(): int { return $this->json->get( 'nxt-consensus' )->asJson()->get( 'base-target' )->asInt(); }
+    function generationSignature(): string { return $this->json->get( 'nxt-consensus' )->asJson()->get( 'generation-signature' )->asString(); }
+    function transactionsRoot(): string { return $this->json->get( 'transactionsRoot' )->asString(); }
+    function id(): Id { return $this->json->get( 'id' )->asId(); }
+    function desiredReward(): int { return $this->json->get( 'desiredReward' )->asInt(); }
+    function generator(): Address { return $this->json->get( 'generator' )->asAddress(); }
+    function signature(): string { return $this->json->get( 'signature' )->asString(); }
+    function size(): int { return $this->json->get( 'blocksize' )->asInt(); }
+    function transactionsCount(): int { return $this->json->get( 'transactionCount' )->asInt(); }
+    function height(): int { return $this->json->get( 'height' )->asInt(); }
+    function totalFee(): int { return $this->json->get( 'totalFee' )->asInt(); }
+    function reward(): int { return $this->json->get( 'reward' )->asInt(); }
+    function vrf(): string { return $this->json->get( 'VRF' )->asString(); }
 }

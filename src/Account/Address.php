@@ -42,9 +42,9 @@ class Address
         return $address;
     }
 
-    function chainId(): string
+    function chainId(): ChainId
     {
-        return $this->bytes()[1];
+        return ChainId::fromString( $this->bytes()[1] );
     }
 
     function bytes(): string

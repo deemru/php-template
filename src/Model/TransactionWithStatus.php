@@ -8,6 +8,6 @@ class TransactionWithStatus extends Transaction
 {
     function applicationStatus(): int
     {
-        return $this->getOr( 'applicationStatus', ApplicationStatus::SUCCEEDED_S )->asApplicationStatus();
+        return $this->json->getOr( 'applicationStatus', ApplicationStatus::SUCCEEDED_S )->asApplicationStatus();
     }
 }

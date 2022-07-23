@@ -10,6 +10,7 @@ class PrivateKey
     const LENGTH = 32;
 
     private Base58String $key;
+    private PublicKey $publicKey;
 
     private function __construct(){}
 
@@ -32,6 +33,13 @@ class PrivateKey
         $privateKey = new PrivateKey;
         $privateKey->key = Base58String::fromString( $key );
         return $privateKey;
+    }
+
+    function publicKey(): PublicKey
+    {
+        if( !isset( $this->publicKey ) )
+            $this->publicKey = PublicKey::fromPrivateKey( $this );
+        return $this->publicKey;
     }
 
     function bytes(): string

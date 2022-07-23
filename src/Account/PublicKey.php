@@ -4,6 +4,7 @@ namespace wavesplatform\Account;
 
 use deemru\WavesKit;
 use wavesplatform\Common\Base58String;
+use wavesplatform\Model\ChainId;
 
 class PublicKey
 {
@@ -38,10 +39,10 @@ class PublicKey
         return $publicKey;
     }
 
-    function address(): Address
+    function address( ChainId $chainId = null ): Address
     {
         if( !isset( $this->address ) )
-            $this->address = Address::fromPublicKey( $this );
+            $this->address = Address::fromPublicKey( $this, $chainId );
         return $this->address;
     }
 

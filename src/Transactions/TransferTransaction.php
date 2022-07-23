@@ -18,8 +18,22 @@ class TransferTransaction extends Transaction
     private Amount $amount;
     private Base58String $attachment;
 
+
+/*
+    static function builder( PublicKey $sender, Recipient $recipient, Amount $amount, Base58String $attachment = null ): TransactionOrOrderBuilder
+    {
+        $builder = new TransactionOrOrderBuilder( [
+            'sender' => $sender->address()->toString(),
+            'senderPublicKey' => $sender->toString(),
+            'recipient' => $recipient->toString(),
+            'amount' => $amount->value(),
+            'assetId' => $amount->toString(),
+        ] );
+    }
+*/
     function __construct( PublicKey $sender, Recipient $recipient, Amount $amount, Base58String $attachment = null )
     {
+        $this->
         parent::__construct();
         $this->sender = $sender;
         $this->recipient = $recipient;
@@ -36,11 +50,17 @@ class TransferTransaction extends Transaction
             'recipient' => $recipient->toString(),
             'amount' => $amount->value(),
             'assetId' => $amount->toString(),
-            'amount' => $fee->value(),
-            'assetId' => $fee->toString(),
+            'fee' => $fee->value(),
+            'feeAssetId' => $fee->toString(),
         ];
         $tx['timestamp'] = isset( $options['timestamp'] ) ? $options['timestamp'] : $this->timestamp();
         if( isset( $options['attachment'] ) ) $tx['attachment'] = $options['attachment'];
         return $tx;
+
+        function setFee( Amount $fee ): TransferTransaction
+        {
+            parent::setFee();
+            return $this;
+        }
     }
 }

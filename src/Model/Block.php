@@ -7,6 +7,6 @@ class Block extends BlockHeaders
     /**
      * @return array<int, TransactionWithStatus>
      */
-    function transactions(): array { return $this->get( 'transactions' )->asJson()->asArrayTransactionWithStatus(); }
-    function fee(): int { return $this->get( 'fee' )->asInt(); }
+    function transactions(): array { return $this->json->get( 'transactions' )->asJson()->asArrayTransactionWithStatus(); }
+    function fee(): int { return $this->json->get( 'fee' )->asInt(); }
 }

@@ -2,10 +2,10 @@
 
 namespace wavesplatform\Model;
 
-use wavesplatform\Common\Json;
+use wavesplatform\Common\JsonBase;
 
-class Balance extends Json
+class Balance extends JsonBase
 {
-    function getAddress(): string { return $this->get( 'id' )->asString(); }
-    function getBalance(): int { return $this->get( 'balance' )->asInt(); }
+    function getAddress(): string { return $this->json->get( 'id' )->asString(); }
+    function getBalance(): int { return $this->json->get( 'balance' )->asInt(); }
 }

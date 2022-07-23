@@ -2,12 +2,12 @@
 
 namespace wavesplatform\Model;
 
-use wavesplatform\Common\Json;
+use wavesplatform\Common\JsonBase;
 
-class ScriptDetails extends Json
+class ScriptDetails extends JsonBase
 {
     const EMPTY = [ 'script' => '', 'scriptComplexity' => 0 ];
 
-    function script(): string { return $this->get( 'script' )->asString(); } // TODO: Base64String
-    function complexity(): int { return $this->get( 'scriptComplexity' )->asInt(); }
+    function script(): string { return $this->json->get( 'script' )->asString(); } // TODO: Base64String
+    function complexity(): int { return $this->json->get( 'scriptComplexity' )->asInt(); }
 }

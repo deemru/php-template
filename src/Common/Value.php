@@ -163,7 +163,7 @@ class Value
 
     function asArgMeta(): ArgMeta
     {
-        return new ArgMeta( $this->asArray() );
+        return new ArgMeta( $this->asJson() );
     }
 
     /**

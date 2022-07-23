@@ -34,6 +34,11 @@ class ChainId
         return $chainId;
     }
 
+    static function MAINNET(){ return ChainId::fromString( ChainId::MAINNET ); }
+    static function TESTNET(){ return ChainId::fromString( ChainId::TESTNET ); }
+    static function STAGENET(){ return ChainId::fromString( ChainId::STAGENET ); }
+    static function PRIVATE(){ return ChainId::fromString( ChainId::PRIVATE ); }
+
     function asInt(): int
     {
         return ord( $this->chainId );

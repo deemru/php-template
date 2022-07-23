@@ -2,18 +2,18 @@
 
 namespace wavesplatform\Model;
 
-use wavesplatform\Common\Json;
+use wavesplatform\Common\JsonBase;
 
-class BlockchainRewards extends Json
+class BlockchainRewards extends JsonBase
 {
-    function height(): int { return $this->get( 'height' )->asInt(); }
-    function currentReward(): int { return $this->get( 'currentReward' )->asInt(); }
-    function totalWavesAmount(): int { return $this->get( 'totalWavesAmount' )->asInt(); }
-    function minIncrement(): int { return $this->get( 'minIncrement' )->asInt(); }
-    function term(): int { return $this->get( 'term' )->asInt(); }
-    function nextCheck(): int { return $this->get( 'nextCheck' )->asInt(); }
-    function votingIntervalStart(): int { return $this->get( 'votingIntervalStart' )->asInt(); }
-    function votingInterval(): int { return $this->get( 'votingInterval' )->asInt(); }
-    function votingThreshold(): int { return $this->get( 'votingThreshold' )->asInt(); }
-    function votes(): Votes { return $this->get( 'votes' )->asJson()->asVotes(); }
+    function height(): int { return $this->json->get( 'height' )->asInt(); }
+    function currentReward(): int { return $this->json->get( 'currentReward' )->asInt(); }
+    function totalWavesAmount(): int { return $this->json->get( 'totalWavesAmount' )->asInt(); }
+    function minIncrement(): int { return $this->json->get( 'minIncrement' )->asInt(); }
+    function term(): int { return $this->json->get( 'term' )->asInt(); }
+    function nextCheck(): int { return $this->json->get( 'nextCheck' )->asInt(); }
+    function votingIntervalStart(): int { return $this->json->get( 'votingIntervalStart' )->asInt(); }
+    function votingInterval(): int { return $this->json->get( 'votingInterval' )->asInt(); }
+    function votingThreshold(): int { return $this->json->get( 'votingThreshold' )->asInt(); }
+    function votes(): Votes { return $this->json->get( 'votes' )->asJson()->asVotes(); }
 }   

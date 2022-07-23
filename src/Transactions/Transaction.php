@@ -4,5 +4,5 @@ namespace wavesplatform\Transactions;
 
 class Transaction extends TransactionOrOrder
 {
-    function type(): int { return $this->get( 'type' )->asInt(); }
+    function type(): int { return $this->json->get( 'type' )->asInt(); }
 }

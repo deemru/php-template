@@ -58,7 +58,7 @@ class Json
     {
         $string = json_encode( $this->json );
         if( $string === false )
-            throw new Exception( __FUNCTION__ . ' failed to encode internal array `' . serialize( $this->json ) . '`', ExceptionCode::JSON_ENCODE );
+            throw new Exception( __FUNCTION__ . ' failed to encode internal array `' . serialize( $this->json) . '`', ExceptionCode::JSON_ENCODE );
         return $string;
     }
 
@@ -118,7 +118,7 @@ class Json
     */
     function asBlockHeaders(): BlockHeaders
     {
-        return new BlockHeaders( $this->json );
+        return new BlockHeaders( $this );
     }
 
     /**
@@ -128,7 +128,7 @@ class Json
     */
     function asBalance(): Balance
     {
-        return new Balance( $this->json );
+        return new Balance( $this );
     }
 
     /**
@@ -138,17 +138,17 @@ class Json
     */
     function asAssetBalance(): AssetBalance
     {
-        return new AssetBalance( $this->json );
+        return new AssetBalance( $this );
     }
 
     function asAssetDetails(): AssetDetails
     {
-        return new AssetDetails( $this->json );
+        return new AssetDetails( $this );
     }
 
     function asAssetDistribution(): AssetDistribution
     {
-        return new AssetDistribution( $this->json );
+        return new AssetDistribution( $this );
     }
 
     /**
@@ -158,17 +158,17 @@ class Json
     */
     function asBalanceDetails(): BalanceDetails
     {
-        return new BalanceDetails( $this->json );
+        return new BalanceDetails( $this );
     }
 
     function asBlockchainRewards(): BlockchainRewards
     {
-        return new BlockchainRewards( $this->json );
+        return new BlockchainRewards( $this );
     }
 
     function asBlock(): Block
     {
-        return new Block( $this->json );
+        return new Block( $this );
     }
 
     /**
@@ -178,52 +178,52 @@ class Json
     */
     function asDataEntry(): DataEntry
     {
-        return new DataEntry( $this->json );
+        return new DataEntry( $this );
     }
 
     function asLeaseInfo(): LeaseInfo
     {
-        return new LeaseInfo( $this->json );
+        return new LeaseInfo( $this );
     }
 
     function asScriptMeta(): ScriptMeta
     {
-        return new ScriptMeta( $this->json );
+        return new ScriptMeta( $this );
     }
 
     function asScriptInfo(): ScriptInfo
     {
-        return new ScriptInfo( $this->json );
+        return new ScriptInfo( $this );
     }
 
     function asScriptDetails(): ScriptDetails
     {
-        return new ScriptDetails( $this->json );
+        return new ScriptDetails( $this );
     }
 
     function asTransactionInfo(): TransactionInfo
     {
-        return new TransactionInfo( $this->json );
+        return new TransactionInfo( $this );
     }
 
     function asTransactionWithStatus(): TransactionWithStatus
     {
-        return new TransactionWithStatus( $this->json );
+        return new TransactionWithStatus( $this );
     }
 
     function asTransactionStatus(): TransactionStatus
     {
-        return new TransactionStatus( $this->json );
+        return new TransactionStatus( $this );
     }
 
     function asTransaction(): Transaction
     {
-        return new Transaction( $this->json );
+        return new Transaction( $this );
     }
 
     function asVotes(): Votes
     {
-        return new Votes( $this->json );
+        return new Votes( $this );
     }
 
     /**
