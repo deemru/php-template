@@ -34,10 +34,10 @@ class ChainId
         return $chainId;
     }
 
-    static function MAINNET(){ return ChainId::fromString( ChainId::MAINNET ); }
-    static function TESTNET(){ return ChainId::fromString( ChainId::TESTNET ); }
-    static function STAGENET(){ return ChainId::fromString( ChainId::STAGENET ); }
-    static function PRIVATE(){ return ChainId::fromString( ChainId::PRIVATE ); }
+    static function MAINNET(): ChainId { return ChainId::fromString( ChainId::MAINNET ); }
+    static function TESTNET(): ChainId { return ChainId::fromString( ChainId::TESTNET ); }
+    static function STAGENET(): ChainId { return ChainId::fromString( ChainId::STAGENET ); }
+    static function PRIVATE(): ChainId { return ChainId::fromString( ChainId::PRIVATE ); }
 
     function asInt(): int
     {

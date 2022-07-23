@@ -11,8 +11,13 @@ class JsonBase
         $this->json = $json;
     }
 
-    function toString()
+    function toString(): string
     {
         return $this->json->toString();
+    }
+
+    function json(): Json
+    {
+        return $this->json;
     }
 }

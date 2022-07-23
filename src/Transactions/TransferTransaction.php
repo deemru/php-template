@@ -30,7 +30,7 @@ class TransferTransaction extends Transaction
             'assetId' => $amount->toString(),
         ] );
     }
-*/
+
     function __construct( PublicKey $sender, Recipient $recipient, Amount $amount, Base58String $attachment = null )
     {
         $this->
@@ -63,4 +63,5 @@ class TransferTransaction extends Transaction
             return $this;
         }
     }
+    */
 }

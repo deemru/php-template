@@ -504,13 +504,13 @@ class Node
 
     function calculateTransactionFee( Transaction $transaction ): Amount
     {
-        $json = $this->post( '/transactions/calculateFee', $transaction );
+        $json = $this->post( '/transactions/calculateFee', $transaction->json() );
         return Amount::of( $json->get( 'feeAmount' )->asInt(), $json->get( 'feeAssetId' )->asAssetId() );
     }
 
     function broadcast( Transaction $transaction ): Transaction
     {
-        return $this->post( '/transactions/broadcast', $transaction )->asTransaction();
+        return $this->post( '/transactions/broadcast', $transaction->json() )->asTransaction();
     }
 /*
     public EthRpcResponse broadcastEthTransaction(EthereumTransaction ethTransaction) throws IOException, NodeException {
