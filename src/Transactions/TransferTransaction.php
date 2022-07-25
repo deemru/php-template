@@ -9,6 +9,7 @@ use wavesplatform\Common\Base58String;
 use wavesplatform\Account\PublicKey;
 use wavesplatform\Common\ExceptionCode;
 use wavesplatform\Common\Json;
+use wavesplatform\Model\ChainId;
 use wavesplatform\Model\WavesConfig;
 
 use wavesplatform\Transactions\TransferTransaction as CurrentTransaction;
@@ -23,11 +24,6 @@ class TransferTransaction extends Transaction
     private Amount $amount;
     private Base58String $attachment;
 
-    function __construct( Json $json = null )
-    {
-        parent::__construct( $json );
-    }
-
     static function build( PublicKey $sender, Recipient $recipient, Amount $amount, Base58String $attachment = null ): CurrentTransaction
     {
         $tx = new CurrentTransaction;
@@ -41,6 +37,45 @@ class TransferTransaction extends Transaction
         }       
 
         return $tx;
+    }
+
+    function getUnsigned(): TransferTransaction
+    {
+        // VERSION
+        if( $this->version() !== CurrentTransaction::VERSION )
+            throw new Exception( __FUNCTION__ . ' unexpected version = ' . $this->version(), ExceptionCode::UNEXPECTED );
+
+        // BASE
+        $pb_Transaction = $this->getProtobufTransactionBase();
+
+        // TRANSFER_TRANSACTION
+        {
+            $pb_TransactionData = new \Waves\TransferTransactionData();
+            // RECIPIENT
+            {
+                $pb_Recipient = new \Waves\Recipient;
+                if( $this->recipient()->isAlias() )
+                    $pb_Recipient->setAlias( $this->recipient()->alias()->name() );
+                else
+                    $pb_Recipient->setPublicKeyHash( $this->recipient()->address()->publicKeyHash() );
+                $pb_TransactionData->setRecipient( $pb_Recipient );
+            }
+            // AMOUNT
+            {
+                $pb_Amount = new \Waves\Amount;
+                $pb_Amount->setAmount( $this->amount()->value() );
+                if( !$this->amount()->assetId()->isWaves() )
+                    $pb_Amount->setAssetId( $this->amount()->assetId()->bytes() );
+                $pb_TransactionData->setAmount( $pb_Amount );
+            }
+            // ATTACHMENT
+            {
+                $pb_TransactionData->setAttachment( $this->attachment()->bytes() );
+            }
+        }        
+
+        $this->setBodyBytes( $pb_Transaction->setTransfer( $pb_TransactionData )->serializeToString() );
+        return $this;
     }
 
     function recipient(): Recipient
@@ -85,46 +120,19 @@ class TransferTransaction extends Transaction
         $this->json->put( 'attachment', $attachment->toString() );
         return $this;
     }
+    
+    // COMMON
 
-    function getUnsigned(): TransferTransaction
+    function __construct( Json $json = null )
     {
-        $pb_Transaction = $this->getProtobufTransactionBase();
-
-        // TRANSFER_TRANSACTION
-        {
-            $pb_TransactionData = new \Waves\TransferTransactionData();
-            // RECIPIENT
-            {
-                $pb_Recipient = new \Waves\Recipient;
-                if( $this->recipient()->isAlias() )
-                    $pb_Recipient->setAlias( $this->recipient()->alias()->name() );
-                else
-                    $pb_Recipient->setPublicKeyHash( $this->recipient()->address()->publicKeyHash() );
-                $pb_TransactionData->setRecipient( $pb_Recipient );
-            }
-            // AMOUNT
-            {
-                $pb_Amount = new \Waves\Amount;
-                $pb_Amount->setAmount( $this->amount()->value() );
-                if( !$this->amount()->assetId()->isWaves() )
-                    $pb_Amount->setAssetId( $this->amount()->assetId()->bytes() );
-                $pb_TransactionData->setAmount( $pb_Amount );
-            }
-            // ATTACHMENT
-            {
-                $pb_TransactionData->setAttachment( $this->attachment()->bytes() );
-            }
-        }        
-
-        $this->setBodyBytes( $pb_Transaction->setTransfer( $pb_TransactionData )->serializeToString() );
-        return $this;
+        parent::__construct( $json );
     }
 
     function addProof( PrivateKey $privateKey, int $index = null ): CurrentTransaction
     {
         $proof = (new WavesKit)->sign( $this->bodyBytes(), $privateKey->bytes() );
         if( $proof === false )
-            throw new Exception( __FUNCTION__ . ' unexpected exception', ExceptionCode::UNEXPECTED );
+            throw new Exception( __FUNCTION__ . ' unexpected sign() error', ExceptionCode::UNEXPECTED );
         $proof = Base58String::fromBytes( $proof )->encoded();
 
         $proofs = $this->proofs();
@@ -142,6 +150,61 @@ class TransferTransaction extends Transaction
     function setType( int $type )
     {
         parent::setType( $type );
+        return $this;
+    }
+
+    /**
+     * @return CurrentTransaction
+     */
+    function setSender( PublicKey $sender )
+    {
+        parent::setSender( $sender );
+        return $this;
+    }
+
+    /**
+     * @return CurrentTransaction
+     */
+    function setVersion( int $version )
+    {
+        parent::setVersion( $version );
+        return $this;
+    }
+
+    /**
+     * @return CurrentTransaction
+     */
+    function setFee( Amount $fee )
+    {
+        parent::setFee( $fee );
+        return $this;
+    }
+
+    /**
+     * @return CurrentTransaction
+     */
+    function setChainId( ChainId $chainId = null )
+    {
+        parent::setChainId( $chainId );
+        return $this;
+    }
+
+    /**
+     * @return CurrentTransaction
+     */
+    function setTimestamp( int $timestamp = null )
+    {
+        parent::setTimestamp( $timestamp );
+        return $this;
+    }
+
+    /**
+     * @param array<int, string> $proofs
+     * @return CurrentTransaction
+     */
+    function setProofs( array $proofs = null )
+    {
+        parent::setProofs( $proofs );
         return $this;
     }
 }

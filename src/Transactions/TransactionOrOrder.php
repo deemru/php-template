@@ -51,10 +51,14 @@ class TransactionOrOrder extends JsonBase
         return $this->version;
     }
 
-    function setVersion( int $version ): void
+    /**
+     * @return mixed
+     */
+    function setVersion( int $version )
     {
         $this->version = $version;
         $this->json->put( 'version', $version );
+        return $this;
     }
 
     function chainId(): ChainId
@@ -71,12 +75,16 @@ class TransactionOrOrder extends JsonBase
         return $this->chainId;
     }
 
-    function setChainId( ChainId $chainId = null ): void
+    /**
+     * @return mixed
+     */
+    function setChainId( ChainId $chainId = null )
     {
         if( !isset( $chainId ) )
             $chainId = WavesConfig::chainId();
         $this->chainId = $chainId;
         $this->json->put( 'chainId', $chainId->asInt() );
+        return $this;
     }
     
     function sender(): PublicKey
@@ -90,11 +98,15 @@ class TransactionOrOrder extends JsonBase
         return $this->sender;
     }
 
-    function setSender( PublicKey $sender ): void
+    /**
+     * @return mixed
+     */
+    function setSender( PublicKey $sender )
     {
         $this->sender = $sender;
         $this->json->put( 'senderPublicKey', $sender->toString() );
         $this->json->put( 'sender', $sender->address()->toString() );
+        return $this;
     }
 
     function timestamp(): int
@@ -104,12 +116,16 @@ class TransactionOrOrder extends JsonBase
         return $this->timestamp;
     }
 
-    function setTimestamp( int $timestamp = null ): void
+    /**
+     * @return mixed
+     */
+    function setTimestamp( int $timestamp = null )
     {
         if( !isset( $timestamp ) )
             $timestamp = intval( microtime( true ) * 1000 );
         $this->timestamp = $timestamp;
         $this->json->put( 'timestamp', $timestamp );
+        return $this;
     }
 
     function fee(): Amount
@@ -119,11 +135,15 @@ class TransactionOrOrder extends JsonBase
         return $this->fee;
     }
 
-    function setFee( Amount $fee ): void
+    /**
+     * @return mixed
+     */
+    function setFee( Amount $fee )
     {
         $this->fee = $fee;
         $this->json->put( 'fee', $fee->value() );
         $this->json->put( 'feeAssetId', $fee->assetId()->toJsonValue() );
+        return $this;
     }
 
     /**
@@ -138,13 +158,15 @@ class TransactionOrOrder extends JsonBase
 
     /**
      * @param array<int, string> $proofs
+     * @return mixed
      */
-    function setProofs( array $proofs = null ): void
+    function setProofs( array $proofs = null )
     {
         if( !isset( $proofs ) )
             $proofs = [];
         $this->proofs = $proofs;
         $this->json->put( 'proofs', $proofs );
+        return $this;
     }
 
     function bodyBytes(): string
@@ -152,7 +174,7 @@ class TransactionOrOrder extends JsonBase
         return $this->bodyBytes;
     }
 
-    function setBodyBytes( string $bodyBytes ): void
+    protected function setBodyBytes( string $bodyBytes ): void
     {
         $this->bodyBytes = $bodyBytes;
     }
