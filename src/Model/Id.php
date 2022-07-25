@@ -10,14 +10,14 @@ class Id
 {
     const BYTE_LENGTH = 32;
 
-    private Base58String $base58String;
+    private Base58String $id;
 
     private function __construct(){}
 
     static function fromString( string $encoded ): Id
     {
         $id = new Id;
-        $id->base58String = Base58String::fromString( $encoded );
+        $id->id = Base58String::fromString( $encoded );
         return $id;
     }
 
@@ -26,13 +26,13 @@ class Id
         if( strlen( $bytes ) !== Id::BYTE_LENGTH )
             throw new Exception( __FUNCTION__ . ' bad id length: ' . strlen( $bytes ), ExceptionCode::BAD_ASSET );
         $id = new Id;
-        $id->base58String = Base58String::fromBytes( $bytes );
+        $id->id = Base58String::fromBytes( $bytes );
         return $id;
     }
 
     function bytes(): string
     {
-        $bytes = $this->base58String->bytes();
+        $bytes = $this->id->bytes();
         if( strlen( $bytes ) !== Id::BYTE_LENGTH )
             throw new Exception( __FUNCTION__ . ' bad id length: ' . strlen( $bytes ), ExceptionCode::BAD_ASSET );
         return $bytes;
@@ -40,7 +40,7 @@ class Id
 
     function encoded(): string
     {
-        return $this->base58String->encoded();
+        return $this->id->encoded();
     }
 
     function toString(): string

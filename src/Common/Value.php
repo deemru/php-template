@@ -13,6 +13,7 @@ use wavesplatform\Model\ChainId;
 use wavesplatform\Model\ApplicationStatus;
 use wavesplatform\Model\Status;
 use wavesplatform\Transactions\Proof;
+use wavesplatform\Transactions\Recipient;
 
 class Value
 {
@@ -188,6 +189,14 @@ class Value
     function asAddress(): Address
     {
         return Address::fromString( $this->asString() );
+    }
+
+    /**
+    * @return Recipient
+    */
+    function asRecipient(): Recipient
+    {
+        return Recipient::fromAddressOrAlias( $this->asString() );
     }
 
     function asPublicKey(): PublicKey

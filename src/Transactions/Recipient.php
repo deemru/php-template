@@ -26,6 +26,13 @@ class Recipient
         return $recipient;
     }
 
+    static function fromAddressOrAlias( string $addressOrAlias ): Recipient
+    {
+        if( strlen( $addressOrAlias ) === Address::STRING_LENGTH )
+            return Recipient::fromAddress( Address::fromString( $addressOrAlias ) );
+        return Recipient::fromAlias( Alias::fromFullAlias( $addressOrAlias ) );
+    }
+
     function isAlias(): bool
     {
         return isset( $this->alias );

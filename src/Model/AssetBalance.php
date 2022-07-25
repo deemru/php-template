@@ -4,6 +4,7 @@ namespace wavesplatform\Model;
 
 use wavesplatform\Common\Json;
 use wavesplatform\Common\JsonBase;
+use wavesplatform\Transactions\Transaction;
 
 class AssetBalance extends JsonBase
 {
@@ -13,5 +14,5 @@ class AssetBalance extends JsonBase
     function quantity(): int { return $this->json->get( 'quantity' )->asInt(); }
     function minSponsoredAssetFee(): int { return $this->json->getOr( 'minSponsoredAssetFee', 0 )->asInt(); }
     function sponsorBalance(): int { return $this->json->getOr( 'sponsorBalance', 0 )->asInt(); }
-    function issueTransaction(): Json { return $this->json->get( 'issueTransaction' )->asJson(); } // TODO: Transaction
+    function issueTransaction(): Transaction { return $this->json->get( 'issueTransaction' )->asJson()->asTransaction(); }
 }

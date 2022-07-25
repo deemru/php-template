@@ -4,13 +4,14 @@ namespace wavesplatform\Model;
 
 use wavesplatform\Account\Address;
 use wavesplatform\Common\JsonBase;
+use wavesplatform\Transactions\Recipient;
 
 class LeaseInfo extends JsonBase
 {
     function id(): Id { return $this->json->get( 'id' )->asId(); }
     function originTransactionId(): Id { return $this->json->get( 'originTransactionId' )->asId(); }
     function sender(): Address { return $this->json->get( 'sender' )->asAddress(); }
-    function recipient(): string { return $this->json->get( 'recipient' )->asString(); } // TODO: Recipient
+    function recipient(): Recipient { return $this->json->get( 'recipient' )->asRecipient(); }
     function amount(): int { return $this->json->get( 'amount' )->asInt(); }
     function height(): int { return $this->json->get( 'height' )->asInt(); }
     function status(): int

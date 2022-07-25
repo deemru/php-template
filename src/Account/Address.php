@@ -12,15 +12,16 @@ use wavesplatform\Model\WavesConfig;
 class Address
 {
     const BYTE_LENGTH = 26;
+    const STRING_LENGTH = 35;
 
-    private Base58String $base58String;
+    private Base58String $address;
 
     private function __construct(){}
 
     static function fromString( string $encoded ): Address
     {
         $address = new Address;
-        $address->base58String = Base58String::fromString( $encoded );
+        $address->address = Base58String::fromString( $encoded );
         return $address;
     }
 
@@ -29,7 +30,7 @@ class Address
         if( strlen( $bytes ) !== Address::BYTE_LENGTH )
             throw new Exception( __FUNCTION__ . ' bad address length: ' . strlen( $bytes ), ExceptionCode::BAD_ADDRESS );
         $address = new Address;
-        $address->base58String = Base58String::fromBytes( $bytes );
+        $address->address = Base58String::fromBytes( $bytes );
         return $address;
     }
 
@@ -38,7 +39,7 @@ class Address
         $address = new Address;
         $wk = new WavesKit( isset( $chainId ) ? $chainId->asString() : WavesConfig::chainId() );
         $wk->setPublicKey( $publicKey->bytes(), true );
-        $address->base58String = Base58String::fromBytes( $wk->getAddress( true ) );
+        $address->address = Base58String::fromBytes( $wk->getAddress( true ) );
         return $address;
     }
 
@@ -49,7 +50,7 @@ class Address
 
     function bytes(): string
     {
-        $bytes = $this->base58String->bytes();
+        $bytes = $this->address->bytes();
         if( strlen( $bytes ) !== Address::BYTE_LENGTH )
             throw new Exception( __FUNCTION__ . ' bad address length: ' . strlen( $bytes ), ExceptionCode::BAD_ADDRESS );
         return $bytes;
@@ -57,7 +58,7 @@ class Address
 
     function encoded(): string
     {
-        return $this->base58String->encoded();
+        return $this->address->encoded();
     }
 
     function toString(): string

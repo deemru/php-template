@@ -25,4 +25,9 @@ class Proof
         $proof->proof = Base58String::fromString( $encoded );
         return $proof;
     }
+
+    function proof(): Base58String
+    {
+        return $this->proof;
+    }
 }

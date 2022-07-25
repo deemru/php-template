@@ -3,6 +3,7 @@
 namespace wavesplatform\Model;
 
 use wavesplatform\Account\Address;
+use wavesplatform\Account\PublicKey;
 use wavesplatform\Common\JsonBase;
 
 class AssetDetails extends JsonBase
@@ -11,7 +12,7 @@ class AssetDetails extends JsonBase
     function issueHeight(): int { return $this->json->get( 'issueHeight' )->asInt(); }
     function issueTimestamp(): int { return $this->json->get( 'issueTimestamp' )->asInt(); }
     function issuer(): Address { return $this->json->get( 'issuer' )->asAddress(); }
-    function issuerPublicKey(): string { return $this->json->get( 'issuerPublicKey' )->asString(); } // TODO: PublicKey
+    function issuerPublicKey(): PublicKey { return $this->json->get( 'issuerPublicKey' )->asPublicKey(); }
     function name(): string { return $this->json->get( 'name' )->asString(); }
     function description(): string { return $this->json->get( 'description' )->asString(); }
     function decimals(): int { return $this->json->get( 'decimals' )->asInt(); }
