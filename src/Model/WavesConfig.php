@@ -6,7 +6,7 @@ class WavesConfig
 {
     private static ChainId $chainId;
 
-    static function chainId( chainId $chainId = null ): ChainId
+    static function chainId( ChainId $chainId = null ): ChainId
     {
         if( isset( $chainId ) )
             WavesConfig::$chainId = $chainId;

@@ -125,7 +125,7 @@ class TransactionOrOrder extends JsonBase
     }
 
     /**
-     * @param array<int, Proof>
+     * @param array<int, Proof> $proofs
      */
     function setProofs( array $proofs ): void
     {
