@@ -12,7 +12,6 @@ use wavesplatform\Model\Id;
 use wavesplatform\Model\ChainId;
 use wavesplatform\Model\ApplicationStatus;
 use wavesplatform\Model\Status;
-use wavesplatform\Transactions\Proof;
 use wavesplatform\Transactions\Recipient;
 
 class Value
@@ -227,14 +226,6 @@ class Value
     function asId(): Id
     {
         return Id::fromString( $this->asString() );
-    }
-
-    /**
-    * @return Proof
-    */
-    function asProof(): Proof
-    {
-        return Proof::fromString( $this->asString() );
     }
 
     function asApplicationStatus(): int

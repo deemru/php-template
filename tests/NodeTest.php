@@ -52,7 +52,7 @@ class NodeTest extends \PHPUnit\Framework\TestCase
 
         $recipient = Recipient::fromAlias( new Alias( 'test' ) );
         $amount = new Amount( 1, AssetId::WAVES() );
-        $tx = TransferTransaction::build( $publicKey, $recipient, $amount );
+        $tx = TransferTransaction::build( $publicKey, $recipient, $amount )->setType( TransferTransaction::TYPE );
         $txFee = $nodeT->calculateTransactionFee( $tx );
         $tx->setFee( $txFee );
         $tx = $tx->getUnsigned()->addProof( $privateKey );
