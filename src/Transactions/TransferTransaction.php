@@ -3,9 +3,13 @@
 namespace wavesplatform\Transactions;
 
 use deemru\WavesKit;
+use wavesplatform\Account\PrivateKey;
 use wavesplatform\Common\Base58String;
 use wavesplatform\Account\PublicKey;
 use wavesplatform\Common\Json;
+use wavesplatform\Model\WavesConfig;
+
+use wavesplatform\Transactions\TransferTransaction as CurrentTransaction;
 
 class TransferTransaction extends Transaction
 {
@@ -13,55 +17,126 @@ class TransferTransaction extends Transaction
     const VERSION = 3;
     const MIN_FEE = 100_000;
 
-    private PublicKey $sender;
     private Recipient $recipient;
     private Amount $amount;
     private Base58String $attachment;
 
-
-/*
-    static function builder( PublicKey $sender, Recipient $recipient, Amount $amount, Base58String $attachment = null ): TransactionOrOrderBuilder
+    function __construct( Json $json = null )
     {
-        $builder = new TransactionOrOrderBuilder( [
-            'sender' => $sender->address()->toString(),
-            'senderPublicKey' => $sender->toString(),
-            'recipient' => $recipient->toString(),
-            'amount' => $amount->value(),
-            'assetId' => $amount->toString(),
-        ] );
+        parent::__construct( $json );
     }
 
-    function __construct( PublicKey $sender, Recipient $recipient, Amount $amount, Base58String $attachment = null )
+    static function build( PublicKey $sender, Recipient $recipient, Amount $amount, Base58String $attachment = null ): CurrentTransaction
     {
-        $this->
-        parent::__construct();
-        $this->sender = $sender;
-        $this->recipient = $recipient;
-        $this->amount = $amount;
-        $this->attachment = $attachment ?? Base58String::emptyString();
-        (new WavesKit())->txTransfer();
+        $tx = new CurrentTransaction;
+        $tx->setBase( $sender, CurrentTransaction::TYPE, CurrentTransaction::VERSION, CurrentTransaction::MIN_FEE );
 
-        $tx =
-        [
-            'type' => TransferTransaction::TYPE,
-            'version' => TransferTransaction::VERSION,
-            'sender' => $sender->address()->toString(),
-            'senderPublicKey' => $sender->toString(),
-            'recipient' => $recipient->toString(),
-            'amount' => $amount->value(),
-            'assetId' => $amount->toString(),
-            'fee' => $fee->value(),
-            'feeAssetId' => $fee->toString(),
-        ];
-        $tx['timestamp'] = isset( $options['timestamp'] ) ? $options['timestamp'] : $this->timestamp();
-        if( isset( $options['attachment'] ) ) $tx['attachment'] = $options['attachment'];
-        return $tx;
-
-        function setFee( Amount $fee ): TransferTransaction
+        // TRANSFER TRANSACTION
         {
-            parent::setFee();
-            return $this;
-        }
+            $tx->setRecipient( $recipient );
+            $tx->setAmount( $amount );
+            $tx->setAttachment( $attachment ?? Base58String::emptyString() );
+        }       
+
+        return $tx;
     }
-    */
+
+    function recipient(): Recipient
+    {
+        if( !isset( $this->recipient ) )
+            $this->recipient = $this->json->get( 'recipient' )->asRecipient();
+        return $this->recipient;
+    }
+
+    function setRecipient( Recipient $recipient ): CurrentTransaction
+    {
+        $this->recipient = $recipient;
+        $this->json->put( 'recipient', $recipient->toString() );
+        return $this;
+    }
+
+    function amount(): Amount
+    {
+        if( !isset( $this->amount ) )
+            $this->amount = Amount::of( $this->json->get( 'amount' )->asInt(), $this->json->get( 'assetId' )->asAssetId() );
+        return $this->amount;
+    }
+
+    function setAmount( Amount $amount ): CurrentTransaction
+    {
+        $this->amount = $amount;
+        $this->json->put( 'amount', $amount->value() );
+        $this->json->put( 'assetId', $amount->assetId()->toJsonValue() );
+        return $this;
+    }
+
+    function attachment(): Base58String
+    {
+        if( !isset( $this->attachment ) )
+            $this->attachment = $this->json->get( 'attachment' )->asBase58String();
+        return $this->attachment;
+    }
+
+    function setAttachment( Base58String $attachment ): CurrentTransaction
+    {
+        $this->attachment = $attachment;
+        $this->json->put( 'attachment', $attachment->toString() );
+        return $this;
+    }
+
+    function getUnsigned(): TransferTransaction
+    {
+        $pb_Transaction = $this->getProtobufTransactionBase();
+
+        // TRANSFER_TRANSACTION
+        {
+            $pb_TransactionData = new \Waves\TransferTransactionData();
+            // RECIPIENT
+            {
+                $pb_Recipient = new \Waves\Recipient;
+                if( $this->recipient()->isAlias() )
+                    $pb_Recipient->setAlias( $this->recipient()->alias()->name() );
+                else
+                    $pb_Recipient->setPublicKeyHash( $this->recipient()->address()->publicKeyHash() );
+                $pb_TransactionData->setRecipient( $pb_Recipient );
+            }
+            // AMOUNT
+            {
+                $pb_Amount = new \Waves\Amount;
+                $pb_Amount->setAmount( $this->amount()->value() );
+                if( !$this->amount()->assetId()->isWaves() )
+                    $pb_Amount->setAssetId( $this->amount()->assetId()->bytes() );
+                $pb_TransactionData->setAmount( $pb_Amount );
+            }
+            // ATTACHMENT
+            {
+                $pb_TransactionData->setAttachment( $this->attachment()->bytes() );
+            }
+        }        
+
+        $this->setBodyBytes( $pb_Transaction->setTransfer( $pb_TransactionData )->serializeToString() );
+        return $this;
+    }
+
+    function addProof( PrivateKey $privateKey, int $index = null ): CurrentTransaction
+    {
+        $proof = Base58String::fromBytes( (new WavesKit)->sign( $this->bodyBytes(), $privateKey->bytes() ) )->encoded();
+
+        $proofs = $this->proofs();
+        if( !isset( $index ) )
+            $proofs[] = $proof;
+        else
+            $proofs[$index] = $proof;
+        $this->setProofs( $proofs );
+        return $this;
+    }
+
+    /**
+     * @return CurrentTransaction
+     */
+    function setType( int $type )
+    {
+        parent::setType( $type );
+        return $this;
+    }
 }

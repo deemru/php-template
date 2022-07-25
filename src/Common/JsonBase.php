@@ -6,8 +6,10 @@ class JsonBase
 {
     protected Json $json;
 
-    function __construct( Json $json )
+    function __construct( Json $json = null )
     {
+        if( !isset( $json ) )
+            $json = Json::asJson( [] );
         $this->json = $json;
     }
 

@@ -51,4 +51,14 @@ class Recipient
             return $this->alias->toString();
         return $this->address->toString();
     }
+
+    function address(): Address
+    {
+        return $this->address;
+    }
+
+    function alias(): Alias
+    {
+        return $this->alias;
+    }
 }

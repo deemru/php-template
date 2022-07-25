@@ -4,6 +4,7 @@ namespace wavesplatform;
 
 require_once 'common.php';
 
+use deemru\WavesKit;
 use Exception;
 use wavesplatform\Common\ExceptionCode;
 
@@ -44,14 +45,25 @@ class NodeTest extends \PHPUnit\Framework\TestCase
         $nodeS = new Node( Node::STAGENET );
 
         $chainId = WavesConfig::chainId( ChainId::TESTNET() );
-        $privateKey = PrivateKey::fromSeed( '' );
+        $privateKey = PrivateKey::fromSeed( '10239486123587123659817234612897461289374618273461872468172436812736481274368921763489127436912873649128364' );
         $publicKey = PublicKey::fromPrivateKey( $privateKey );
         $address = Address::fromPublicKey( $publicKey );
         $address->toString();
 
+        $wk = new WavesKit( ChainId::TESTNET()->asString() );
+        $wk->setSeed( '10239486123587123659817234612897461289374618273461872468172436812736481274368921763489127436912873649128364' );
+        $wk->log( $wk->getAddress() );
+
         $recipient = Recipient::fromAlias( new Alias( 'test' ) );
         $amount = new Amount( 1, AssetId::WAVES() );
-        //$tx = new TransferTransaction( $publicKey, $recipient, $amount );
+        $tx = TransferTransaction::build( $publicKey, $recipient, $amount );
+        $txFee = $nodeT->calculateTransactionFee( $tx );
+        $tx->setFee( $txFee );
+        $tx = $tx->getUnsigned()->addProof( $privateKey );
+        $id = $tx->id();
+        $btx = $nodeT->broadcast( $tx );
+
+        $etx = $nodeT->waitForTransaction( $btx->id() );
 
         //$fee = $nodeT->calculateTransactionFee( $tx );
 

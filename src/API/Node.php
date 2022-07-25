@@ -506,7 +506,16 @@ class Node
     function calculateTransactionFee( Transaction $transaction ): Amount
     {
         $json = $this->post( '/transactions/calculateFee', $transaction->json() );
-        return Amount::of( $json->get( 'feeAmount' )->asInt(), $json->get( 'feeAssetId' )->asAssetId() );
+        return Amount::of( $json->get( 'feeAmount' )->asInt(), $json->getOr( 'feeAssetId', null )->asAssetId() );
+    }
+
+    function serializeTransaction( Transaction $transaction ): string
+    {
+        $json = $this->post( '/utils/transactionSerialize', $transaction->json() );
+        $bytes = '';
+        foreach( $json->get( 'bytes' )->asArrayInt() as $byte )
+            $bytes .= chr( $byte );
+        return $bytes;
     }
 
     function broadcast( Transaction $transaction ): Transaction
@@ -592,37 +601,41 @@ class Node
     {
         return $this->get( '/eth/assets?id=' . $asset )->get( 0 )->asJson()->asAssetDetails()->assetId()->encoded();
     }
-}
-
-/*
 
     //===============
     // WAITINGS
     //===============
 
-    private final int blockInterval = 60;
+    const blockInterval = 60;
 
-    public TransactionInfo waitForTransaction(Id id, int waitingInSeconds) throws IOException {
-        int pollingIntervalInMillis = 100;
+    function waitForTransaction( Id $id, int $waitingInSeconds = Node::blockInterval ): TransactionInfo
+    {
+        if( $waitingInSeconds < 1 )
+            $waitingInSeconds = 1;
 
-        if (waitingInSeconds < 1)
-            throw new IllegalStateException("waitForTransaction: waiting value must be positive. Current: " + waitingInSeconds);
+        $pollingIntervalInMillis = 100;
+        $pollingIntervalInMicros = $pollingIntervalInMillis * 1000;
+        $waitingInMillis = $waitingInSeconds * 1000;
 
-        Exception lastException = null;
-        for (long spentMillis = 0; spentMillis < waitingInSeconds * 1000L; spentMillis += pollingIntervalInMillis) {
-            try {
-                return this.getTransactionInfo(id);
-            } catch (Exception e) {
-                lastException = e;
-                try {
-                    Thread.sleep(pollingIntervalInMillis);
-                } catch (InterruptedException ignored) {
-                }
+        for( $spentMillis = 0; $spentMillis < $waitingInMillis; $spentMillis += $pollingIntervalInMillis )
+        {
+            try
+            {
+                return $this->getTransactionInfo( $id );
+            }
+            catch( Exception $e )
+            {
+                if( $e->getCode() !== ExceptionCode::FETCH_URI )
+                    throw new Exception( __FUNCTION__ . ' unexpected exception `' . $e->getCode() . '`:`' . $e->getMessage() . '`', ExceptionCode::UNEXPECTED );
+
+                usleep( $pollingIntervalInMicros );
             }
         }
-        throw new IOException("Could not wait for transaction " + id + " in " + waitingInSeconds + " seconds", lastException);
-    }
 
+        throw new Exception( __FUNCTION__ . ' could not wait for transaction `' . $id->toString() . '` in ' . $waitingInSeconds . ' seconds', ExceptionCode::TIMEOUT );
+    }
+}
+/*
     public TransactionInfo waitForTransaction(Id id) throws IOException {
         return waitForTransaction(id, blockInterval);
     }

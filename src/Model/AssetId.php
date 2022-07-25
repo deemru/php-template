@@ -66,4 +66,9 @@ class AssetId
     {
         return $this->encoded();
     }
+
+    function toJsonValue(): string|null
+    {
+        return $this->isWaves() ? null : $this->encoded();
+    }
 }

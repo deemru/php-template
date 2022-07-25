@@ -6,6 +6,8 @@ use Exception;
 use wavesplatform\Common\ExceptionCode;
 
 use deemru\ABCode;
+use deemru\WavesKit;
+use wavesplatform\Model\Id;
 
 class Functions
 {
@@ -36,5 +38,10 @@ class Functions
             // Unreachable for binary encodings
             throw new Exception( __FUNCTION__ . ' failed to encode bytes: ' . bin2hex( $bytes ), ExceptionCode::BASE58_ENCODE ); // @codeCoverageIgnore
         return $encoded;
+    }
+
+    static function calculateTransactionId( string $bodyBytes ): Id
+    {
+        return Id::fromBytes( (new WavesKit)->blake2b256( $bodyBytes ) );
     }
 }

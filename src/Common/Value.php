@@ -109,6 +109,11 @@ class Value
         return $decoded;
     }
 
+    function asBase58String(): Base58String
+    {
+        return Base58String::fromString( $this->asString() );
+    }
+
     /**
     * Gets a Json value
     *
@@ -162,6 +167,19 @@ class Value
     }
 
     /**
+    * @return array<int, string>
+    */
+    function asArrayString(): array
+    {
+        if( !is_array( $this->value ) )
+            throw new Exception( __FUNCTION__ . ' failed to detect array at `' . json_encode( $this->value ) . '`', ExceptionCode::ARRAY_EXPECTED );
+        $strings = [];
+        foreach( $this->value as $value )
+            $strings[] = Value::asValue( $value )->asString();
+        return $strings;
+    }
+
+    /**
     * Gets an array of string to integer map
     *
     * @return array<string, int>
@@ -211,7 +229,7 @@ class Value
     */
     function asAssetId(): AssetId
     {
-        return AssetId::fromString( $this->asString() );
+        return isset( $this->value ) ? AssetId::fromString( $this->asString() ) : AssetId::WAVES();
     }
 
     /**

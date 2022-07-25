@@ -2,6 +2,7 @@
 
 namespace wavesplatform\Transactions;
 
+use deemru\WavesKit;
 use wavesplatform\Common\Json;
 use wavesplatform\Common\JsonBase;
 use wavesplatform\Account\PublicKey;
@@ -9,6 +10,7 @@ use wavesplatform\Model\AssetId;
 use wavesplatform\Model\ChainId;
 use wavesplatform\Model\Id;
 use wavesplatform\Model\WavesConfig;
+use wavesplatform\Util\Functions;
 
 class TransactionOrOrder extends JsonBase
 {
@@ -27,7 +29,12 @@ class TransactionOrOrder extends JsonBase
     function id(): Id
     {
         if( !isset( $this->id ) )
-            $this->id = $this->json->get( 'id' )->asId();
+        {
+            if( !$this->json()->exists( 'id' ) && isset( $this->bodyBytes ) )
+                $this->setId( Functions::calculateTransactionId( $this->bodyBytes ) );
+            else
+                $this->id = $this->json->get( 'id' )->asId();
+        }
         return $this->id;
     }
 
@@ -64,8 +71,10 @@ class TransactionOrOrder extends JsonBase
         return $this->chainId;
     }
 
-    function setChainId( ChainId $chainId ): void
+    function setChainId( ChainId $chainId = null ): void
     {
+        if( !isset( $chainId ) )
+            $chainId = WavesConfig::chainId();
         $this->chainId = $chainId;
         $this->json->put( 'chainId', $chainId->asInt() );
     }
@@ -85,6 +94,7 @@ class TransactionOrOrder extends JsonBase
     {
         $this->sender = $sender;
         $this->json->put( 'senderPublicKey', $sender->toString() );
+        $this->json->put( 'sender', $sender->address()->toString() );
     }
 
     function timestamp(): int
@@ -94,12 +104,14 @@ class TransactionOrOrder extends JsonBase
         return $this->timestamp;
     }
 
-    function setTimestamp( int $timestamp ): void
+    function setTimestamp( int $timestamp = null ): void
     {
+        if( !isset( $timestamp ) )
+            $timestamp = intval( microtime( true ) * 1000 );
         $this->timestamp = $timestamp;
         $this->json->put( 'timestamp', $timestamp );
     }
-    
+
     function fee(): Amount
     {
         if( !isset( $this->fee ) )
@@ -111,25 +123,37 @@ class TransactionOrOrder extends JsonBase
     {
         $this->fee = $fee;
         $this->json->put( 'fee', $fee->value() );
-        $this->json->put( 'feeAssetId', $fee->assetId()->toString() );
+        $this->json->put( 'feeAssetId', $fee->assetId()->toJsonValue() );
     }
 
     /**
-     * @return array<int, Proof>
+     * @return array<int, string>
      */
     function proofs(): array 
     {
         if( !isset( $this->proofs ) )
-            $this->proofs = $this->json->get( 'proofs' )->asArrayProof();
+            $this->proofs = $this->json->get( 'proofs' )->asArrayString();
         return $this->proofs;
     }
 
     /**
-     * @param array<int, Proof> $proofs
+     * @param array<int, string> $proofs
      */
-    function setProofs( array $proofs ): void
+    function setProofs( array $proofs = null ): void
     {
+        if( !isset( $proofs ) )
+            $proofs = [];
         $this->proofs = $proofs;
         $this->json->put( 'proofs', $proofs );
+    }
+
+    function bodyBytes(): string
+    {
+        return $this->bodyBytes;
+    }
+
+    function setBodyBytes( string $bodyBytes ): void
+    {
+        $this->bodyBytes = $bodyBytes;
     }
 }

@@ -65,4 +65,9 @@ class Address
     {
         return $this->encoded();
     }
+
+    function publicKeyHash(): string
+    {
+        return substr( $this->bytes(), 2, 20 );
+    }
 }
