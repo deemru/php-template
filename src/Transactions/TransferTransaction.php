@@ -3,9 +3,11 @@
 namespace wavesplatform\Transactions;
 
 use deemru\WavesKit;
+use Exception;
 use wavesplatform\Account\PrivateKey;
 use wavesplatform\Common\Base58String;
 use wavesplatform\Account\PublicKey;
+use wavesplatform\Common\ExceptionCode;
 use wavesplatform\Common\Json;
 use wavesplatform\Model\WavesConfig;
 
@@ -120,7 +122,10 @@ class TransferTransaction extends Transaction
 
     function addProof( PrivateKey $privateKey, int $index = null ): CurrentTransaction
     {
-        $proof = Base58String::fromBytes( (new WavesKit)->sign( $this->bodyBytes(), $privateKey->bytes() ) )->encoded();
+        $proof = (new WavesKit)->sign( $this->bodyBytes(), $privateKey->bytes() );
+        if( $proof === false )
+            throw new Exception( __FUNCTION__ . ' unexpected exception', ExceptionCode::UNEXPECTED );
+        $proof = Base58String::fromBytes( $proof )->encoded();
 
         $proofs = $this->proofs();
         if( !isset( $index ) )

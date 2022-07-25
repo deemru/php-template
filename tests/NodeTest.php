@@ -50,10 +50,6 @@ class NodeTest extends \PHPUnit\Framework\TestCase
         $address = Address::fromPublicKey( $publicKey );
         $address->toString();
 
-        $wk = new WavesKit( ChainId::TESTNET()->asString() );
-        $wk->setSeed( '10239486123587123659817234612897461289374618273461872468172436812736481274368921763489127436912873649128364' );
-        $wk->log( $wk->getAddress() );
-
         $recipient = Recipient::fromAlias( new Alias( 'test' ) );
         $amount = new Amount( 1, AssetId::WAVES() );
         $tx = TransferTransaction::build( $publicKey, $recipient, $amount );

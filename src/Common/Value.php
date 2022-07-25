@@ -139,19 +139,6 @@ class Value
     }
 
     /**
-    * @return array<int, Proof>
-    */
-    function asArrayProof(): array
-    {
-        if( !is_array( $this->value ) )
-            throw new Exception( __FUNCTION__ . ' failed to detect array at `' . json_encode( $this->value ) . '`', ExceptionCode::ARRAY_EXPECTED );
-        $proofs = [];
-        foreach( $this->value as $value )
-            $proofs[] = Value::asValue( $value )->asProof();
-        return $proofs;
-    }
-
-    /**
     * Gets an array of integers value
     *
     * @return array<int, int>

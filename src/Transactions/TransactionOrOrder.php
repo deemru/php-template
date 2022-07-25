@@ -21,7 +21,7 @@ class TransactionOrOrder extends JsonBase
     private int $timestamp;
     private Amount $fee;
     /**
-     * @var array<int, Proof>
+     * @var array<int, string>
      */
     private array $proofs;
     private string $bodyBytes;
