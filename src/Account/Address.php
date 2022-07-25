@@ -37,7 +37,7 @@ class Address
     static function fromPublicKey( PublicKey $publicKey, ChainId $chainId = null ): Address
     {
         $address = new Address;
-        $wk = new WavesKit( isset( $chainId ) ? $chainId->asString() : WavesConfig::chainId() );
+        $wk = new WavesKit( ( isset( $chainId ) ? $chainId : WavesConfig::chainId() )->asString() );
         $wk->setPublicKey( $publicKey->bytes(), true );
         $address->address = Base58String::fromBytes( $wk->getAddress( true ) );
         return $address;

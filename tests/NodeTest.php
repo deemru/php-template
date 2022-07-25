@@ -43,7 +43,7 @@ class NodeTest extends \PHPUnit\Framework\TestCase
         $nodeT = new Node( Node::TESTNET );
         $nodeS = new Node( Node::STAGENET );
 
-        $chainId = WavesConfig::chainId( 'T' );
+        $chainId = WavesConfig::chainId( ChainId::TESTNET() );
         $privateKey = PrivateKey::fromSeed( '' );
         $publicKey = PublicKey::fromPrivateKey( $privateKey );
         $address = Address::fromPublicKey( $publicKey );
@@ -402,8 +402,8 @@ class NodeTest extends \PHPUnit\Framework\TestCase
 
     function testMoreCoverage(): void
     {
-        $node1 = new Node( Node::MAINNET, 'W' );
-        $node2 = new Node( Node::MAINNET, '?' );
+        $node1 = new Node( Node::MAINNET );
+        $node2 = new Node( Node::MAINNET, ChainId::MAINNET() );
         $node3 = new Node( str_replace( 'https', 'http', Node::MAINNET ) );
         $this->assertSame( $node1->chainId()->asString(), $node2->chainId()->asString() );
         $this->assertSame( $node2->chainId()->asString(), $node3->chainId()->asString() );

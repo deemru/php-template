@@ -48,9 +48,9 @@ class Node
      * Creates Node instance
      *
      * @param string $uri Node REST API address
-     * @param string $chainId Chain ID or "?" to set automatically (Default: "")
+     * @param ChainId $chainId Chain ID or "?" to set automatically (Default: "")
      */
-    function __construct( string $uri, string $chainId = '' )
+    function __construct( string $uri, ChainId $chainId = null )
     {
         $this->uri = $uri;
         $this->wk = new WavesKit( '?', function( string $wklevel, string $wkmessage )
@@ -60,24 +60,25 @@ class Node
         } );
         $this->wk->setNodeAddress( $uri, 0 );
 
-        if( $chainId === '?' )
-            $this->chainId = $this->getAddresses()[0]->chainId();
+        if( !isset( $chainId ) )
+        {
+            if( $uri === Node::MAINNET )
+                $this->chainId = ChainId::MAINNET();
+            else
+            if( $uri === Node::TESTNET )
+                $this->chainId = ChainId::TESTNET();
+            else
+            if( $uri === Node::STAGENET )
+                $this->chainId = ChainId::STAGENET();
+            else
+                $this->chainId = $this->getAddresses()[0]->chainId();
+        }
         else
-        if( strlen( $chainId ) === 1 )
-            $this->chainId = ChainId::fromString( $chainId );
-        else
-        if( $uri === Node::MAINNET )
-            $this->chainId = ChainId::MAINNET();
-        else
-        if( $uri === Node::TESTNET )
-            $this->chainId = ChainId::TESTNET();
-        else
-        if( $uri === Node::STAGENET )
-            $this->chainId = ChainId::STAGENET();
-        else
-            $this->chainId = $this->getAddresses()[0]->chainId();
+        {
+            $this->chainId = $chainId;
+        }
 
-        $this->wk->chainId = $this->chainId; // @phpstan-ignore-line // accept workaround
+        $this->wk->chainId = $this->chainId->asString(); // @phpstan-ignore-line // accept workaround
     }
 
     function chainId(): ChainId

@@ -31,7 +31,7 @@ class TransactionOrOrder extends JsonBase
         return $this->id;
     }
 
-    function setId( Id $id )
+    function setId( Id $id ): void
     {
         $this->id = $id;
         $this->json->put( 'id', $id->toString() );
@@ -44,7 +44,7 @@ class TransactionOrOrder extends JsonBase
         return $this->version;
     }
 
-    function setVersion( int $version )
+    function setVersion( int $version ): void
     {
         $this->version = $version;
         $this->json->put( 'version', $version );
@@ -64,7 +64,7 @@ class TransactionOrOrder extends JsonBase
         return $this->chainId;
     }
 
-    function setChainId( ChainId $chainId )
+    function setChainId( ChainId $chainId ): void
     {
         $this->chainId = $chainId;
         $this->json->put( 'chainId', $chainId->asInt() );
@@ -81,7 +81,7 @@ class TransactionOrOrder extends JsonBase
         return $this->sender;
     }
 
-    function setSender( PublicKey $sender )
+    function setSender( PublicKey $sender ): void
     {
         $this->sender = $sender;
         $this->json->put( 'senderPublicKey', $sender->toString() );
@@ -94,7 +94,7 @@ class TransactionOrOrder extends JsonBase
         return $this->timestamp;
     }
 
-    function setTimestamp( int $timestamp )
+    function setTimestamp( int $timestamp ): void
     {
         $this->timestamp = $timestamp;
         $this->json->put( 'timestamp', $timestamp );
@@ -107,7 +107,7 @@ class TransactionOrOrder extends JsonBase
         return $this->fee;
     }
 
-    function setFee( Amount $fee )
+    function setFee( Amount $fee ): void
     {
         $this->fee = $fee;
         $this->json->put( 'fee', $fee->value() );
@@ -127,7 +127,7 @@ class TransactionOrOrder extends JsonBase
     /**
      * @param array<int, Proof>
      */
-    function setProofs( array $proofs )
+    function setProofs( array $proofs ): void
     {
         $this->proofs = $proofs;
         $this->json->put( 'proofs', $proofs );

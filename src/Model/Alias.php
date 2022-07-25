@@ -20,17 +20,17 @@ class Alias
     private string $name;
     private string $fullAlias;
 
-    function __construct( string $alias, string $chainId = '' )
+    function __construct( string $alias, ChainId $chainId = null )
     {
         $matches = [];
         preg_match( Alias::MATCH, $alias, $matches );
         if( !isset( $matches[0] ) || $matches[0] !== $alias )
             throw new Exception( __FUNCTION__ . ' bad alias name = `' . serialize( $alias ) . '`', ExceptionCode::BAD_ALIAS );
-        if( $chainId === '' || strlen( $chainId ) !== 1 )
+        if( !isset( $chainId ) )
             $chainId = WavesConfig::chainId();
         $this->name = $alias;
-        $this->bytes = Alias::TYPE . $chainId . $alias;
-        $this->fullAlias = Alias::PREFIX . $chainId . ':' . $alias;
+        $this->bytes = Alias::TYPE . $chainId->asString() . $alias;
+        $this->fullAlias = Alias::PREFIX . $chainId->asString() . ':' . $alias;
     }
 
     static function fromFullAlias( string $fullAlias ): Alias
@@ -40,7 +40,7 @@ class Alias
             $prefix = substr( $fullAlias, 0, strlen( Alias::PREFIX ) );
             if( $prefix === Alias::PREFIX && $fullAlias[7] === ':' )
             {
-                $chainId = $fullAlias[6];
+                $chainId = ChainId::fromString( $fullAlias[6] );
                 $alias = substr( $fullAlias, 8 );
                 return new Alias( $alias, $chainId );
             }
@@ -49,7 +49,7 @@ class Alias
         throw new Exception( __FUNCTION__ . ' bad alias name = `' . serialize( $fullAlias ) . '`', ExceptionCode::BAD_ALIAS );
     }
 
-    static function isValid( string $alias, string $chainId = '' ): bool
+    static function isValid( string $alias, ChainId $chainId = null ): bool
     {
         return $alias === (new Alias( $alias, $chainId ))->name();
     }

@@ -4,12 +4,14 @@ namespace wavesplatform\Model;
 
 class WavesConfig
 {
-    private static string $chainId = ChainId::MAINNET;
+    private static ChainId $chainId;
 
-    static function chainId( string $chainId = '' ): string
+    static function chainId( chainId $chainId = null ): ChainId
     {
-        if( strlen( $chainId ) === 1 )
+        if( isset( $chainId ) )
             WavesConfig::$chainId = $chainId;
+        else if( !isset( WavesConfig::$chainId ) )
+            WavesConfig::$chainId = ChainId::MAINNET();
         return WavesConfig::$chainId;
     }
 }

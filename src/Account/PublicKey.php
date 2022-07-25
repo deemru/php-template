@@ -46,7 +46,7 @@ class PublicKey
         return $this->address;
     }
 
-    function attachAddress( Address $address )
+    function attachAddress( Address $address ): void
     {
         $this->address = $address;
     }

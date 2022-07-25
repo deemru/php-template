@@ -14,6 +14,9 @@ class Proof
 
     private function __construct(){}
 
+    /**
+     * @return array<int, Proof>
+     */
     function emptyList(): array
     {
         return Value::asValue( [] )->asArrayProof();

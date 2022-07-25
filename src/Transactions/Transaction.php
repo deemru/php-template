@@ -13,7 +13,7 @@ class Transaction extends TransactionOrOrder
         return $this->type;
     }
 
-    function setType( int $type )
+    function setType( int $type ): void
     {
         $this->type = $type;
         $this->json->put( 'type', $type );
