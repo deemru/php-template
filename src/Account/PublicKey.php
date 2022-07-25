@@ -46,6 +46,11 @@ class PublicKey
         return $this->address;
     }
 
+    function attachAddress( Address $address )
+    {
+        $this->address = $address;
+    }
+
     function bytes(): string
     {
         return $this->key->bytes();

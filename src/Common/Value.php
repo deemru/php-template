@@ -12,6 +12,7 @@ use wavesplatform\Model\Id;
 use wavesplatform\Model\ChainId;
 use wavesplatform\Model\ApplicationStatus;
 use wavesplatform\Model\Status;
+use wavesplatform\Transactions\Proof;
 
 class Value
 {
@@ -132,6 +133,19 @@ class Value
     }
 
     /**
+    * @return array<int, Proof>
+    */
+    function asArrayProof(): array
+    {
+        if( !is_array( $this->value ) )
+            throw new Exception( __FUNCTION__ . ' failed to detect array at `' . json_encode( $this->value ) . '`', ExceptionCode::ARRAY_EXPECTED );
+        $proofs = [];
+        foreach( $this->value as $value )
+            $proofs[] = Value::asValue( $value )->asProof();
+        return $proofs;
+    }
+
+    /**
     * Gets an array of integers value
     *
     * @return array<int, int>
@@ -199,6 +213,14 @@ class Value
     function asId(): Id
     {
         return Id::fromString( $this->asString() );
+    }
+
+    /**
+    * @return Proof
+    */
+    function asProof(): Proof
+    {
+        return Proof::fromString( $this->asString() );
     }
 
     function asApplicationStatus(): int

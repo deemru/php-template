@@ -18,8 +18,10 @@ class TransactionOrOrder extends JsonBase
     private PublicKey $sender;
     private int $timestamp;
     private Amount $fee;
-    private int $extraFee;
-    private Json $proofs;
+    /**
+     * @var array<int, Proof>
+     */
+    private array $proofs;
     private string $bodyBytes;
 
     function id(): Id
@@ -28,12 +30,24 @@ class TransactionOrOrder extends JsonBase
             $this->id = $this->json->get( 'id' )->asId();
         return $this->id;
     }
+
+    function setId( Id $id )
+    {
+        $this->id = $id;
+        $this->json->put( 'id', $id->toString() );
+    }
     
     function version(): int
     {
         if( !isset( $this->version ) )
             $this->version = $this->json->get( 'version' )->asInt();
         return $this->version;
+    }
+
+    function setVersion( int $version )
+    {
+        $this->version = $version;
+        $this->json->put( 'version', $version );
     }
 
     function chainId(): ChainId
@@ -49,12 +63,28 @@ class TransactionOrOrder extends JsonBase
         }
         return $this->chainId;
     }
+
+    function setChainId( ChainId $chainId )
+    {
+        $this->chainId = $chainId;
+        $this->json->put( 'chainId', $chainId->asInt() );
+    }
     
     function sender(): PublicKey
     {
         if( !isset( $this->sender ) )
+        {
             $this->sender = $this->json->get( 'senderPublicKey' )->asPublicKey();
+            if( $this->json->exists( 'sender' ) )
+                $this->sender->attachAddress( $this->json->get( 'sender' )->asAddress() );
+        }
         return $this->sender;
+    }
+
+    function setSender( PublicKey $sender )
+    {
+        $this->sender = $sender;
+        $this->json->put( 'senderPublicKey', $sender->toString() );
     }
 
     function timestamp(): int
@@ -62,6 +92,12 @@ class TransactionOrOrder extends JsonBase
         if( !isset( $this->timestamp ) )
             $this->timestamp = $this->json->get( 'timestamp' )->asInt();
         return $this->timestamp;
+    }
+
+    function setTimestamp( int $timestamp )
+    {
+        $this->timestamp = $timestamp;
+        $this->json->put( 'timestamp', $timestamp );
     }
     
     function fee(): Amount
@@ -71,15 +107,29 @@ class TransactionOrOrder extends JsonBase
         return $this->fee;
     }
 
-    function proofs(): Json 
-    {
-        return $this->json->get( 'proofs' )->asJson();// TODO: array<int, Proof>
-    }
-
     function setFee( Amount $fee )
     {
         $this->fee = $fee;
         $this->json->put( 'fee', $fee->value() );
         $this->json->put( 'feeAssetId', $fee->assetId()->toString() );
+    }
+
+    /**
+     * @return array<int, Proof>
+     */
+    function proofs(): array 
+    {
+        if( !isset( $this->proofs ) )
+            $this->proofs = $this->json->get( 'proofs' )->asArrayProof();
+        return $this->proofs;
+    }
+
+    /**
+     * @param array<int, Proof>
+     */
+    function setProofs( array $proofs )
+    {
+        $this->proofs = $proofs;
+        $this->json->put( 'proofs', $proofs );
     }
 }
