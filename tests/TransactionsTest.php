@@ -32,21 +32,11 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
     private Node $node;
     private PrivateKey $account;
 
-    private function catchExceptionOrFail( int $code, callable $block ): void
+    private function prepare(): void
     {
-        try
-        {
-            $block();
-            $this->fail( 'Failed to catch exception with code:' . $code );
-        }
-        catch( Exception $e )
-        {
-            $this->assertEquals( $code, $e->getCode(), $e->getMessage() );
-        }
-    }
+        if( isset( $this->chainId ) )
+            return;
 
-    function testAccount(): void
-    {
         $chainId = ChainId::TESTNET();
         $node = new Node( Node::TESTNET );
         $account = PrivateKey::fromSeed( '10239486123587123659817234612897461289374618273461872468172436812736481274368921763489127436912873649128364' );
@@ -65,6 +55,7 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
 
     function testIssue(): void
     {
+        $this->prepare();
         $chainId = $this->chainId;
         $node = $this->node;
         $account = $this->account;
@@ -125,6 +116,7 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
 
     function testTransfer(): void
     {
+        $this->prepare();
         $chainId = $this->chainId;
         $node = $this->node;
         $account = $this->account;
@@ -191,7 +183,6 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
 if( DO_LOCAL_DEBUG )
 {
     $test = new TransactionsTest;
-    $test->testAccount();
     $test->testIssue();
     $test->testTransfer();
     $test->testMoreCoverage();
