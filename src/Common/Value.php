@@ -84,6 +84,13 @@ class Value
         return $this->value;
     }
 
+    function asBase64String(): Base64String
+    {
+        if( !is_string( $this->value ) )
+            throw new Exception( __FUNCTION__ . ' failed to detect string at `' . json_encode( $this->value ) . '`', ExceptionCode::STRING_EXPECTED );
+        return Base64String::fromString( $this->value );
+    }
+
     function asChainId(): ChainId
     {
         if( is_int( $this->value ) )

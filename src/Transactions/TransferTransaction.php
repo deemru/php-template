@@ -17,7 +17,7 @@ use wavesplatform\Transactions\TransferTransaction as CurrentTransaction;
 class TransferTransaction extends Transaction
 {
     const TYPE = 4;
-    const VERSION = 3;
+    const LATEST_VERSION = 3;
     const MIN_FEE = 100_000;
 
     private Recipient $recipient;
@@ -27,7 +27,7 @@ class TransferTransaction extends Transaction
     static function build( PublicKey $sender, Recipient $recipient, Amount $amount, Base58String $attachment = null ): CurrentTransaction
     {
         $tx = new CurrentTransaction;
-        $tx->setBase( $sender, CurrentTransaction::TYPE, CurrentTransaction::VERSION, CurrentTransaction::MIN_FEE );
+        $tx->setBase( $sender, CurrentTransaction::TYPE, CurrentTransaction::LATEST_VERSION, CurrentTransaction::MIN_FEE );
 
         // TRANSFER TRANSACTION
         {
@@ -39,10 +39,10 @@ class TransferTransaction extends Transaction
         return $tx;
     }
 
-    function getUnsigned(): TransferTransaction
+    function getUnsigned(): CurrentTransaction
     {
         // VERSION
-        if( $this->version() !== CurrentTransaction::VERSION )
+        if( $this->version() !== CurrentTransaction::LATEST_VERSION )
             throw new Exception( __FUNCTION__ . ' unexpected version = ' . $this->version(), ExceptionCode::UNEXPECTED );
 
         // BASE
@@ -50,7 +50,7 @@ class TransferTransaction extends Transaction
 
         // TRANSFER_TRANSACTION
         {
-            $pb_TransactionData = new \wavesplatform\Protobuf\TransferTransactionData();
+            $pb_TransactionData = new \wavesplatform\Protobuf\TransferTransactionData;
             // RECIPIENT
             {
                 $pb_Recipient = new \wavesplatform\Protobuf\Recipient;
@@ -130,6 +130,9 @@ class TransferTransaction extends Transaction
 
     function addProof( PrivateKey $privateKey, int $index = null ): CurrentTransaction
     {
+        if( !isset( $this->bodyBytes ) )
+            $this->getUnsigned();
+
         $proof = (new WavesKit)->sign( $this->bodyBytes(), $privateKey->bytes() );
         if( $proof === false )
             throw new Exception( __FUNCTION__ . ' unexpected sign() error', ExceptionCode::UNEXPECTED );

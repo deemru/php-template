@@ -19,6 +19,7 @@ use wavesplatform\Model\LeaseStatus;
 use wavesplatform\Model\Id;
 use wavesplatform\Model\WavesConfig;
 use wavesplatform\Transactions\Amount;
+use wavesplatform\Transactions\IssueTransaction;
 use wavesplatform\Transactions\Recipient;
 use wavesplatform\Transactions\TransferTransaction;
 use wavesplatform\Util\Functions;
@@ -49,6 +50,8 @@ class NodeTest extends \PHPUnit\Framework\TestCase
         $publicKey = PublicKey::fromPrivateKey( $privateKey );
         $address = Address::fromPublicKey( $publicKey );
         $address->toString();
+
+        $nodeT->waitForTransaction( $nodeT->broadcast( IssueTransaction::build( $publicKey, 'NFT-' . mt_rand( 100000, 999999 ), 'description', 1, 0, 0 )->addProof( $privateKey ) )->id() );
 
         $recipient = Recipient::fromAlias( new Alias( 'test' ) );
         $amount = new Amount( 1, AssetId::WAVES() );
