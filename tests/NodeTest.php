@@ -51,7 +51,7 @@ class NodeTest extends \PHPUnit\Framework\TestCase
         $address = Address::fromPublicKey( $publicKey );
         $address->toString();
 
-        $nodeT->waitForTransaction( $nodeT->broadcast( IssueTransaction::build( $publicKey, 'NFT-' . mt_rand( 100000, 999999 ), 'description', 1, 0, 0 )->addProof( $privateKey ) )->id() );
+        $nodeT->waitForTransaction( $nodeT->broadcast( IssueTransaction::build( $publicKey, 'NFT-' . mt_rand( 100000, 999999 ), 'description', 1, 0, false )->addProof( $privateKey ) )->id() );
 
         $recipient = Recipient::fromAlias( new Alias( 'test' ) );
         $amount = new Amount( 1, AssetId::WAVES() );

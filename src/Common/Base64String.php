@@ -42,7 +42,7 @@ class Base64String extends Value
         if( !isset( $this->bytes ) )
         {
             $this->bytes = base64_decode( $this->encoded );
-            if( $this->bytes === false )
+            if( !is_string( $this->bytes ) )
                 throw new Exception( __FUNCTION__ . ' failed to decode string: ' . $this->encoded, ExceptionCode::BASE64_DECODE );
         }
         return $this->bytes;
