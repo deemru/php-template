@@ -4,7 +4,7 @@ The PHP code in this directory is automatically generated and can be independent
 
 ## Versions
 
-- protoc — [21.3](https://github.com/protocolbuffers/protobuf/releases/tag/21.3)
+- protoc — [v21.4](https://github.com/protocolbuffers/protobuf/releases/tag/v21.4)
 - proto/waves — [v1.4.3](https://github.com/wavesplatform/protobuf-schemas/tree/v1.4.3/proto/waves)
 
 ## Generation
