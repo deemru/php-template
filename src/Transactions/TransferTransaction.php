@@ -50,10 +50,10 @@ class TransferTransaction extends Transaction
 
         // TRANSFER_TRANSACTION
         {
-            $pb_TransactionData = new \Waves\TransferTransactionData();
+            $pb_TransactionData = new \wavesplatform\Protobuf\TransferTransactionData();
             // RECIPIENT
             {
-                $pb_Recipient = new \Waves\Recipient;
+                $pb_Recipient = new \wavesplatform\Protobuf\Recipient;
                 if( $this->recipient()->isAlias() )
                     $pb_Recipient->setAlias( $this->recipient()->alias()->name() );
                 else
@@ -62,7 +62,7 @@ class TransferTransaction extends Transaction
             }
             // AMOUNT
             {
-                $pb_Amount = new \Waves\Amount;
+                $pb_Amount = new \wavesplatform\Protobuf\Amount;
                 $pb_Amount->setAmount( $this->amount()->value() );
                 if( !$this->amount()->assetId()->isWaves() )
                     $pb_Amount->setAssetId( $this->amount()->assetId()->bytes() );

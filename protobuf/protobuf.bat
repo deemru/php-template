@@ -20,8 +20,9 @@ curl -fsSL -o %PROTO_WAVES_ARCH% %PROTO_WAVES_URL%%PROTO_WAVES_ARCH%
 7z x %PROTO_WAVES_ARCH% -aoa
 
 mkdir %PROTO_STABLE%
-bin\protoc --php_out=protobuf -Iprotobuf-schemas-%PROTO_WAVES_VERSION%/proto protobuf-schemas-%PROTO_WAVES_VERSION%/proto/waves/*.proto
+php ..\%PROTO_STABLE%\protobuf.php protobuf-schemas-%PROTO_WAVES_VERSION%/proto/waves/*.proto
+bin\protoc --php_out=%PROTO_STABLE% -Iprotobuf-schemas-%PROTO_WAVES_VERSION%/proto protobuf-schemas-%PROTO_WAVES_VERSION%/proto/waves/*.proto
 
-xcopy /S /Y protobuf ..\protobuf
+xcopy /S /Y %PROTO_STABLE% ..\%PROTO_STABLE%
 cd ..
 rmdir /s /q %PROTO_TEMP%

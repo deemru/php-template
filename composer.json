@@ -12,12 +12,10 @@
         }
     ],
     "autoload": {
-        "classmap": [
-            "src"
-        ],
         "psr-4": {
-            "Waves\\": "protobuf/Waves/",
-            "GPBMetadata\\Waves\\": "protobuf/GPBMetadata/Waves/"
+            "wavesplatform\\": "src/",
+            "wavesplatform\\Protobuf\\": "protobuf/wavesplatform/Protobuf/",
+            "wavesplatform\\ProtobufMetadata\\": "protobuf/wavesplatform/ProtobufMetadata/"
         }
     },
     "require-dev": {
@@ -25,6 +23,7 @@
         "phpstan/phpstan": "^1.7"
     },
     "require": {
+        "google/protobuf": "^3.21",
         "deemru/waveskit": "^1.0",
         "deemru/abcode": "^1.0"
     }
