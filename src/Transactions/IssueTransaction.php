@@ -166,7 +166,7 @@ class IssueTransaction extends Transaction
     function script(): Base64String
     {
         if( !isset( $this->script ) )
-            $this->script = $this->json->getOr( 'script', Value::asValue( '' ) )->asBase64String();
+            $this->script = $this->json->exists( 'script' ) ? $this->json->get( 'script' )->asBase64String() : Base64String::emptyString();
         return $this->script;
     }
 
@@ -186,9 +186,6 @@ class IssueTransaction extends Transaction
 
     function addProof( PrivateKey $privateKey, int $index = null ): CurrentTransaction
     {
-        if( !isset( $this->bodyBytes ) )
-            $this->getUnsigned();
-
         $proof = (new WavesKit)->sign( $this->bodyBytes(), $privateKey->bytes() );
         if( $proof === false )
             throw new Exception( __FUNCTION__ . ' unexpected sign() error', ExceptionCode::UNEXPECTED );
@@ -265,5 +262,12 @@ class IssueTransaction extends Transaction
     {
         parent::setProofs( $proofs );
         return $this;
+    }
+
+    function bodyBytes(): string
+    {
+        if( !isset( $this->bodyBytes ) )
+            $this->getUnsigned();
+        return parent::bodyBytes();
     }
 }

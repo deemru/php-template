@@ -6,6 +6,7 @@ use deemru\WavesKit;
 use wavesplatform\Common\Json;
 use wavesplatform\Common\JsonBase;
 use wavesplatform\Account\PublicKey;
+use wavesplatform\Common\Value;
 use wavesplatform\Model\AssetId;
 use wavesplatform\Model\ChainId;
 use wavesplatform\Model\Id;
@@ -152,7 +153,7 @@ class TransactionOrOrder extends JsonBase
     function proofs(): array 
     {
         if( !isset( $this->proofs ) )
-            $this->proofs = $this->json->get( 'proofs' )->asArrayString();
+            $this->proofs = $this->json->getOr( 'proofs', [] )->asArrayString();
         return $this->proofs;
     }
 

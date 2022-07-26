@@ -4,7 +4,7 @@ namespace wavesplatform\Common;
 
 use Exception;
 
-class Base64String extends Value
+class Base64String
 {
     const PROLOG = 'base64:';
     private string $bytes;

@@ -130,9 +130,6 @@ class TransferTransaction extends Transaction
 
     function addProof( PrivateKey $privateKey, int $index = null ): CurrentTransaction
     {
-        if( !isset( $this->bodyBytes ) )
-            $this->getUnsigned();
-
         $proof = (new WavesKit)->sign( $this->bodyBytes(), $privateKey->bytes() );
         if( $proof === false )
             throw new Exception( __FUNCTION__ . ' unexpected sign() error', ExceptionCode::UNEXPECTED );
@@ -209,5 +206,12 @@ class TransferTransaction extends Transaction
     {
         parent::setProofs( $proofs );
         return $this;
+    }
+
+    function bodyBytes(): string
+    {
+        if( !isset( $this->bodyBytes ) )
+            $this->getUnsigned();
+        return parent::bodyBytes();
     }
 }

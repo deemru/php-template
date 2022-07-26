@@ -12,6 +12,7 @@ use wavesplatform\Account\Address;
 use wavesplatform\Account\PrivateKey;
 use wavesplatform\Account\PublicKey;
 use wavesplatform\API\Node;
+use wavesplatform\Common\Base64String;
 use wavesplatform\Model\Alias;
 use wavesplatform\Model\AssetId;
 use wavesplatform\Model\ChainId;
@@ -44,27 +45,6 @@ class NodeTest extends \PHPUnit\Framework\TestCase
         $nodeW = new Node( Node::MAINNET );
         $nodeT = new Node( Node::TESTNET );
         $nodeS = new Node( Node::STAGENET );
-
-        $chainId = WavesConfig::chainId( ChainId::TESTNET() );
-        $privateKey = PrivateKey::fromSeed( '10239486123587123659817234612897461289374618273461872468172436812736481274368921763489127436912873649128364' );
-        $publicKey = PublicKey::fromPrivateKey( $privateKey );
-        $address = Address::fromPublicKey( $publicKey );
-        $address->toString();
-
-        $nodeT->waitForTransaction( $nodeT->broadcast( IssueTransaction::build( $publicKey, 'NFT-' . mt_rand( 100000, 999999 ), 'description', 1, 0, false )->addProof( $privateKey ) )->id() );
-
-        $recipient = Recipient::fromAlias( new Alias( 'test' ) );
-        $amount = new Amount( 1, AssetId::WAVES() );
-        $tx = TransferTransaction::build( $publicKey, $recipient, $amount )->setType( TransferTransaction::TYPE );
-        $txFee = $nodeT->calculateTransactionFee( $tx );
-        $tx->setFee( $txFee );
-        $tx = $tx->getUnsigned()->addProof( $privateKey );
-        $id = $tx->id();
-        $btx = $nodeT->broadcast( $tx );
-
-        $etx = $nodeT->waitForTransaction( $btx->id() );
-
-        //$fee = $nodeT->calculateTransactionFee( $tx );
 
         $version = $nodeS->getVersion();
 
