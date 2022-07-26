@@ -170,14 +170,6 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
         
         $this->assertNotSame( $tx1->id(), $tx2->id() );
     }
-
-    function testMoreCoverage(): void
-    {
-    }
-
-    function testExceptions(): void
-    {
-    }
 }
 
 if( DO_LOCAL_DEBUG )
@@ -185,6 +177,4 @@ if( DO_LOCAL_DEBUG )
     $test = new TransactionsTest;
     $test->testIssue();
     $test->testTransfer();
-    $test->testMoreCoverage();
-    $test->testExceptions();
 }
