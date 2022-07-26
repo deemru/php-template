@@ -26,7 +26,7 @@ use wavesplatform\Transactions\Recipient;
 use wavesplatform\Transactions\TransferTransaction;
 use wavesplatform\Util\Functions;
 
-class NodeTest extends \PHPUnit\Framework\TestCase
+class TransactionsTest extends \PHPUnit\Framework\TestCase
 {
     private ChainId $chainId;
     private Node $node;
@@ -190,7 +190,7 @@ class NodeTest extends \PHPUnit\Framework\TestCase
 
 if( DO_LOCAL_DEBUG )
 {
-    $test = new NodeTest;
+    $test = new TransactionsTest;
     $test->testAccount();
     $test->testIssue();
     $test->testTransfer();
