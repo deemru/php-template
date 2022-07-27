@@ -87,7 +87,7 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
     {
         if( 1 ) // @phpstan-ignore-line // fast/full test
         {
-            $this->tokenId = AssetId::fromString( '8whRxvA9Rs6b7bb5AZheEijobEqJMCT96hZiQcJPgP9D' );
+            $this->tokenId = AssetId::fromString( 'CcK2rmEDNET8iPSyXvZprRPsDt7mfJPbxuvkMRdsyESC' );
         }
         else
         {
