@@ -57,9 +57,9 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
         $this->sponsorship();
     }
 
-    private function sponsorship()
+    private function sponsorship(): void
     {
-        if( 1 )
+        if( 1 ) // @phpstan-ignore-line // fast/full test
         {
             $this->sponsorId = AssetId::fromString( 'G8BKG3oCEx7Viesm6ucUWt1v1cnz1MueJYkApqK9R5AR' );
         }
