@@ -6,6 +6,7 @@ require_once 'common.php';
 
 use deemru\WavesKit;
 use Exception;
+use Waves\SetScriptTransactionData;
 use wavesplatform\Common\ExceptionCode;
 
 use wavesplatform\Account\Address;
@@ -15,6 +16,7 @@ use wavesplatform\API\Node;
 use wavesplatform\Common\Base58String;
 use wavesplatform\Common\Base64String;
 use wavesplatform\Model\Alias;
+use wavesplatform\Model\ApplicationStatus;
 use wavesplatform\Model\AssetId;
 use wavesplatform\Model\ChainId;
 use wavesplatform\Model\LeaseStatus;
@@ -23,6 +25,8 @@ use wavesplatform\Model\WavesConfig;
 use wavesplatform\Transactions\Amount;
 use wavesplatform\Transactions\IssueTransaction;
 use wavesplatform\Transactions\Recipient;
+use wavesplatform\Transactions\ReissueTransaction;
+use wavesplatform\Transactions\SetAssetScriptTransaction;
 use wavesplatform\Transactions\SponsorFeeTransaction;
 use wavesplatform\Transactions\TransferTransaction;
 use wavesplatform\Util\Functions;
@@ -33,6 +37,7 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
     private Node $node;
     private PrivateKey $account;
     private AssetId $sponsorId;
+    private AssetId $tokenId;
 
     private function prepare(): void
     {
@@ -54,14 +59,15 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
 
         WavesConfig::chainId( $this->chainId );
 
-        $this->sponsorship();
+        $this->prepareSponsor();
+        $this->prepareToken();
     }
 
-    private function sponsorship(): void
+    private function prepareSponsor(): void
     {
         if( 1 ) // @phpstan-ignore-line // fast/full test
         {
-            $this->sponsorId = AssetId::fromString( 'G8BKG3oCEx7Viesm6ucUWt1v1cnz1MueJYkApqK9R5AR' );
+            $this->sponsorId = AssetId::fromString( '7xaTA288aL96de84ppHbKXxe2uh8FpypgNGJuHz1jtQ8' );
         }
         else
         {
@@ -74,6 +80,136 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
             $tx = $node->waitForTransaction( $node->broadcast( IssueTransaction::build( $sender, 'SPONSOR', '', 1, 0, false )->addProof( $account ) )->id() );
             $this->sponsorId = AssetId::fromString( $tx->id()->toString() );
         }
+    }
+
+    private function prepareToken(): void
+    {
+        if( 1 ) // @phpstan-ignore-line // fast/full test
+        {
+            $this->tokenId = AssetId::fromString( 'Gzg5G9sAjMGFokyatjasoMDYWxdW9aia3DPvYfPj28k1' );
+        }
+        else
+        {
+            $this->prepare();
+            $chainId = $this->chainId;
+            $node = $this->node;
+            $account = $this->account;
+            $sender = $account->publicKey();
+
+            $tx = $node->waitForTransaction( $node->broadcast( IssueTransaction::build( $sender, 'TOKEN', '', 1000000, 6, true )->addProof( $account ) )->id() );
+            $this->tokenId = AssetId::fromString( $tx->id()->toString() );
+        }
+    }
+
+    function testSetAssetScript(): void
+    {
+        $this->prepare();
+        $chainId = $this->chainId;
+        $node = $this->node;
+        $account = $this->account;
+        $sender = $account->publicKey();
+
+        $script = Base64String::fromString( 'BQbtKNoM' );
+
+        $tx = $node->waitForTransaction( $node->broadcast( IssueTransaction::build( $sender, 'SCRIPTED', '', 1, 0, false, $script )->addProof( $account ) )->id() );
+        $scriptedId = AssetId::fromString( $tx->id()->toString() );
+
+        $tx = SetAssetScriptTransaction::build(
+            $sender,
+            $scriptedId,
+            $script
+        );
+
+        $tx->bodyBytes();
+
+        $id = $tx->id();
+        $tx->version();
+        $tx->chainId();
+        $tx->sender();
+        $tx->timestamp();
+        $tx->fee();
+        $tx->proofs();
+
+        $tx->assetId();
+        $tx->script();
+
+        $tx1 = $node->waitForTransaction( $node->broadcast( $tx->addProof( $account ) )->id() );
+
+        $this->assertSame( $id->toString(), $tx1->id()->toString() );
+        $this->assertSame( $tx1->applicationStatus(), ApplicationStatus::SUCCEEDED );
+
+        $tx2 = $node->waitForTransaction(
+            $node->broadcast(
+                (new SetAssetScriptTransaction)
+                ->setAssetId( $scriptedId )
+                ->setScript( $script )
+
+                ->setSender( $sender )
+                ->setType( SetAssetScriptTransaction::TYPE )
+                ->setVersion( SetAssetScriptTransaction::LATEST_VERSION )
+                ->setFee( Amount::of( SetAssetScriptTransaction::MIN_FEE ) )
+                ->setChainId( $chainId )
+                ->setTimestamp()
+
+                ->addProof( $account )
+            )->id()
+        );
+        
+        $this->assertNotSame( $tx1->id(), $tx2->id() );
+        $this->assertSame( $tx2->applicationStatus(), ApplicationStatus::SUCCEEDED );
+    }
+
+    function testReissue(): void
+    {
+        $this->prepare();
+        $chainId = $this->chainId;
+        $node = $this->node;
+        $account = $this->account;
+        $sender = $account->publicKey();
+
+        $tx = ReissueTransaction::build(
+            $sender,
+            Amount::of( 1000_000_000, $this->tokenId ),
+            true
+        );
+
+        $tx->bodyBytes();
+
+        $id = $tx->id();
+        $tx->version();
+        $tx->chainId();
+        $tx->sender();
+        $tx->timestamp();
+        $tx->fee();
+        $tx->proofs();
+
+        $tx->amount();
+        $tx->isReissuable();
+
+        $tx1 = $node->waitForTransaction( $node->broadcast( $tx->addProof( $account ) )->id() );
+
+        $this->assertSame( $id->toString(), $tx1->id()->toString() );
+        $this->assertSame( $tx1->applicationStatus(), ApplicationStatus::SUCCEEDED );
+
+        $tx2 = $node->waitForTransaction(
+            $node->broadcast(
+                (new ReissueTransaction)
+                ->setAmount( Amount::of( 2000_000_000, $this->tokenId ) )
+                ->setIsReissuable( false )
+
+                ->setSender( $sender )
+                ->setType( ReissueTransaction::TYPE )
+                ->setVersion( ReissueTransaction::LATEST_VERSION )
+                ->setFee( Amount::of( ReissueTransaction::MIN_FEE ) )
+                ->setChainId( $chainId )
+                ->setTimestamp()
+
+                ->addProof( $account )
+            )->id()
+        );
+        
+        $this->assertNotSame( $tx1->id(), $tx2->id() );
+        $this->assertSame( $tx2->applicationStatus(), ApplicationStatus::SUCCEEDED );
     }
 
     function testIssue(): void
@@ -113,6 +249,7 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
         $tx1 = $node->waitForTransaction( $node->broadcast( $tx->addProof( $account ) )->id() );
 
         $this->assertSame( $id->toString(), $tx1->id()->toString() );
+        $this->assertSame( $tx1->applicationStatus(), ApplicationStatus::SUCCEEDED );
 
         $tx2 = $node->waitForTransaction(
             $node->broadcast(
@@ -135,6 +272,7 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
         );
         
         $this->assertNotSame( $tx1->id(), $tx2->id() );
+        $this->assertSame( $tx2->applicationStatus(), ApplicationStatus::SUCCEEDED );
     }
 
     function testSponsorship(): void
@@ -169,6 +307,7 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
         $tx1 = $node->waitForTransaction( $node->broadcast( $tx->addProof( $account ) )->id() );
 
         $this->assertSame( $id->toString(), $tx1->id()->toString() );
+        $this->assertSame( $tx1->applicationStatus(), ApplicationStatus::SUCCEEDED );
 
         $tx2 = $node->waitForTransaction(
             $node->broadcast(
@@ -188,6 +327,7 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
         );
         
         $this->assertNotSame( $tx1->id(), $tx2->id() );
+        $this->assertSame( $tx2->applicationStatus(), ApplicationStatus::SUCCEEDED );
     }
 
     function testTransfer(): void
@@ -225,6 +365,7 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
         $tx1 = $node->waitForTransaction( $node->broadcast( $tx->addProof( $account ) )->id() );
 
         $this->assertSame( $id->toString(), $tx1->id()->toString() );
+        $this->assertSame( $tx1->applicationStatus(), ApplicationStatus::SUCCEEDED );
 
         $tx2 = $node->waitForTransaction(
             $node->broadcast(
@@ -245,13 +386,16 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
         );
         
         $this->assertNotSame( $tx1->id(), $tx2->id() );
+        $this->assertSame( $tx2->applicationStatus(), ApplicationStatus::SUCCEEDED );
     }
 }
 
 if( DO_LOCAL_DEBUG )
 {
     $test = new TransactionsTest;
-    $test->testSponsorship();
+    $test->testReissue();
     $test->testIssue();
+    $test->testSetAssetScript();
+    $test->testSponsorship();
     $test->testTransfer();
 }

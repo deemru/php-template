@@ -46,6 +46,9 @@ class NodeTest extends \PHPUnit\Framework\TestCase
         $nodeT = new Node( Node::TESTNET );
         $nodeS = new Node( Node::STAGENET );
 
+        $node = new Node( 'http://devnet1-htz-nbg1-1.wavesnodes.com' );
+        
+
         $version = $nodeS->getVersion();
 
         $ethAsset = $nodeS->ethToWavesAsset( '0x7a087b3384447a48393eda243e630b07db443597' );

@@ -11,40 +11,29 @@ use wavesplatform\Common\Base64String;
 use wavesplatform\Common\ExceptionCode;
 use wavesplatform\Common\Json;
 use wavesplatform\Common\Value;
+use wavesplatform\Model\AssetId;
 use wavesplatform\Model\ChainId;
 use wavesplatform\Model\WavesConfig;
 
-use wavesplatform\Transactions\IssueTransaction as CurrentTransaction;
+use wavesplatform\Transactions\SetAssetScriptTransaction as CurrentTransaction;
 
-class IssueTransaction extends Transaction
+class SetAssetScriptTransaction extends Transaction
 {
-    const TYPE = 3;
-    const LATEST_VERSION = 3;
+    const TYPE = 15;
+    const LATEST_VERSION = 2;
     const MIN_FEE = 100_000_000;
-    const NFT_MIN_FEE = 100_000;
 
-    private string $name;
-    private string $description;
-    private int $quantity;
-    private int $decimals;
-    private bool $isReissuable;
+    private AssetId $assetId;
     private Base64String $script;
 
-    static function build( PublicKey $sender, string $name, string $description, int $quantity, int $decimals,
-                           bool $isReissuable, Base64String $script = null ): CurrentTransaction
+    static function build( PublicKey $sender, AssetId $assetId, Base64String $script ): CurrentTransaction
     {
-        $minFee = ( $quantity === 1 && $decimals === 0 && $isReissuable === false ) ? CurrentTransaction::NFT_MIN_FEE : CurrentTransaction::MIN_FEE;
-
         $tx = new CurrentTransaction;
-        $tx->setBase( $sender, CurrentTransaction::TYPE, CurrentTransaction::LATEST_VERSION, $minFee );
+        $tx->setBase( $sender, CurrentTransaction::TYPE, CurrentTransaction::LATEST_VERSION, CurrentTransaction::MIN_FEE );
 
-        // ISSUE TRANSACTION
+        // SET_ASSET_SCRIPT TRANSACTION
         {
-            $tx->setName( $name );
-            $tx->setDescription( $description );
-            $tx->setQuantity( $quantity );
-            $tx->setDecimals( $decimals );
-            $tx->setIsReissuable( $isReissuable );
+            $tx->setAssetId( $assetId );
             $tx->setScript( $script );
         }       
 
@@ -60,28 +49,12 @@ class IssueTransaction extends Transaction
         // BASE
         $pb_Transaction = $this->getProtobufTransactionBase();
 
-        // ISSUE TRANSACTION
+        // SET_ASSET_SCRIPT TRANSACTION
         {
-            $pb_TransactionData = new \wavesplatform\Protobuf\IssueTransactionData;
-            // NAME
+            $pb_TransactionData = new \wavesplatform\Protobuf\SetAssetScriptTransactionData();
+            // ASSET
             {
-                $pb_TransactionData->setName( $this->name() );
-            }
-            // DESCRIPTION
-            {
-                $pb_TransactionData->setDescription( $this->description() );
-            }
-            // QUANTITY
-            {
-                $pb_TransactionData->setAmount( $this->quantity() );
-            }
-            // DECIMALS
-            {
-                $pb_TransactionData->setDecimals( $this->decimals() );
-            }
-            // REISSUABLE
-            {
-                $pb_TransactionData->setReissuable( $this->isReissuable() );
+                $pb_TransactionData->setAssetId( $this->assetId()->bytes() );
             }
             // SCRIPT
             {
@@ -89,78 +62,22 @@ class IssueTransaction extends Transaction
             }
         }        
 
-        // ISSUE TRANSACTION
-        $this->setBodyBytes( $pb_Transaction->setIssue( $pb_TransactionData )->serializeToString() );
+        // SET_ASSET_SCRIPT TRANSACTION
+        $this->setBodyBytes( $pb_Transaction->setSetAssetScript( $pb_TransactionData )->serializeToString() );
         return $this;
     }
 
-    function name(): string
+    function assetId(): AssetId
     {
-        if( !isset( $this->name ) )
-            $this->name = $this->json->get( 'name' )->asString();
-        return $this->name;
+        if( !isset( $this->assetId ) )
+            $this->assetId = $this->json->get( 'assetId' )->asAssetId();
+        return $this->assetId;
     }
 
-    function setName( string $name ): CurrentTransaction
+    function setAssetId( AssetId $assetId ): CurrentTransaction
     {
-        $this->name = $name;
-        $this->json->put( 'name', $name );
-        return $this;
-    }
-
-    function description(): string
-    {
-        if( !isset( $this->description ) )
-            $this->description = $this->json->get( 'description' )->asString();
-        return $this->description;
-    }
-
-    function setDescription( string $description ): CurrentTransaction
-    {
-        $this->description = $description;
-        $this->json->put( 'description', $description );
-        return $this;
-    }
-
-    function quantity(): int
-    {
-        if( !isset( $this->quantity ) )
-            $this->quantity = $this->json->get( 'quantity' )->asInt();
-        return $this->quantity;
-    }
-
-    function setQuantity( int $quantity ): CurrentTransaction
-    {
-        $this->quantity = $quantity;
-        $this->json->put( 'quantity', $quantity );
-        return $this;
-    }
-
-    function decimals(): int
-    {
-        if( !isset( $this->decimals ) )
-            $this->decimals = $this->json->get( 'decimals' )->asInt();
-        return $this->decimals;
-    }
-
-    function setDecimals( int $decimals ): CurrentTransaction
-    {
-        $this->decimals = $decimals;
-        $this->json->put( 'decimals', $decimals );
-        return $this;
-    }
-
-    function isReissuable(): bool
-    {
-        if( !isset( $this->isReissuable ) )
-            $this->isReissuable = $this->json->get( 'reissuable' )->asBoolean();
-        return $this->isReissuable;
-    }
-
-    function setIsReissuable( bool $isReissuable ): CurrentTransaction
-    {
-        $this->isReissuable = $isReissuable;
-        $this->json->put( 'reissuable', $isReissuable );
+        $this->assetId = $assetId;
+        $this->json->put( 'assetId', $assetId->toJsonValue() );
         return $this;
     }
 
