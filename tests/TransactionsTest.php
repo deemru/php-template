@@ -25,6 +25,8 @@ use wavesplatform\Model\WavesConfig;
 use wavesplatform\Transactions\Amount;
 use wavesplatform\Transactions\BurnTransaction;
 use wavesplatform\Transactions\IssueTransaction;
+use wavesplatform\Transactions\LeaseCancelTransaction;
+use wavesplatform\Transactions\LeaseTransaction;
 use wavesplatform\Transactions\Recipient;
 use wavesplatform\Transactions\ReissueTransaction;
 use wavesplatform\Transactions\SetAssetScriptTransaction;
@@ -100,6 +102,106 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
             $tx = $node->waitForTransaction( $node->broadcast( IssueTransaction::build( $sender, 'TOKEN', '', 1000000, 6, true )->addProof( $account ) )->id() );
             $this->tokenId = AssetId::fromString( $tx->id()->toString() );
         }
+    }
+
+    function testLeaseAndLeaseCancel(): void
+    {
+        $this->prepare();
+        $chainId = $this->chainId;
+        $node = $this->node;
+        $account = $this->account;
+        $sender = $account->publicKey();
+
+        $recipient = Recipient::fromAddressOrAlias( 'test' );
+
+        // LEASE
+
+        $tx = LeaseTransaction::build(
+            $sender,
+            $recipient,
+            10_000_000
+        );
+
+        $tx->bodyBytes();
+
+        $id = $tx->id();
+        $tx->version();
+        $tx->chainId();
+        $tx->sender();
+        $tx->timestamp();
+        $tx->fee();
+        $tx->proofs();
+
+        $tx->recipient();
+        $tx->amount();
+
+        $tx1 = $node->waitForTransaction( $node->broadcast( $tx->addProof( $account ) )->id() );
+
+        $this->assertSame( $id->toString(), $tx1->id()->toString() );
+        $this->assertSame( $tx1->applicationStatus(), ApplicationStatus::SUCCEEDED );
+
+        $tx2 = $node->waitForTransaction(
+            $node->broadcast(
+                (new LeaseTransaction)
+                ->setRecipient( Recipient::fromAddress( $node->getAddressByAlias( $recipient->alias() ) ) )
+                ->setAmount( 20_000_000 )
+
+                ->setSender( $sender )
+                ->setType( LeaseTransaction::TYPE )
+                ->setVersion( LeaseTransaction::LATEST_VERSION )
+                ->setFee( Amount::of( LeaseTransaction::MIN_FEE ) )
+                ->setChainId( $chainId )
+                ->setTimestamp()
+
+                ->addProof( $account )
+            )->id()
+        );
+        
+        $this->assertNotSame( $tx1->id(), $tx2->id() );
+        $this->assertSame( $tx2->applicationStatus(), ApplicationStatus::SUCCEEDED );
+
+        // LEASE_CANCEL
+
+        $tx = LeaseCancelTransaction::build(
+            $sender,
+            $tx1->id()
+        );
+
+        $tx->bodyBytes();
+
+        $id = $tx->id();
+        $tx->version();
+        $tx->chainId();
+        $tx->sender();
+        $tx->timestamp();
+        $tx->fee();
+        $tx->proofs();
+
+        $tx->leaseId();
+
+        $tx1 = $node->waitForTransaction( $node->broadcast( $tx->addProof( $account ) )->id() );
+
+        $this->assertSame( $id->toString(), $tx1->id()->toString() );
+        $this->assertSame( $tx1->applicationStatus(), ApplicationStatus::SUCCEEDED );
+
+        $tx2 = $node->waitForTransaction(
+            $node->broadcast(
+                (new LeaseCancelTransaction)
+                ->setLeaseId( $tx2->id() )
+
+                ->setSender( $sender )
+                ->setType( LeaseCancelTransaction::TYPE )
+                ->setVersion( LeaseCancelTransaction::LATEST_VERSION )
+                ->setFee( Amount::of( LeaseCancelTransaction::MIN_FEE ) )
+                ->setChainId( $chainId )
+                ->setTimestamp()
+
+                ->addProof( $account )
+            )->id()
+        );
+        
+        $this->assertNotSame( $tx1->id(), $tx2->id() );
+        $this->assertSame( $tx2->applicationStatus(), ApplicationStatus::SUCCEEDED );
     }
 
     function testSetAssetScript(): void
@@ -395,7 +497,7 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
         $account = $this->account;
         $sender = $account->publicKey();
 
-        $recipient = Recipient::fromAlias( new Alias( 'test' ) );
+        $recipient = Recipient::fromAlias( Alias::fromString( 'test' ) );
         $amount = new Amount( 1, AssetId::WAVES() );
         $attachment = Base58String::fromBytes( 'test' );
 
@@ -450,6 +552,7 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
 if( DO_LOCAL_DEBUG )
 {
     $test = new TransactionsTest;
+    $test->testLeaseAndLeaseCancel();
     $test->testIssue();
     $test->testReissue();
     $test->testBurn();

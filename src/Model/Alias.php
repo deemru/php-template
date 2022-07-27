@@ -20,7 +20,7 @@ class Alias
     private string $name;
     private string $fullAlias;
 
-    function __construct( string $alias, ChainId $chainId = null )
+    private function __construct( string $alias, ChainId $chainId = null )
     {
         $matches = [];
         preg_match( Alias::MATCH, $alias, $matches );
@@ -31,6 +31,11 @@ class Alias
         $this->name = $alias;
         $this->bytes = Alias::TYPE . $chainId->asString() . $alias;
         $this->fullAlias = Alias::PREFIX . $chainId->asString() . ':' . $alias;
+    }
+
+    static function fromString( string $alias, ChainId $chainId = null ): Alias
+    {
+        return new Alias( $alias, $chainId );
     }
 
     static function fromFullAlias( string $fullAlias ): Alias

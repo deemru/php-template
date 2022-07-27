@@ -2,7 +2,9 @@
 
 namespace wavesplatform\Transactions;
 
+use Exception;
 use wavesplatform\Account\Address;
+use wavesplatform\Common\ExceptionCode;
 use wavesplatform\Model\Alias;
 
 class Recipient
@@ -30,7 +32,17 @@ class Recipient
     {
         if( strlen( $addressOrAlias ) === Address::STRING_LENGTH )
             return Recipient::fromAddress( Address::fromString( $addressOrAlias ) );
-        return Recipient::fromAlias( Alias::fromFullAlias( $addressOrAlias ) );
+        try
+        {
+            return Recipient::fromAlias( Alias::fromFullAlias( $addressOrAlias ) );
+        }
+        catch( Exception $e )
+        {
+            if( $e->getCode() !== ExceptionCode::BAD_ALIAS )
+                throw $e;
+
+            return Recipient::fromAlias( Alias::fromString( $addressOrAlias ) );
+        }
     }
 
     function isAlias(): bool
