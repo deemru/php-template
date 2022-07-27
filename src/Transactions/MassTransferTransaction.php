@@ -9,34 +9,42 @@ use wavesplatform\Common\Base58String;
 use wavesplatform\Account\PublicKey;
 use wavesplatform\Common\ExceptionCode;
 use wavesplatform\Common\Json;
+use wavesplatform\Model\AssetId;
 use wavesplatform\Model\ChainId;
 use wavesplatform\Model\WavesConfig;
+use wavesplatform\Transactions\Mass\Transfer;
+use wavesplatform\Transactions\MassTransferTransaction as CurrentTransaction;
 
-use wavesplatform\Transactions\TransferTransaction as CurrentTransaction;
-
-class TransferTransaction extends Transaction
+class MassTransferTransaction extends Transaction
 {
-    const TYPE = 4;
-    const LATEST_VERSION = 3;
+    const TYPE = 11;
+    const LATEST_VERSION = 2;
     const MIN_FEE = 100_000;
 
-    private Recipient $recipient;
-    private Amount $amount;
-    private Base58String $attachment;
+    /**
+     * @var array<int, Transfer>
+     */
+    private array $transfers;
+    private AssetId $assetId;
 
-    static function build( PublicKey $sender, Recipient $recipient, Amount $amount, Base58String $attachment = null ): CurrentTransaction
+    static function build( PublicKey $sender, AssetId $assetId, array $transfers, Base58String $attachment = null ): CurrentTransaction
     {
         $tx = new CurrentTransaction;
-        $tx->setBase( $sender, CurrentTransaction::TYPE, CurrentTransaction::LATEST_VERSION, CurrentTransaction::MIN_FEE );
+        $tx->setBase( $sender, CurrentTransaction::TYPE, CurrentTransaction::LATEST_VERSION, CurrentTransaction::calculateFeeFor( count( $transfers ) ) );
 
-        // TRANSFER TRANSACTION
+        // MASS_TRANSFER TRANSACTION
         {
-            $tx->setRecipient( $recipient );
-            $tx->setAmount( $amount );
+            $tx->setAssetId( $assetId );
+            $tx->setTransfers( $transfers );
             $tx->setAttachment( $attachment );
         }       
 
         return $tx;
+    }
+
+    static function calculateFeeFor( int $n )
+    {
+        return 100_000 + ( $n + ( $n & 1 ) ) * 50_000;
     }
 
     function getUnsigned(): CurrentTransaction
@@ -48,16 +56,25 @@ class TransferTransaction extends Transaction
         // BASE
         $pb_Transaction = $this->getProtobufTransactionBase();
 
-        // TRANSFER TRANSACTION
+        // MASS_TRANSFER TRANSACTION
         {
-            $pb_TransactionData = new \wavesplatform\Protobuf\TransferTransactionData;
-            // RECIPIENT
+            $pb_TransactionData = new \wavesplatform\Protobuf\MassTransferTransactionData;
+            // TRANSFERS
             {
-                $pb_TransactionData->setRecipient( $this->recipient()->toProtobuf() );
+                $pb_Transfers = [];
+                foreach( $this->transfers() as $transfer )
+                {
+                    $pb_Transfer = new \wavesplatform\Protobuf\MassTransferTransactionData\Transfer;
+                    $pb_Transfer->setRecipient( $transfer->recipient()->toProtobuf() );
+                    $pb_Transfer->setAmount( $transfer->amount() );
+                    $pb_Transfers[] = $pb_Transfer;
+                }
+                
+                $pb_TransactionData->setTransfers( $pb_Transfers );
             }
-            // AMOUNT
+            // ASSET
             {
-                $pb_TransactionData->setAmount( $this->amount()->toProtobuf() );
+                $pb_TransactionData->setAssetId( $this->assetId()->bytes() );
             }
             // ATTACHMENT
             {
@@ -65,37 +82,57 @@ class TransferTransaction extends Transaction
             }
         }        
 
-        // TRANSFER TRANSACTION
-        $this->setBodyBytes( $pb_Transaction->setTransfer( $pb_TransactionData )->serializeToString() );
+        // MASS_TRANSFER TRANSACTION
+        $this->setBodyBytes( $pb_Transaction->setMassTransfer( $pb_TransactionData )->serializeToString() );
         return $this;
     }
 
-    function recipient(): Recipient
+    function assetId(): AssetId
     {
-        if( !isset( $this->recipient ) )
-            $this->recipient = $this->json->get( 'recipient' )->asRecipient();
-        return $this->recipient;
+        if( !isset( $this->assetId ) )
+            $this->assetId = $this->json->get( 'assetId' )->asAssetId();
+        return $this->assetId;
     }
 
-    function setRecipient( Recipient $recipient ): CurrentTransaction
+    function setAssetId( AssetId $assetId ): CurrentTransaction
     {
-        $this->recipient = $recipient;
-        $this->json->put( 'recipient', $recipient->toString() );
+        $this->assetId = $assetId;
+        $this->json->put( 'assetId', $assetId->toJsonValue() );
         return $this;
     }
 
-    function amount(): Amount
+    /**
+     * @return array<int, Transfer>
+     */
+    function transfers(): array
     {
-        if( !isset( $this->amount ) )
-            $this->amount = Amount::of( $this->json->get( 'amount' )->asInt(), $this->json->get( 'assetId' )->asAssetId() );
-        return $this->amount;
+        if( !isset( $this->transfers ) )
+        {
+            $transfers = [];
+            foreach( $this->json->get( 'amount' )->asArray() as $value )
+            {
+                $json = Json::asJson( $value );
+                $recipient = $json->get( 'recipient' )->asRecipient();
+                $amount = $json->get( 'amount' )->asInt();
+                $transfers[] = new Transfer( $recipient, $amount );
+            }
+            $this->transfers = $transfers;
+        }
+        return $this->transfers;
     }
 
-    function setAmount( Amount $amount ): CurrentTransaction
+    /**
+     * @param array<int, Transfer> $transfers
+     * @return CurrentTransaction
+     */
+    function setTransfers( array $transfers ): CurrentTransaction
     {
-        $this->amount = $amount;
-        $this->json->put( 'amount', $amount->value() );
-        $this->json->put( 'assetId', $amount->assetId()->toJsonValue() );
+        $this->transfers = $transfers;
+        
+        $transfers = [];
+        foreach( $this->transfers as $transfer )
+            $transfers[] = [ 'recipient' => $transfer->recipient()->toString(), 'amount' => $transfer->amount() ];
+        $this->json->put( 'transfers', $transfers );
         return $this;
     }
 

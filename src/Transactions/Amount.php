@@ -34,4 +34,13 @@ class Amount
     {
         return serialize( $this );
     }
+
+    function toProtobuf(): \wavesplatform\Protobuf\Amount
+    {
+        $pb_Amount = new \wavesplatform\Protobuf\Amount;
+        $pb_Amount->setAmount( $this->value() );
+        if( !$this->assetId()->isWaves() )
+            $pb_Amount->setAssetId( $this->assetId()->bytes() );
+        return $pb_Amount;
+    }
 }

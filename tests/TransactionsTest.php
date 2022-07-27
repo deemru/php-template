@@ -24,9 +24,12 @@ use wavesplatform\Model\Id;
 use wavesplatform\Model\WavesConfig;
 use wavesplatform\Transactions\Amount;
 use wavesplatform\Transactions\BurnTransaction;
+use wavesplatform\Transactions\CreateAliasTransaction;
 use wavesplatform\Transactions\IssueTransaction;
 use wavesplatform\Transactions\LeaseCancelTransaction;
 use wavesplatform\Transactions\LeaseTransaction;
+use wavesplatform\Transactions\Mass\Transfer;
+use wavesplatform\Transactions\MassTransferTransaction;
 use wavesplatform\Transactions\Recipient;
 use wavesplatform\Transactions\ReissueTransaction;
 use wavesplatform\Transactions\SetAssetScriptTransaction;
@@ -102,6 +105,56 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
             $tx = $node->waitForTransaction( $node->broadcast( IssueTransaction::build( $sender, 'TOKEN', '', 1000000, 6, true )->addProof( $account ) )->id() );
             $this->tokenId = AssetId::fromString( $tx->id()->toString() );
         }
+    }
+
+    function testAlias(): void
+    {
+        $this->prepare();
+        $chainId = $this->chainId;
+        $node = $this->node;
+        $account = $this->account;
+        $sender = $account->publicKey();
+
+        $tx = CreateAliasTransaction::build(
+            $sender,
+            Alias::fromString( 'name-' . mt_rand( 10000000000, 99999999999 ) )
+        );
+
+        $tx->bodyBytes();
+
+        $id = $tx->id();
+        $tx->version();
+        $tx->chainId();
+        $tx->sender();
+        $tx->timestamp();
+        $tx->fee();
+        $tx->proofs();
+
+        $tx->alias();
+
+        $tx1 = $node->waitForTransaction( $node->broadcast( $tx->addProof( $account ) )->id() );
+
+        $this->assertSame( $id->toString(), $tx1->id()->toString() );
+        $this->assertSame( $tx1->applicationStatus(), ApplicationStatus::SUCCEEDED );
+
+        $tx2 = $node->waitForTransaction(
+            $node->broadcast(
+                (new CreateAliasTransaction)
+                ->setAlias( Alias::fromString( 'name-' . mt_rand( 10000000000, 99999999999 ) ) )
+
+                ->setSender( $sender )
+                ->setType( CreateAliasTransaction::TYPE )
+                ->setVersion( CreateAliasTransaction::LATEST_VERSION )
+                ->setFee( Amount::of( CreateAliasTransaction::MIN_FEE ) )
+                ->setChainId( $chainId )
+                ->setTimestamp()
+
+                ->addProof( $account )
+            )->id()
+        );
+        
+        $this->assertNotSame( $tx1->id(), $tx2->id() );
+        $this->assertSame( $tx2->applicationStatus(), ApplicationStatus::SUCCEEDED );
     }
 
     function testLeaseAndLeaseCancel(): void
@@ -489,6 +542,68 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
         $this->assertSame( $tx2->applicationStatus(), ApplicationStatus::SUCCEEDED );
     }
 
+    function testMassTransfer(): void
+    {
+        $this->prepare();
+        $chainId = $this->chainId;
+        $node = $this->node;
+        $account = $this->account;
+        $sender = $account->publicKey();
+
+        $transfers = [];
+        $transfers[] = new Transfer( Recipient::fromAlias( Alias::fromString( 'test' ) ), 1 );
+        $transfers[] = new Transfer( Recipient::fromAddress( $sender->address() ), 2 );
+
+        $attachment = Base58String::fromBytes( 'test' );
+
+        $tx = MassTransferTransaction::build(
+            $sender,
+            $this->tokenId,
+            $transfers,
+            $attachment,
+        );
+
+        $tx->bodyBytes();
+
+        $id = $tx->id();
+        $tx->version();
+        $tx->chainId();
+        $tx->sender();
+        $tx->timestamp();
+        $tx->fee();
+        $tx->proofs();
+
+        $tx->assetId();
+        $tx->transfers();
+        $tx->attachment();
+
+        $tx1 = $node->waitForTransaction( $node->broadcast( $tx->addProof( $account ) )->id() );
+
+        $this->assertSame( $id->toString(), $tx1->id()->toString() );
+        $this->assertSame( $tx1->applicationStatus(), ApplicationStatus::SUCCEEDED );
+
+        $tx2 = $node->waitForTransaction(
+            $node->broadcast(
+                (new MassTransferTransaction)
+                ->setAssetId( AssetId::WAVES() )
+                ->setTransfers( $transfers )
+                ->setAttachment( $attachment )
+
+                ->setSender( $sender )
+                ->setType( MassTransferTransaction::TYPE )
+                ->setVersion( MassTransferTransaction::LATEST_VERSION )
+                ->setFee( Amount::of( MassTransferTransaction::calculateFeeFor( count( $transfers ) ) ) )
+                ->setChainId( $chainId )
+                ->setTimestamp()
+
+                ->addProof( $account )
+            )->id()
+        );
+        
+        $this->assertNotSame( $tx1->id(), $tx2->id() );
+        $this->assertSame( $tx2->applicationStatus(), ApplicationStatus::SUCCEEDED );
+    }
+
     function testTransfer(): void
     {
         $this->prepare();
@@ -552,11 +667,13 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
 if( DO_LOCAL_DEBUG )
 {
     $test = new TransactionsTest;
+    $test->testMassTransfer();
+    $test->testTransfer();
+    $test->testAlias();
     $test->testLeaseAndLeaseCancel();
     $test->testIssue();
     $test->testReissue();
     $test->testBurn();
     $test->testSetAssetScript();
     $test->testSponsorship();
-    $test->testTransfer();
 }

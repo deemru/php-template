@@ -52,13 +52,9 @@ class SponsorFeeTransaction extends Transaction
         // SPONSORSHIP TRANSACTION
         {
             $pb_TransactionData = new \wavesplatform\Protobuf\SponsorFeeTransactionData;
-            // ASSET + FEE
+            // MINFEE
             {
-                $pb_Amount = new \wavesplatform\Protobuf\Amount;
-                $pb_Amount->setAmount( $this->minSponsoredFee() );
-                if( !$this->assetId()->isWaves() )
-                    $pb_Amount->setAssetId( $this->assetId()->bytes() );
-                $pb_TransactionData->setMinFee( $pb_Amount );
+                $pb_TransactionData->setMinFee( Amount::of( $this->minSponsoredFee(), $this->assetId() )->toProtobuf() );
             }
         }        
 

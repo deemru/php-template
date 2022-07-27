@@ -39,15 +39,10 @@ class Transaction extends TransactionOrOrder
 
     function getProtobufTransactionBase(): \wavesplatform\Protobuf\Transaction
     {
-        $pb_FeeAmount = new \wavesplatform\Protobuf\Amount;
-        $pb_FeeAmount->setAmount( $this->fee()->value() );
-        if( !$this->fee()->assetId()->isWaves() )
-            $pb_FeeAmount->setAssetId( $this->fee()->assetId()->bytes() );
-
         $pb_Transaction = new \wavesplatform\Protobuf\Transaction();
         $pb_Transaction->setSenderPublicKey( $this->sender()->bytes() );
         $pb_Transaction->setVersion( $this->version() );
-        $pb_Transaction->setFee( $pb_FeeAmount );
+        $pb_Transaction->setFee( $this->fee()->toProtobuf() );
         $pb_Transaction->setChainId( $this->chainId()->asInt() );
         $pb_Transaction->setTimestamp( $this->timestamp() );
 

@@ -57,6 +57,13 @@ class Recipient
         return $this->address->bytes();
     }
 
+    function toShortString(): string
+    {
+        if( $this->isAlias() )
+            return $this->alias->name();
+        return $this->address->toString();
+    }
+
     function toString(): string
     {
         if( $this->isAlias() )
@@ -72,5 +79,15 @@ class Recipient
     function alias(): Alias
     {
         return $this->alias;
+    }
+
+    function toProtobuf(): \wavesplatform\Protobuf\Recipient
+    {
+        $pb_Recipient = new \wavesplatform\Protobuf\Recipient;
+        if( $this->isAlias() )
+            $pb_Recipient->setAlias( $this->alias()->name() );
+        else
+            $pb_Recipient->setPublicKeyHash( $this->address()->publicKeyHash() );
+        return $pb_Recipient;
     }
 }

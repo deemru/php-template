@@ -51,10 +51,7 @@ class BurnTransaction extends Transaction
             $pb_TransactionData = new \wavesplatform\Protobuf\BurnTransactionData;
             // AMOUNT
             {
-                $pb_Amount = new \wavesplatform\Protobuf\Amount;
-                $pb_Amount->setAmount( $this->amount()->value() );
-                $pb_Amount->setAssetId( $this->amount()->assetId()->bytes() );
-                $pb_TransactionData->setAssetAmount( $pb_Amount );
+                $pb_TransactionData->setAssetAmount( $this->amount()->toProtobuf() );
             }
         }        
 

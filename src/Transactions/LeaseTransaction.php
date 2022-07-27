@@ -51,12 +51,7 @@ class LeaseTransaction extends Transaction
             $pb_TransactionData = new \wavesplatform\Protobuf\LeaseTransactionData;
             // RECIPIENT
             {
-                $pb_Recipient = new \wavesplatform\Protobuf\Recipient;
-                if( $this->recipient()->isAlias() )
-                    $pb_Recipient->setAlias( $this->recipient()->alias()->name() );
-                else
-                    $pb_Recipient->setPublicKeyHash( $this->recipient()->address()->publicKeyHash() );
-                $pb_TransactionData->setRecipient( $pb_Recipient );
+                $pb_TransactionData->setRecipient( $this->recipient()->toProtobuf() );
             }
             // AMOUNT
             {

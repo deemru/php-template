@@ -7,33 +7,31 @@ use Exception;
 use wavesplatform\Account\PrivateKey;
 use wavesplatform\Common\Base58String;
 use wavesplatform\Account\PublicKey;
-use wavesplatform\Common\Base64String;
 use wavesplatform\Common\ExceptionCode;
 use wavesplatform\Common\Json;
-use wavesplatform\Common\Value;
+use wavesplatform\Model\Alias;
 use wavesplatform\Model\ChainId;
+use wavesplatform\Model\Id;
 use wavesplatform\Model\WavesConfig;
 
-use wavesplatform\Transactions\ReissueTransaction as CurrentTransaction;
+use wavesplatform\Transactions\CreateAliasTransaction as CurrentTransaction;
 
-class ReissueTransaction extends Transaction
+class CreateAliasTransaction extends Transaction
 {
-    const TYPE = 5;
+    const TYPE = 10;
     const LATEST_VERSION = 3;
     const MIN_FEE = 100_000;
 
-    private Amount $amount;
-    private bool $isReissuable;
+    private Alias $alias;
 
-    static function build( PublicKey $sender, Amount $amount, bool $isReissuable ): CurrentTransaction
+    static function build( PublicKey $sender, Alias $alias ): CurrentTransaction
     {
         $tx = new CurrentTransaction;
         $tx->setBase( $sender, CurrentTransaction::TYPE, CurrentTransaction::LATEST_VERSION, CurrentTransaction::MIN_FEE );
 
-        // REISSUE TRANSACTION
+        // ALIAS TRANSACTION
         {
-            $tx->setAmount( $amount );
-            $tx->setIsReissuable( $isReissuable );
+            $tx->setAlias( $alias );
         }       
 
         return $tx;
@@ -48,50 +46,31 @@ class ReissueTransaction extends Transaction
         // BASE
         $pb_Transaction = $this->getProtobufTransactionBase();
 
-        // REISSUE TRANSACTION
+        // ALIAS TRANSACTION
         {
-            $pb_TransactionData = new \wavesplatform\Protobuf\ReissueTransactionData;
-            // AMOUNT
+            $pb_TransactionData = new \wavesplatform\Protobuf\CreateAliasTransactionData;
+            // ID
             {
-                $pb_TransactionData->setAssetAmount( $this->amount()->toProtobuf() );
-            }
-            // REISSUABLE
-            {
-                $pb_TransactionData->setReissuable( $this->isReissuable() );
+                $pb_TransactionData->setAlias( $this->alias()->name() );
             }
         }        
 
-        // REISSUE TRANSACTION
-        $this->setBodyBytes( $pb_Transaction->setReissue( $pb_TransactionData )->serializeToString() );
+        // ALIAS TRANSACTION
+        $this->setBodyBytes( $pb_Transaction->setCreateAlias( $pb_TransactionData )->serializeToString() );
         return $this;
     }
 
-    function amount(): Amount
+    function alias(): Alias
     {
-        if( !isset( $this->amount ) )
-            $this->amount = Amount::of( $this->json->get( 'quantity' )->asInt(), $this->json->get( 'assetId' )->asAssetId() );
-        return $this->amount;
+        if( !isset( $this->alias ) )
+            $this->alias = Alias::fromString( $this->json->get( 'alias' )->asString() );
+        return $this->alias;
     }
 
-    function setAmount( Amount $amount ): CurrentTransaction
+    function setAlias( Alias $alias ): CurrentTransaction
     {
-        $this->amount = $amount;
-        $this->json->put( 'quantity', $amount->value() );
-        $this->json->put( 'assetId', $amount->assetId()->toJsonValue() );
-        return $this;
-    }
-
-    function isReissuable(): bool
-    {
-        if( !isset( $this->isReissuable ) )
-            $this->isReissuable = $this->json->get( 'reissuable' )->asBoolean();
-        return $this->isReissuable;
-    }
-
-    function setIsReissuable( bool $isReissuable ): CurrentTransaction
-    {
-        $this->isReissuable = $isReissuable;
-        $this->json->put( 'reissuable', $isReissuable );
+        $this->alias = $alias;
+        $this->json->put( 'alias', $alias->name() );
         return $this;
     }
 
