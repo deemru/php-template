@@ -113,7 +113,7 @@ class Node
         {
             $message = __FUNCTION__ . ' failed at `' . $uri . '`';
             if( $this->wklevel === 'e' )
-                $message .= ' (WavesKit: ' . $this->wkmessage . ')';
+                $message .= ' (' . $this->wkmessage . ')';
             throw new Exception( $message, ExceptionCode::FETCH_URI );
         }
         $fetch = $this->wk->json_decode( $fetch );

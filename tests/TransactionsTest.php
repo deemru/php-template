@@ -23,6 +23,7 @@ use wavesplatform\Model\LeaseStatus;
 use wavesplatform\Model\Id;
 use wavesplatform\Model\WavesConfig;
 use wavesplatform\Transactions\Amount;
+use wavesplatform\Transactions\BurnTransaction;
 use wavesplatform\Transactions\IssueTransaction;
 use wavesplatform\Transactions\Recipient;
 use wavesplatform\Transactions\ReissueTransaction;
@@ -86,7 +87,7 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
     {
         if( 1 ) // @phpstan-ignore-line // fast/full test
         {
-            $this->tokenId = AssetId::fromString( 'Gzg5G9sAjMGFokyatjasoMDYWxdW9aia3DPvYfPj28k1' );
+            $this->tokenId = AssetId::fromString( '8whRxvA9Rs6b7bb5AZheEijobEqJMCT96hZiQcJPgP9D' );
         }
         else
         {
@@ -108,6 +109,12 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
         $node = $this->node;
         $account = $this->account;
         $sender = $account->publicKey();
+
+        if( 1 ) // @phpstan-ignore-line // fast/full test
+        {
+            $this->assertNotSame( $this->tokenId->toString(), $this->sponsorId->toString() );
+            return;
+        }        
 
         $script = Base64String::fromString( 'BQbtKNoM' );
 
@@ -195,6 +202,58 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
             $node->broadcast(
                 (new ReissueTransaction)
                 ->setAmount( Amount::of( 2000_000_000, $this->tokenId ) )
+                ->setIsReissuable( true )
+
+                ->setSender( $sender )
+                ->setType( ReissueTransaction::TYPE )
+                ->setVersion( ReissueTransaction::LATEST_VERSION )
+                ->setFee( Amount::of( ReissueTransaction::MIN_FEE ) )
+                ->setChainId( $chainId )
+                ->setTimestamp()
+
+                ->addProof( $account )
+            )->id()
+        );
+        
+        $this->assertNotSame( $tx1->id(), $tx2->id() );
+        $this->assertSame( $tx2->applicationStatus(), ApplicationStatus::SUCCEEDED );
+    }
+
+    function testBurn(): void
+    {
+        $this->prepare();
+        $chainId = $this->chainId;
+        $node = $this->node;
+        $account = $this->account;
+        $sender = $account->publicKey();
+
+        $tx = BurnTransaction::build(
+            $sender,
+            Amount::of( 100_000_000, $this->tokenId ),
+            true
+        );
+
+        $tx->bodyBytes();
+
+        $id = $tx->id();
+        $tx->version();
+        $tx->chainId();
+        $tx->sender();
+        $tx->timestamp();
+        $tx->fee();
+        $tx->proofs();
+
+        $tx->amount();
+
+        $tx1 = $node->waitForTransaction( $node->broadcast( $tx->addProof( $account ) )->id() );
+
+        $this->assertSame( $id->toString(), $tx1->id()->toString() );
+        $this->assertSame( $tx1->applicationStatus(), ApplicationStatus::SUCCEEDED );
+
+        $tx2 = $node->waitForTransaction(
+            $node->broadcast(
+                (new ReissueTransaction)
+                ->setAmount( Amount::of( 10_000_000, $this->tokenId ) )
                 ->setIsReissuable( false )
 
                 ->setSender( $sender )
@@ -393,8 +452,9 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
 if( DO_LOCAL_DEBUG )
 {
     $test = new TransactionsTest;
+    //$test->testIssue();
     $test->testReissue();
-    $test->testIssue();
+    $test->testBurn();
     $test->testSetAssetScript();
     $test->testSponsorship();
     $test->testTransfer();
