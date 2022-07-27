@@ -23,6 +23,7 @@ use wavesplatform\Model\WavesConfig;
 use wavesplatform\Transactions\Amount;
 use wavesplatform\Transactions\IssueTransaction;
 use wavesplatform\Transactions\Recipient;
+use wavesplatform\Transactions\SponsorFeeTransaction;
 use wavesplatform\Transactions\TransferTransaction;
 use wavesplatform\Util\Functions;
 
@@ -31,6 +32,7 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
     private ChainId $chainId;
     private Node $node;
     private PrivateKey $account;
+    private AssetId $sponsorId;
 
     private function prepare(): void
     {
@@ -51,6 +53,27 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
         $this->chainId = $chainId;
 
         WavesConfig::chainId( $this->chainId );
+
+        $this->sponsorship();
+    }
+
+    private function sponsorship()
+    {
+        if( 1 )
+        {
+            $this->sponsorId = AssetId::fromString( 'G8BKG3oCEx7Viesm6ucUWt1v1cnz1MueJYkApqK9R5AR' );
+        }
+        else
+        {
+            $this->prepare();
+            $chainId = $this->chainId;
+            $node = $this->node;
+            $account = $this->account;
+            $sender = $account->publicKey();
+
+            $tx = $node->waitForTransaction( $node->broadcast( IssueTransaction::build( $sender, 'SPONSOR', '', 1, 0, false )->addProof( $account ) )->id() );
+            $this->sponsorId = AssetId::fromString( $tx->id()->toString() );
+        }
     }
 
     function testIssue(): void
@@ -114,6 +137,59 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
         $this->assertNotSame( $tx1->id(), $tx2->id() );
     }
 
+    function testSponsorship(): void
+    {
+        $this->prepare();
+        $chainId = $this->chainId;
+        $node = $this->node;
+        $account = $this->account;
+        $sender = $account->publicKey();
+
+        $sponsorId = $this->sponsorId;
+
+        $tx = SponsorFeeTransaction::build(
+            $sender,
+            $sponsorId,
+            1
+        );
+
+        $tx->bodyBytes();
+
+        $id = $tx->id();
+        $tx->version();
+        $tx->chainId();
+        $tx->sender();
+        $tx->timestamp();
+        $tx->fee();
+        $tx->proofs();
+
+        $tx->assetId();
+        $tx->minSponsoredFee();
+
+        $tx1 = $node->waitForTransaction( $node->broadcast( $tx->addProof( $account ) )->id() );
+
+        $this->assertSame( $id->toString(), $tx1->id()->toString() );
+
+        $tx2 = $node->waitForTransaction(
+            $node->broadcast(
+                (new SponsorFeeTransaction())
+                ->setAssetId( $sponsorId )
+                ->setMinSponsoredFee( 1 )
+
+                ->setSender( $sender )
+                ->setType( SponsorFeeTransaction::TYPE )
+                ->setVersion( SponsorFeeTransaction::LATEST_VERSION )
+                ->setFee( Amount::of( SponsorFeeTransaction::MIN_FEE ) )
+                ->setChainId( $chainId )
+                ->setTimestamp()
+
+                ->addProof( $account )
+            )->id()
+        );
+        
+        $this->assertNotSame( $tx1->id(), $tx2->id() );
+    }
+
     function testTransfer(): void
     {
         $this->prepare();
@@ -130,7 +206,7 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
             $sender,
             $recipient,
             $amount,
-        );
+        )->setFee( Amount::of( 1, $this->sponsorId ) );
 
         $tx->bodyBytes();
 
@@ -175,6 +251,7 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
 if( DO_LOCAL_DEBUG )
 {
     $test = new TransactionsTest;
+    $test->testSponsorship();
     $test->testIssue();
     $test->testTransfer();
 }

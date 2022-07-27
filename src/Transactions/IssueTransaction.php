@@ -60,7 +60,7 @@ class IssueTransaction extends Transaction
         // BASE
         $pb_Transaction = $this->getProtobufTransactionBase();
 
-        // TRANSFER_TRANSACTION
+        // ISSUE TRANSACTION
         {
             $pb_TransactionData = new \wavesplatform\Protobuf\IssueTransactionData;
             // NAME
@@ -89,6 +89,7 @@ class IssueTransaction extends Transaction
             }
         }        
 
+        // ISSUE TRANSACTION
         $this->setBodyBytes( $pb_Transaction->setIssue( $pb_TransactionData )->serializeToString() );
         return $this;
     }
@@ -196,8 +197,7 @@ class IssueTransaction extends Transaction
             $proofs[] = $proof;
         else
             $proofs[$index] = $proof;
-        $this->setProofs( $proofs );
-        return $this;
+        return $this->setProofs( $proofs );
     }
 
     /**

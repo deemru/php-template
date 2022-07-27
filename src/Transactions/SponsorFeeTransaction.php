@@ -7,33 +7,34 @@ use Exception;
 use wavesplatform\Account\PrivateKey;
 use wavesplatform\Common\Base58String;
 use wavesplatform\Account\PublicKey;
+use wavesplatform\Common\Base64String;
 use wavesplatform\Common\ExceptionCode;
 use wavesplatform\Common\Json;
+use wavesplatform\Common\Value;
+use wavesplatform\Model\AssetId;
 use wavesplatform\Model\ChainId;
 use wavesplatform\Model\WavesConfig;
 
-use wavesplatform\Transactions\TransferTransaction as CurrentTransaction;
+use wavesplatform\Transactions\SponsorFeeTransaction as CurrentTransaction;
 
-class TransferTransaction extends Transaction
+class SponsorFeeTransaction extends Transaction
 {
-    const TYPE = 4;
-    const LATEST_VERSION = 3;
+    const TYPE = 14;
+    const LATEST_VERSION = 2;
     const MIN_FEE = 100_000;
 
-    private Recipient $recipient;
-    private Amount $amount;
-    private Base58String $attachment;
+    private AssetId $assetId;
+    private int $minSponsoredFee;
 
-    static function build( PublicKey $sender, Recipient $recipient, Amount $amount, Base58String $attachment = null ): CurrentTransaction
+    static function build( PublicKey $sender, AssetId $assetId, int $minSponsoredFee ): CurrentTransaction
     {
         $tx = new CurrentTransaction;
         $tx->setBase( $sender, CurrentTransaction::TYPE, CurrentTransaction::LATEST_VERSION, CurrentTransaction::MIN_FEE );
 
-        // TRANSFER TRANSACTION
+        // SPONSORSHIP TRANSACTION
         {
-            $tx->setRecipient( $recipient );
-            $tx->setAmount( $amount );
-            $tx->setAttachment( $attachment ?? Base58String::emptyString() );
+            $tx->setAssetId( $assetId );
+            $tx->setMinSponsoredFee( $minSponsoredFee );
         }       
 
         return $tx;
@@ -48,80 +49,52 @@ class TransferTransaction extends Transaction
         // BASE
         $pb_Transaction = $this->getProtobufTransactionBase();
 
-        // TRANSFER TRANSACTION
+        // SPONSORSHIP TRANSACTION
         {
-            $pb_TransactionData = new \wavesplatform\Protobuf\TransferTransactionData;
-            // RECIPIENT
-            {
-                $pb_Recipient = new \wavesplatform\Protobuf\Recipient;
-                if( $this->recipient()->isAlias() )
-                    $pb_Recipient->setAlias( $this->recipient()->alias()->name() );
-                else
-                    $pb_Recipient->setPublicKeyHash( $this->recipient()->address()->publicKeyHash() );
-                $pb_TransactionData->setRecipient( $pb_Recipient );
-            }
-            // AMOUNT
+            $pb_TransactionData = new \wavesplatform\Protobuf\SponsorFeeTransactionData;
+            // ASSET + FEE
             {
                 $pb_Amount = new \wavesplatform\Protobuf\Amount;
-                $pb_Amount->setAmount( $this->amount()->value() );
-                if( !$this->amount()->assetId()->isWaves() )
-                    $pb_Amount->setAssetId( $this->amount()->assetId()->bytes() );
-                $pb_TransactionData->setAmount( $pb_Amount );
-            }
-            // ATTACHMENT
-            {
-                $pb_TransactionData->setAttachment( $this->attachment()->bytes() );
+                $pb_Amount->setAmount( $this->minSponsoredFee() );
+                if( !$this->assetId()->isWaves() )
+                    $pb_Amount->setAssetId( $this->assetId()->bytes() );
+                $pb_TransactionData->setMinFee( $pb_Amount );
             }
         }        
 
-        // TRANSFER TRANSACTION
-        $this->setBodyBytes( $pb_Transaction->setTransfer( $pb_TransactionData )->serializeToString() );
+        // SPONSORSHIP TRANSACTION
+        $this->setBodyBytes( $pb_Transaction->setSponsorFee( $pb_TransactionData )->serializeToString() );
         return $this;
     }
 
-    function recipient(): Recipient
+    function assetId(): AssetId
     {
-        if( !isset( $this->recipient ) )
-            $this->recipient = $this->json->get( 'recipient' )->asRecipient();
-        return $this->recipient;
+        if( !isset( $this->assetId ) )
+            $this->assetId = $this->json->get( 'assetId' )->asAssetId();
+        return $this->assetId;
     }
 
-    function setRecipient( Recipient $recipient ): CurrentTransaction
+    function setAssetId( AssetId $assetId ): CurrentTransaction
     {
-        $this->recipient = $recipient;
-        $this->json->put( 'recipient', $recipient->toString() );
+        $this->assetId = $assetId;
+        $this->json->put( 'assetId', $assetId->toJsonValue() );
         return $this;
     }
 
-    function amount(): Amount
+    function minSponsoredFee(): int
     {
-        if( !isset( $this->amount ) )
-            $this->amount = Amount::of( $this->json->get( 'amount' )->asInt(), $this->json->get( 'assetId' )->asAssetId() );
-        return $this->amount;
+        if( !isset( $this->minSponsoredFee ) )
+            $this->minSponsoredFee = $this->json->get( 'minSponsoredAssetFee' )->asInt();
+        return $this->minSponsoredFee;
     }
 
-    function setAmount( Amount $amount ): CurrentTransaction
+    function setMinSponsoredFee( int $minSponsoredFee ): CurrentTransaction
     {
-        $this->amount = $amount;
-        $this->json->put( 'amount', $amount->value() );
-        $this->json->put( 'assetId', $amount->assetId()->toJsonValue() );
+        $this->minSponsoredFee = $minSponsoredFee;
+        $this->json->put( 'minSponsoredAssetFee', $minSponsoredFee );
         return $this;
     }
 
-    function attachment(): Base58String
-    {
-        if( !isset( $this->attachment ) )
-            $this->attachment = $this->json->get( 'attachment' )->asBase58String();
-        return $this->attachment;
-    }
-
-    function setAttachment( Base58String $attachment ): CurrentTransaction
-    {
-        $this->attachment = $attachment;
-        $this->json->put( 'attachment', $attachment->toString() );
-        return $this;
-    }
-    
     // COMMON
 
     function __construct( Json $json = null )
