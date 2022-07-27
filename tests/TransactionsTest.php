@@ -46,6 +46,8 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
             return;
 
         $chainId = ChainId::TESTNET();
+        WavesConfig::chainId( $chainId );
+
         $node = new Node( Node::TESTNET );
         $account = PrivateKey::fromSeed( '10239486123587123659817234612897461289374618273461872468172436812736481274368921763489127436912873649128364' );
         $publicKey = PublicKey::fromPrivateKey( $account );
@@ -57,8 +59,6 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
         $this->node = $node;
         $this->account = $account;
         $this->chainId = $chainId;
-
-        WavesConfig::chainId( $this->chainId );
 
         $this->prepareSponsor();
         $this->prepareToken();
@@ -114,7 +114,7 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
         {
             $this->assertNotSame( $this->tokenId->toString(), $this->sponsorId->toString() );
             return;
-        }        
+        }
 
         $script = Base64String::fromString( 'BQbtKNoM' );
 
