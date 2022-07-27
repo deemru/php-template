@@ -9,6 +9,7 @@ use wavesplatform\Common\Base58String;
 use wavesplatform\Account\PublicKey;
 use wavesplatform\Common\ExceptionCode;
 use wavesplatform\Common\Json;
+use wavesplatform\Common\Value;
 use wavesplatform\Model\AssetId;
 use wavesplatform\Model\ChainId;
 use wavesplatform\Model\WavesConfig;
@@ -26,11 +27,19 @@ class MassTransferTransaction extends Transaction
      */
     private array $transfers;
     private AssetId $assetId;
+    private Base58String $attachment;
 
+    /**
+     * @param PublicKey $sender
+     * @param AssetId $assetId
+     * @param array<int, Transfer> $transfers
+     * @param Base58String $attachment
+     * @return CurrentTransaction
+     */
     static function build( PublicKey $sender, AssetId $assetId, array $transfers, Base58String $attachment = null ): CurrentTransaction
     {
         $tx = new CurrentTransaction;
-        $tx->setBase( $sender, CurrentTransaction::TYPE, CurrentTransaction::LATEST_VERSION, CurrentTransaction::calculateFeeFor( count( $transfers ) ) );
+        $tx->setBase( $sender, CurrentTransaction::TYPE, CurrentTransaction::LATEST_VERSION, CurrentTransaction::calculateFee( count( $transfers ) ) );
 
         // MASS_TRANSFER TRANSACTION
         {
@@ -42,9 +51,9 @@ class MassTransferTransaction extends Transaction
         return $tx;
     }
 
-    static function calculateFeeFor( int $n )
+    static function calculateFee( int $transfersCount ): int
     {
-        return 100_000 + ( $n + ( $n & 1 ) ) * 50_000;
+        return 100_000 + ( $transfersCount + ( $transfersCount & 1 ) ) * 50_000;
     }
 
     function getUnsigned(): CurrentTransaction
@@ -111,7 +120,7 @@ class MassTransferTransaction extends Transaction
             $transfers = [];
             foreach( $this->json->get( 'amount' )->asArray() as $value )
             {
-                $json = Json::asJson( $value );
+                $json = Value::asValue( $value )->asJson();
                 $recipient = $json->get( 'recipient' )->asRecipient();
                 $amount = $json->get( 'amount' )->asInt();
                 $transfers[] = new Transfer( $recipient, $amount );

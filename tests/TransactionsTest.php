@@ -592,7 +592,7 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
                 ->setSender( $sender )
                 ->setType( MassTransferTransaction::TYPE )
                 ->setVersion( MassTransferTransaction::LATEST_VERSION )
-                ->setFee( Amount::of( MassTransferTransaction::calculateFeeFor( count( $transfers ) ) ) )
+                ->setFee( Amount::of( MassTransferTransaction::calculateFee( count( $transfers ) ) ) )
                 ->setChainId( $chainId )
                 ->setTimestamp()
 
