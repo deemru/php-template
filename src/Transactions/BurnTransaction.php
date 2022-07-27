@@ -23,7 +23,6 @@ class BurnTransaction extends Transaction
     const MIN_FEE = 100_000;
 
     private Amount $amount;
-    private bool $isReissuable;
 
     static function build( PublicKey $sender, Amount $amount ): CurrentTransaction
     {

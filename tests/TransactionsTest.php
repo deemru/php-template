@@ -110,7 +110,7 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
         $account = $this->account;
         $sender = $account->publicKey();
 
-        if( 1 ) // @phpstan-ignore-line // fast/full test
+        if( $node->getBalance( $sender->address() ) < 10_00000000 ) // TODO: faucet
         {
             $this->assertNotSame( $this->tokenId->toString(), $this->sponsorId->toString() );
             return;
@@ -229,8 +229,7 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
 
         $tx = BurnTransaction::build(
             $sender,
-            Amount::of( 100_000_000, $this->tokenId ),
-            true
+            Amount::of( 100_000_000, $this->tokenId )
         );
 
         $tx->bodyBytes();
@@ -252,14 +251,13 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
 
         $tx2 = $node->waitForTransaction(
             $node->broadcast(
-                (new ReissueTransaction)
+                (new BurnTransaction)
                 ->setAmount( Amount::of( 10_000_000, $this->tokenId ) )
-                ->setIsReissuable( false )
 
                 ->setSender( $sender )
-                ->setType( ReissueTransaction::TYPE )
-                ->setVersion( ReissueTransaction::LATEST_VERSION )
-                ->setFee( Amount::of( ReissueTransaction::MIN_FEE ) )
+                ->setType( BurnTransaction::TYPE )
+                ->setVersion( BurnTransaction::LATEST_VERSION )
+                ->setFee( Amount::of( BurnTransaction::MIN_FEE ) )
                 ->setChainId( $chainId )
                 ->setTimestamp()
 
@@ -452,7 +450,7 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
 if( DO_LOCAL_DEBUG )
 {
     $test = new TransactionsTest;
-    //$test->testIssue();
+    $test->testIssue();
     $test->testReissue();
     $test->testBurn();
     $test->testSetAssetScript();
