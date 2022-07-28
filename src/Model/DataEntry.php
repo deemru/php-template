@@ -25,7 +25,7 @@ class DataEntry extends JsonBase
             throw new Exception( __FUNCTION__ . ' value expected but not set', ExceptionCode::UNEXPECTED );
         else
         if( $type === EntryType::BINARY )
-            $json = [ 'key' => $key, 'type' => 'binary', 'value' => Base64String::fromBytes( $value )->toString() ];
+            $json = [ 'key' => $key, 'type' => 'binary', 'value' => Base64String::fromBytes( Value::asValue( $value )->asString() )->toString() ];
         else
             $json = [ 'key' => $key, 'type' => DataEntry::typeToString( $type ), 'value' => $value ];
         return new DataEntry( Value::asValue( $json )->asJson() );
@@ -88,10 +88,10 @@ class DataEntry extends JsonBase
         $pb_DataEntry->setKey( $this->key() );
         switch( $this->type() )
         {
-            case EntryType::BINARY: $pb_DataEntry->setBinaryValue( $this->value() ); break;
-            case EntryType::BOOLEAN: $pb_DataEntry->setBoolValue( $this->value() ); break;
-            case EntryType::INTEGER: $pb_DataEntry->setIntValue( $this->value() ); break;
-            case EntryType::STRING: $pb_DataEntry->setStringValue( $this->value() ); break;
+            case EntryType::BINARY: $pb_DataEntry->setBinaryValue( $this->json->get( 'value' )->asBase64Decoded() ); break;
+            case EntryType::BOOLEAN: $pb_DataEntry->setBoolValue( $this->json->get( 'value' )->asBoolean() ); break;
+            case EntryType::INTEGER: $pb_DataEntry->setIntValue( $this->json->get( 'value' )->asInt() ); break;
+            case EntryType::STRING: $pb_DataEntry->setStringValue( $this->json->get( 'value' )->asString() ); break;
             case EntryType::DELETE: break;
             default: throw new Exception( __FUNCTION__ . ' failed to detect type `' . serialize( $this->type() ) . '`', ExceptionCode::UNKNOWN_TYPE ); // @codeCoverageIgnore
         }

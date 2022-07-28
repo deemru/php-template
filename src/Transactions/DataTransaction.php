@@ -49,7 +49,7 @@ class DataTransaction extends Transaction
         return $tx;
     }
 
-    static function calculateFee( $bodyBytesLen ): int
+    static function calculateFee( int $bodyBytesLen ): int
     {
         return 100_000 * ( 1 + intdiv( $bodyBytesLen - 1, 1024 ) );
     }

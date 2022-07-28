@@ -554,27 +554,16 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
         $sender = $account->publicKey();
 
         $data = [];
-        for( $i = 0; $i < 100; $i++ )
-            $data[] = DataEntry::build( 'key_' . mt_rand( 1000000000, 9999999999 ), EntryType::BINARY, random_bytes( 128 ) );
-
-        //$data[] = DataEntry::build( 'key_string', EntryType::STRING, '123' );
-        //$data[] = DataEntry::build( 'key_binary', EntryType::BINARY, '123' );
-        //$data[] = DataEntry::build( 'key_boolean', EntryType::BOOLEAN, true );
-        //$data[] = DataEntry::build( 'key_integer', EntryType::INTEGER, 123 );
-        //$data[] = DataEntry::build( 'key_delete', EntryType::DELETE );
-
-        //$data[] = DataEntry::build( 'key_string', EntryType::DELETE );
-        //$data[] = DataEntry::build( 'key_binary', EntryType::DELETE );
-        //$data[] = DataEntry::build( 'key_boolean', EntryType::DELETE );
-        //$data[] = DataEntry::build( 'key_integer', EntryType::DELETE );
-        //$data[] = DataEntry::build( 'key_delete', EntryType::DELETE );
+        $data[] = DataEntry::build( 'key_string', EntryType::STRING, '123' );
+        $data[] = DataEntry::build( 'key_binary', EntryType::BINARY, '123' );
+        $data[] = DataEntry::build( 'key_boolean', EntryType::BOOLEAN, true );
+        $data[] = DataEntry::build( 'key_integer', EntryType::INTEGER, 123 );
+        $data[] = DataEntry::build( 'key_delete', EntryType::DELETE );
 
         $tx = DataTransaction::build(
             $sender,
             $data
         );
-
-        $fee = $node->calculateTransactionFee( $tx );
 
         $tx->bodyBytes();
 
