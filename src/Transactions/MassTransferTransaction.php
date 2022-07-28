@@ -14,6 +14,7 @@ use wavesplatform\Model\AssetId;
 use wavesplatform\Model\ChainId;
 use wavesplatform\Model\WavesConfig;
 use wavesplatform\Transactions\Mass\Transfer;
+
 use wavesplatform\Transactions\MassTransferTransaction as CurrentTransaction;
 
 class MassTransferTransaction extends Transaction

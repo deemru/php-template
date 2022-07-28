@@ -63,6 +63,14 @@ class Json
     }
 
     /**
+     * @return array<mixed, mixed>
+     */
+    function toArray(): array
+    {
+        return $this->json;
+    }
+
+    /**
      * Gets Value by key
      *
      * @param mixed $key

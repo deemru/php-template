@@ -19,12 +19,15 @@ use wavesplatform\Model\Alias;
 use wavesplatform\Model\ApplicationStatus;
 use wavesplatform\Model\AssetId;
 use wavesplatform\Model\ChainId;
+use wavesplatform\Model\DataEntry;
+use wavesplatform\Model\EntryType;
 use wavesplatform\Model\LeaseStatus;
 use wavesplatform\Model\Id;
 use wavesplatform\Model\WavesConfig;
 use wavesplatform\Transactions\Amount;
 use wavesplatform\Transactions\BurnTransaction;
 use wavesplatform\Transactions\CreateAliasTransaction;
+use wavesplatform\Transactions\DataTransaction;
 use wavesplatform\Transactions\IssueTransaction;
 use wavesplatform\Transactions\LeaseCancelTransaction;
 use wavesplatform\Transactions\LeaseTransaction;
@@ -542,6 +545,74 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
         $this->assertSame( $tx2->applicationStatus(), ApplicationStatus::SUCCEEDED );
     }
 
+    function testData(): void
+    {
+        $this->prepare();
+        $chainId = $this->chainId;
+        $node = $this->node;
+        $account = $this->account;
+        $sender = $account->publicKey();
+
+        $data = [];
+        for( $i = 0; $i < 100; $i++ )
+            $data[] = DataEntry::build( 'key_' . mt_rand( 1000000000, 9999999999 ), EntryType::BINARY, random_bytes( 128 ) );
+
+        //$data[] = DataEntry::build( 'key_string', EntryType::STRING, '123' );
+        //$data[] = DataEntry::build( 'key_binary', EntryType::BINARY, '123' );
+        //$data[] = DataEntry::build( 'key_boolean', EntryType::BOOLEAN, true );
+        //$data[] = DataEntry::build( 'key_integer', EntryType::INTEGER, 123 );
+        //$data[] = DataEntry::build( 'key_delete', EntryType::DELETE );
+
+        //$data[] = DataEntry::build( 'key_string', EntryType::DELETE );
+        //$data[] = DataEntry::build( 'key_binary', EntryType::DELETE );
+        //$data[] = DataEntry::build( 'key_boolean', EntryType::DELETE );
+        //$data[] = DataEntry::build( 'key_integer', EntryType::DELETE );
+        //$data[] = DataEntry::build( 'key_delete', EntryType::DELETE );
+
+        $tx = DataTransaction::build(
+            $sender,
+            $data
+        );
+
+        $fee = $node->calculateTransactionFee( $tx );
+
+        $tx->bodyBytes();
+
+        $id = $tx->id();
+        $tx->version();
+        $tx->chainId();
+        $tx->sender();
+        $tx->timestamp();
+        $tx->fee();
+        $tx->proofs();
+
+        $tx->data();
+
+        $tx1 = $node->waitForTransaction( $node->broadcast( $tx->addProof( $account ) )->id() );
+
+        $this->assertSame( $id->toString(), $tx1->id()->toString() );
+        $this->assertSame( $tx1->applicationStatus(), ApplicationStatus::SUCCEEDED );
+
+        $tx2 = $node->waitForTransaction(
+            $node->broadcast(
+                (new DataTransaction)
+                ->setData( $data )
+
+                ->setSender( $sender )
+                ->setType( DataTransaction::TYPE )
+                ->setVersion( DataTransaction::LATEST_VERSION )
+                ->setFee( Amount::of( DataTransaction::MIN_FEE ) )
+                ->setChainId( $chainId )
+                ->setTimestamp()
+
+                ->addProof( $account )
+            )->id()
+        );
+        
+        $this->assertNotSame( $tx1->id(), $tx2->id() );
+        $this->assertSame( $tx2->applicationStatus(), ApplicationStatus::SUCCEEDED );
+    }
+
     function testMassTransfer(): void
     {
         $this->prepare();
@@ -667,6 +738,7 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
 if( DO_LOCAL_DEBUG )
 {
     $test = new TransactionsTest;
+    $test->testData();
     $test->testMassTransfer();
     $test->testTransfer();
     $test->testAlias();
