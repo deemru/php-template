@@ -105,7 +105,7 @@ class Func
                     break;
 
                 case Arg::LIST:
-                    $bytes .= Func::argsBodyBytes( $value->asArray() );
+                    $bytes .= chr( 11 ) . Func::argsBodyBytes( $value->asArray() );
                     break;
 
                 default:

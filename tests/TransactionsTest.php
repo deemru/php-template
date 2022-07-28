@@ -302,12 +302,10 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
         $this->assertSame( $id->toString(), $tx1->id()->toString() );
         $this->assertSame( $tx1->applicationStatus(), ApplicationStatus::SUCCEEDED );
 
-        $script = Base64String::emptyString();
-
         $tx2 = $node->waitForTransaction(
             $node->broadcast(
                 (new SetScriptTransaction)
-                ->setScript( $script )
+                ->setScript() // remove script
 
                 ->setSender( $sender )
                 ->setType( SetScriptTransaction::TYPE )
