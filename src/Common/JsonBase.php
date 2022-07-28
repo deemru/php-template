@@ -9,7 +9,7 @@ class JsonBase
     function __construct( Json $json = null )
     {
         if( !isset( $json ) )
-            $json = Json::asJson( [] );
+            $json = Json::as( [] );
         $this->json = $json;
     }
 

@@ -132,7 +132,7 @@ class TransactionOrOrder extends JsonBase
     function fee(): Amount
     {
         if( !isset( $this->fee ) )
-            $this->fee = Amount::of( $this->json->get( 'fee' )->asInt(), $this->json->getOr( 'feeAssetId', AssetId::WAVES_STRING )->asAssetId() );
+            $this->fee = Amount::fromJson( $this->json, 'fee', 'feeAssetId' );
         return $this->fee;
     }
 

@@ -15,6 +15,7 @@ use wavesplatform\Account\PublicKey;
 use wavesplatform\API\Node;
 use wavesplatform\Common\Base58String;
 use wavesplatform\Common\Base64String;
+use wavesplatform\Common\Value;
 use wavesplatform\Model\Alias;
 use wavesplatform\Model\ApplicationStatus;
 use wavesplatform\Model\AssetId;
@@ -28,6 +29,9 @@ use wavesplatform\Transactions\Amount;
 use wavesplatform\Transactions\BurnTransaction;
 use wavesplatform\Transactions\CreateAliasTransaction;
 use wavesplatform\Transactions\DataTransaction;
+use wavesplatform\Transactions\Invocation\Arg;
+use wavesplatform\Transactions\Invocation\Func;
+use wavesplatform\Transactions\InvokeScriptTransaction;
 use wavesplatform\Transactions\IssueTransaction;
 use wavesplatform\Transactions\LeaseCancelTransaction;
 use wavesplatform\Transactions\LeaseTransaction;
@@ -39,6 +43,7 @@ use wavesplatform\Transactions\SetAssetScriptTransaction;
 use wavesplatform\Transactions\SetScriptTransaction;
 use wavesplatform\Transactions\SponsorFeeTransaction;
 use wavesplatform\Transactions\TransferTransaction;
+use wavesplatform\Transactions\UpdateAssetInfoTransaction;
 use wavesplatform\Util\Functions;
 
 class TransactionsTest extends \PHPUnit\Framework\TestCase
@@ -55,9 +60,11 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
             return;
 
         $chainId = ChainId::TESTNET();
+        //$chainId = ChainId::STAGENET();
         WavesConfig::chainId( $chainId );
 
         $node = new Node( Node::TESTNET );
+        //$node = new Node( Node::STAGENET );
         $account = PrivateKey::fromSeed( '10239486123587123659817234612897461289374618273461872468172436812736481274368921763489127436912873649128364' );
         $publicKey = PublicKey::fromPrivateKey( $account );
         $address = Address::fromPublicKey( $publicKey );
@@ -77,7 +84,8 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
     {
         if( 1 ) // @phpstan-ignore-line // fast/full test
         {
-            $this->sponsorId = AssetId::fromString( '7xaTA288aL96de84ppHbKXxe2uh8FpypgNGJuHz1jtQ8' );
+            $this->sponsorId = AssetId::fromString( '2exRLtCQNwnYpeP17MevNirHJp2u2mtLk7McxyPFcvp5' );
+            //$this->sponsorId = AssetId::fromString( '7WmVG9EXb6adXbySyGi313pbFeSCuoPHNVnPpEBy4aYh' ); // stage
         }
         else
         {
@@ -87,7 +95,7 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
             $account = $this->account;
             $sender = $account->publicKey();
 
-            $tx = $node->waitForTransaction( $node->broadcast( IssueTransaction::build( $sender, 'SPONSOR', '', 1, 0, false )->addProof( $account ) )->id() );
+            $tx = $node->waitForTransaction( $node->broadcast( IssueTransaction::build( $sender, 'SPONSOR', '', 1000, 0, false )->addProof( $account ) )->id() );
             $this->sponsorId = AssetId::fromString( $tx->id()->toString() );
         }
     }
@@ -97,6 +105,7 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
         if( 1 ) // @phpstan-ignore-line // fast/full test
         {
             $this->tokenId = AssetId::fromString( 'CcK2rmEDNET8iPSyXvZprRPsDt7mfJPbxuvkMRdsyESC' );
+            //$this->tokenId = AssetId::fromString( 'BmRLpCbcJ3Xtuev1yJRqzPYdqp9iPFTqW3RJeU4WZMKU' ); // stage
         }
         else
         {
@@ -545,6 +554,64 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
         $this->assertSame( $tx2->applicationStatus(), ApplicationStatus::SUCCEEDED );
     }
 
+    function testRename(): void
+    {
+        $this->prepare();
+        $chainId = $this->chainId;
+        $node = $this->node;
+        $account = $this->account;
+        $sender = $account->publicKey();
+
+        $tokenId = $this->tokenId;
+
+        $tx = UpdateAssetInfoTransaction::build(
+            $sender,
+            $tokenId,
+            'TOKEN-RENAMED',
+            'renamed description'
+        );
+
+        $tx->bodyBytes();
+
+        $id = $tx->id();
+        $tx->version();
+        $tx->chainId();
+        $tx->sender();
+        $tx->timestamp();
+        $tx->fee();
+        $tx->proofs();
+
+        $tx->assetId();
+        $tx->name();
+        $tx->description();
+
+        $tx1 = $node->waitForTransaction( $node->broadcast( $tx->addProof( $account ) )->id() );
+
+        $this->assertSame( $id->toString(), $tx1->id()->toString() );
+        $this->assertSame( $tx1->applicationStatus(), ApplicationStatus::SUCCEEDED );
+
+        $tx2 = $node->waitForTransaction(
+            $node->broadcast(
+                (new UpdateAssetInfoTransaction)
+                ->setAssetId( $this->sponsorId )
+                ->setName( 'SPONSOR-RENAMED' )
+                ->setDescription( 'renamed description' )
+
+                ->setSender( $sender )
+                ->setType( UpdateAssetInfoTransaction::TYPE )
+                ->setVersion( UpdateAssetInfoTransaction::LATEST_VERSION )
+                ->setFee( Amount::of( UpdateAssetInfoTransaction::MIN_FEE ) )
+                ->setChainId( $chainId )
+                ->setTimestamp()
+
+                ->addProof( $account )
+            )->id()
+        );
+        
+        $this->assertNotSame( $tx1->id(), $tx2->id() );
+        $this->assertSame( $tx2->applicationStatus(), ApplicationStatus::SUCCEEDED );
+    }
+
     function testSponsorship(): void
     {
         $this->prepare();
@@ -777,11 +844,80 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
         $this->assertNotSame( $tx1->id(), $tx2->id() );
         $this->assertSame( $tx2->applicationStatus(), ApplicationStatus::SUCCEEDED );
     }
+
+    function testInvoke(): void
+    {
+        $this->prepare();
+        $chainId = $this->chainId;
+        $node = $this->node;
+        $account = $this->account;
+        $sender = $account->publicKey();
+
+        $dApp = Recipient::fromAddressOrAlias( '3N7uoMNjqNt1jf9q9f9BSr7ASk1QtzJABEY' );
+        $args = [];
+        $args[] = Arg::as( Arg::STRING, Value::as( $sender->address()->toString() ) );
+        $args[] = Arg::as( Arg::INTEGER, Value::as( 1000 ) );
+        $args[] = Arg::as( Arg::BINARY, Value::as( (new WavesKit)->sha256( $sender->address()->toString() ) ) );
+        $args[] = Arg::as( Arg::BOOLEAN, Value::as( true ) );
+        $function = Func::as( 'retransmit', $args );
+        $payments = [];
+        $payments[] = Amount::of( 1000 );
+
+        $tx = InvokeScriptTransaction::build(
+            $sender,
+            $dApp,
+            $function,
+            $payments
+        )->setFee( Amount::of( 5, $this->sponsorId ) );;
+
+        $tx->bodyBytes();
+
+        $id = $tx->id();
+        $tx->version();
+        $tx->chainId();
+        $tx->sender();
+        $tx->timestamp();
+        $tx->fee();
+        $tx->proofs();
+
+        $tx->dApp();
+        $tx->function();
+        $tx->payments();
+
+        $tx1 = $node->waitForTransaction( $node->broadcast( $tx->addProof( $account ) )->id() );
+
+        $this->assertSame( $id->toString(), $tx1->id()->toString() );
+        $this->assertSame( $tx1->applicationStatus(), ApplicationStatus::SUCCEEDED );
+
+        $tx2 = $node->waitForTransaction(
+            $node->broadcast(
+                (new InvokeScriptTransaction)
+                ->setDApp( $dApp )
+                ->setFunction( $function )
+                ->setPayments( $payments )
+
+                ->setSender( $sender )
+                ->setType( InvokeScriptTransaction::TYPE )
+                ->setVersion( InvokeScriptTransaction::LATEST_VERSION )
+                ->setFee( Amount::of( InvokeScriptTransaction::MIN_FEE ) )
+                ->setChainId( $chainId )
+                ->setTimestamp()
+
+                ->addProof( $account )
+            )->id()
+        );
+        
+        $this->assertNotSame( $tx1->id(), $tx2->id() );
+        $this->assertSame( $tx2->applicationStatus(), ApplicationStatus::SUCCEEDED );
+    }
 }
 
 if( DO_LOCAL_DEBUG )
 {
     $test = new TransactionsTest;
+    $test->testSponsorship();
+    $test->testInvoke();
+    //$test->testRename();
     $test->testSetScript();
     $test->testData();
     $test->testMassTransfer();
@@ -792,5 +928,4 @@ if( DO_LOCAL_DEBUG )
     $test->testReissue();
     $test->testBurn();
     $test->testSetAssetScript();
-    $test->testSponsorship();
 }

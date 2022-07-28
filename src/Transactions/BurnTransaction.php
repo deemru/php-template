@@ -63,7 +63,7 @@ class BurnTransaction extends Transaction
     function amount(): Amount
     {
         if( !isset( $this->amount ) )
-            $this->amount = Amount::of( $this->json->get( 'quantity' )->asInt(), $this->json->get( 'assetId' )->asAssetId() );
+            $this->amount = Amount::fromJson( $this->json, 'quantity' );
         return $this->amount;
     }
 

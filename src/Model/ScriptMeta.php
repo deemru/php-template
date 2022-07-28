@@ -19,11 +19,11 @@ class ScriptMeta extends JsonBase
         $arrayFuncs = $this->json->get( 'callableFuncTypes' )->asArray();
         foreach( $arrayFuncs as $key => $value )
         {
-            $function = Value::asValue( $key )->asString();
+            $function = Value::as( $key )->asString();
             $args = [];
-            $arrayArgs = Value::asValue( $value )->asArray();
+            $arrayArgs = Value::as( $value )->asArray();
             foreach( $arrayArgs as $arg )
-                $args[] = Value::asValue( $arg )->asArgMeta();
+                $args[] = Value::as( $arg )->asArgMeta();
             $map[$function] = $args;
         }
 

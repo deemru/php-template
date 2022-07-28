@@ -2,6 +2,7 @@
 
 namespace wavesplatform\Transactions;
 
+use wavesplatform\Common\Json;
 use wavesplatform\Model\AssetId;
 
 class Amount
@@ -18,6 +19,11 @@ class Amount
     static function of( int $amount, AssetId $assetId = null ): Amount
     {
         return new Amount( $amount, $assetId );
+    }
+
+    static function fromJson( Json $json, string $amountKey = 'amount', string $assetIdKey = ' assetId' ): Amount
+    {
+        return Amount::of( $json->get( $amountKey )->asInt(), $json->getOr( $assetIdKey, AssetId::WAVES_STRING )->asAssetId() );
     }
 
     function value(): int

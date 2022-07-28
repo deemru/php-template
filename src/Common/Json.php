@@ -25,6 +25,7 @@ use wavesplatform\Model\TransactionInfo;
 use wavesplatform\Model\TransactionWithStatus;
 use wavesplatform\Model\TransactionStatus;
 use wavesplatform\Model\Votes;
+use wavesplatform\Transactions\Invocation\Arg;
 
 class Json
 {
@@ -38,7 +39,7 @@ class Json
     *
     * @param array<mixed, mixed> $json
     */
-    function __construct( array $json = [] )
+    private function __construct( array $json = [] )
     {
         $this->json = $json;
     }
@@ -49,9 +50,14 @@ class Json
     * @param array<mixed, mixed> $json
     * @return Json
     */
-    static function asJson( array $json ): Json
+    static function as( array $json ): Json
     {
         return new Json( $json );
+    }
+
+    static function emptyJson(): Json
+    {
+        return new Json;
     }
 
     function toString(): string
@@ -80,7 +86,7 @@ class Json
     {
         if( !isset( $this->json[$key] ) )
             throw new Exception( __FUNCTION__ . ' failed to find key `' . $key . '`', ExceptionCode::KEY_MISSING );
-        return new Value( $this->json[$key] );
+        return Value::as( $this->json[$key] );
     }
 
     /**
@@ -92,7 +98,7 @@ class Json
      */
     function getOr( $key, $value ): Value
     {
-        return $this->exists( $key ) ? $this->get( $key ) : Value::asValue( $value );
+        return $this->exists( $key ) ? $this->get( $key ) : Value::as( $value );
     }
 
     /**
@@ -243,7 +249,7 @@ class Json
     {
         $array = [];
         foreach( $this->json as $headers )
-            $array[] = Value::asValue( $headers )->asJson()->asBlockHeaders();
+            $array[] = Value::as( $headers )->asJson()->asBlockHeaders();
         return $array;
     }
 
@@ -256,7 +262,7 @@ class Json
     {
         $array = [];
         foreach( $this->json as $headers )
-            $array[] = Value::asValue( $headers )->asJson()->asBlock();
+            $array[] = Value::as( $headers )->asJson()->asBlock();
         return $array;
     }
 
@@ -269,7 +275,7 @@ class Json
     {
         $array = [];
         foreach( $this->json as $info )
-            $array[] = Value::asValue( $info )->asJson()->asLeaseInfo();
+            $array[] = Value::as( $info )->asJson()->asLeaseInfo();
         return $array;
     }
 
@@ -282,7 +288,7 @@ class Json
     {
         $array = [];
         foreach( $this->json as $address )
-            $array[] = Address::fromString( Value::asValue( $address )->asString() );
+            $array[] = Address::fromString( Value::as( $address )->asString() );
         return $array;
     }
 
@@ -295,7 +301,7 @@ class Json
     {
         $array = [];
         foreach( $this->json as $alias )
-            $array[] = Alias::fromFullAlias( Value::asValue( $alias )->asString() );
+            $array[] = Alias::fromFullAlias( Value::as( $alias )->asString() );
         return $array;
     }
 
@@ -308,7 +314,7 @@ class Json
     {
         $array = [];
         foreach( $this->json as $balance )
-            $array[] = Value::asValue( $balance )->asJson()->asBalance();
+            $array[] = Value::as( $balance )->asJson()->asBalance();
         return $array;
     }
 
@@ -321,7 +327,7 @@ class Json
     {
         $array = [];
         foreach( $this->json as $assetBalance )
-            $array[] = Value::asValue( $assetBalance )->asJson()->asAssetBalance();
+            $array[] = Value::as( $assetBalance )->asJson()->asAssetBalance();
         return $array;
     }
 
@@ -334,7 +340,7 @@ class Json
     {
         $array = [];
         foreach( $this->json as $assetDetails )
-            $array[] = Value::asValue( $assetDetails )->asJson()->asAssetDetails();
+            $array[] = Value::as( $assetDetails )->asJson()->asAssetDetails();
         return $array;
     }
 
@@ -347,7 +353,7 @@ class Json
     {
         $array = [];
         foreach( $this->json as $data )
-            $array[] = Value::asValue( $data )->asJson()->asDataEntry();
+            $array[] = Value::as( $data )->asJson()->asDataEntry();
         return $array;
     }
 
@@ -360,7 +366,7 @@ class Json
     {
         $array = [];
         foreach( $this->json as $tx )
-            $array[] = Value::asValue( $tx )->asJson()->asTransactionWithStatus();
+            $array[] = Value::as( $tx )->asJson()->asTransactionWithStatus();
         return $array;
     }
 
@@ -373,7 +379,7 @@ class Json
     {
         $array = [];
         foreach( $this->json as $tx )
-            $array[] = Value::asValue( $tx )->asJson()->asTransactionInfo();
+            $array[] = Value::as( $tx )->asJson()->asTransactionInfo();
         return $array;
     }
 
@@ -384,7 +390,7 @@ class Json
     {
         $array = [];
         foreach( $this->json as $tx )
-            $array[] = Value::asValue( $tx )->asJson()->asTransactionStatus();
+            $array[] = Value::as( $tx )->asJson()->asTransactionStatus();
         return $array;
     }
 
@@ -395,7 +401,7 @@ class Json
     {
         $array = [];
         foreach( $this->json as $tx )
-            $array[] = Value::asValue( $tx )->asJson()->asTransaction();
+            $array[] = Value::as( $tx )->asJson()->asTransaction();
         return $array;
     }
 }

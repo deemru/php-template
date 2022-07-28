@@ -11,29 +11,32 @@ use wavesplatform\Common\Base64String;
 use wavesplatform\Common\ExceptionCode;
 use wavesplatform\Common\Json;
 use wavesplatform\Common\Value;
+use wavesplatform\Model\AssetId;
 use wavesplatform\Model\ChainId;
 use wavesplatform\Model\WavesConfig;
 
-use wavesplatform\Transactions\ReissueTransaction as CurrentTransaction;
+use wavesplatform\Transactions\UpdateAssetInfoTransaction as CurrentTransaction;
 
-class ReissueTransaction extends Transaction
+class UpdateAssetInfoTransaction extends Transaction
 {
-    const TYPE = 5;
-    const LATEST_VERSION = 3;
+    const TYPE = 17;
+    const LATEST_VERSION = 1;
     const MIN_FEE = 100_000;
 
-    private Amount $amount;
-    private bool $isReissuable;
+    private AssetId $assetId;
+    private string $name;
+    private string $description;
 
-    static function build( PublicKey $sender, Amount $amount, bool $isReissuable ): CurrentTransaction
+    static function build( PublicKey $sender, AssetId $assetId, string $name, string $description ): CurrentTransaction
     {
         $tx = new CurrentTransaction;
         $tx->setBase( $sender, CurrentTransaction::TYPE, CurrentTransaction::LATEST_VERSION, CurrentTransaction::MIN_FEE );
 
-        // REISSUE TRANSACTION
+        // RENAME TRANSACTION
         {
-            $tx->setAmount( $amount );
-            $tx->setIsReissuable( $isReissuable );
+            $tx->setAssetId( $assetId );
+            $tx->setName( $name );
+            $tx->setDescription( $description );
         }       
 
         return $tx;
@@ -48,50 +51,67 @@ class ReissueTransaction extends Transaction
         // BASE
         $pb_Transaction = $this->getProtobufTransactionBase();
 
-        // REISSUE TRANSACTION
+        // RENAME TRANSACTION
         {
-            $pb_TransactionData = new \wavesplatform\Protobuf\ReissueTransactionData;
-            // AMOUNT
+            $pb_TransactionData = new \wavesplatform\Protobuf\UpdateAssetInfoTransactionData;
+            // ASSET
             {
-                $pb_TransactionData->setAssetAmount( $this->amount()->toProtobuf() );
+                $pb_TransactionData->setAssetId( $this->assetId()->bytes() );
             }
-            // REISSUABLE
+            // NAME
             {
-                $pb_TransactionData->setReissuable( $this->isReissuable() );
+                $pb_TransactionData->setName( $this->name() );
+            }
+            // DESCRIPTION
+            {
+                $pb_TransactionData->setDescription( $this->description() );
             }
         }        
 
-        // REISSUE TRANSACTION
-        $this->setBodyBytes( $pb_Transaction->setReissue( $pb_TransactionData )->serializeToString() );
+        // RENAME TRANSACTION
+        $this->setBodyBytes( $pb_Transaction->setUpdateAssetInfo( $pb_TransactionData )->serializeToString() );
         return $this;
     }
 
-    function amount(): Amount
+    function assetId(): AssetId
     {
-        if( !isset( $this->amount ) )
-            $this->amount = Amount::fromJson( $this->json, 'quantity' );
-        return $this->amount;
+        if( !isset( $this->assetId ) )
+            $this->assetId = $this->json->get( 'assetId' )->asAssetId();
+        return $this->assetId;
     }
 
-    function setAmount( Amount $amount ): CurrentTransaction
+    function setAssetId( AssetId $assetId ): CurrentTransaction
     {
-        $this->amount = $amount;
-        $this->json->put( 'quantity', $amount->value() );
-        $this->json->put( 'assetId', $amount->assetId()->toJsonValue() );
+        $this->assetId = $assetId;
+        $this->json->put( 'assetId', $assetId->toJsonValue() );
         return $this;
     }
 
-    function isReissuable(): bool
+    function name(): string
     {
-        if( !isset( $this->isReissuable ) )
-            $this->isReissuable = $this->json->get( 'reissuable' )->asBoolean();
-        return $this->isReissuable;
+        if( !isset( $this->name ) )
+            $this->name = $this->json->get( 'name' )->asString();
+        return $this->name;
     }
 
-    function setIsReissuable( bool $isReissuable ): CurrentTransaction
+    function setName( string $name ): CurrentTransaction
     {
-        $this->isReissuable = $isReissuable;
-        $this->json->put( 'reissuable', $isReissuable );
+        $this->name = $name;
+        $this->json->put( 'name', $name );
+        return $this;
+    }
+
+    function description(): string
+    {
+        if( !isset( $this->description ) )
+            $this->description = $this->json->get( 'description' )->asString();
+        return $this->description;
+    }
+
+    function setDescription( string $description ): CurrentTransaction
+    {
+        $this->description = $description;
+        $this->json->put( 'description', $description );
         return $this;
     }
 

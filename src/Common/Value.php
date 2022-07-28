@@ -12,6 +12,7 @@ use wavesplatform\Model\Id;
 use wavesplatform\Model\ChainId;
 use wavesplatform\Model\ApplicationStatus;
 use wavesplatform\Model\Status;
+use wavesplatform\Transactions\Invocation\Arg;
 use wavesplatform\Transactions\Recipient;
 
 class Value
@@ -24,7 +25,7 @@ class Value
     /**
      * @param mixed $value
      */
-    function __construct( $value )
+    private function __construct( $value )
     {
         $this->value = $value;
     }
@@ -35,7 +36,7 @@ class Value
     * @param mixed $value
     * @return Value
     */
-    static function asValue( $value ): Value
+    static function as( $value ): Value
     {
         return new Value( $value );
     }
@@ -129,7 +130,7 @@ class Value
     {
         if( !is_array( $this->value ) )
             throw new Exception( __FUNCTION__ . ' failed to detect Json at `' . json_encode( $this->value ) . '`', ExceptionCode::ARRAY_EXPECTED );
-        return Json::asJson( $this->value );
+        return Json::as( $this->value );
     }
 
     /**
@@ -155,7 +156,7 @@ class Value
             throw new Exception( __FUNCTION__ . ' failed to detect array at `' . json_encode( $this->value ) . '`', ExceptionCode::ARRAY_EXPECTED );
         $ints = [];
         foreach( $this->value as $value )
-            $ints[] = Value::asValue( $value )->asInt();
+            $ints[] = Value::as( $value )->asInt();
         return $ints;
     }
 
@@ -168,7 +169,7 @@ class Value
             throw new Exception( __FUNCTION__ . ' failed to detect array at `' . json_encode( $this->value ) . '`', ExceptionCode::ARRAY_EXPECTED );
         $strings = [];
         foreach( $this->value as $value )
-            $strings[] = Value::asValue( $value )->asString();
+            $strings[] = Value::as( $value )->asString();
         return $strings;
     }
 
@@ -183,7 +184,7 @@ class Value
             throw new Exception( __FUNCTION__ . ' failed to detect array at `' . json_encode( $this->value ) . '`', ExceptionCode::ARRAY_EXPECTED );
         $ints = [];
         foreach( $this->value as $key => $value )
-            $ints[Value::asValue( $key )->asString()] = Value::asValue( $value )->asInt();
+            $ints[Value::as( $key )->asString()] = Value::as( $value )->asInt();
         return $ints;
     }
 

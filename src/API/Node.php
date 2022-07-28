@@ -119,7 +119,7 @@ class Node
         $fetch = $this->wk->json_decode( $fetch );
         if( $fetch === false )
             throw new Exception( __FUNCTION__ . ' failed to decode `' . $uri . '`', ExceptionCode::JSON_DECODE );
-        return Json::asJson( $fetch );
+        return Json::as( $fetch );
     }
 
     /**
@@ -186,7 +186,7 @@ class Node
      */
     function getBalances( array $addresses, int $height = null ): array
     {
-        $json = new Json;
+        $json = Json::emptyJson();
 
         $array = [];
         foreach( $addresses as $address )
@@ -228,7 +228,7 @@ class Node
      */
     function getDataByKeys( Address $address, array $keys ): array
     {
-        $json = new Json;
+        $json = Json::emptyJson();
 
         $array = [];
         foreach( $keys as $key )
@@ -324,7 +324,7 @@ class Node
      */
     function getAssetsDetails( array $assetIds ): array
     {
-        $json = new Json;
+        $json = Json::emptyJson();
 
         $array = [];
         foreach( $assetIds as $assetId )
@@ -489,7 +489,7 @@ class Node
      */
     function getLeasesInfo( array $leaseIds ): array
     {
-        $json = new Json;
+        $json = Json::emptyJson();
 
         $array = [];
         foreach( $leaseIds as $leaseId )
@@ -506,7 +506,7 @@ class Node
     function calculateTransactionFee( Transaction $transaction ): Amount
     {
         $json = $this->post( '/transactions/calculateFee', $transaction->json() );
-        return Amount::of( $json->get( 'feeAmount' )->asInt(), $json->getOr( 'feeAssetId', null )->asAssetId() );
+        return Amount::fromJson( $json, 'feeAmount', 'feeAssetId' );
     }
 
     function serializeTransaction( Transaction $transaction ): string
@@ -557,7 +557,7 @@ class Node
      */
     function getTransactionsStatus( array $txIds ): array
     {
-        $json = new Json;
+        $json = Json::emptyJson();
 
         $array = [];
         foreach( $txIds as $txId )

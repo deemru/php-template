@@ -121,7 +121,7 @@ class MassTransferTransaction extends Transaction
             $transfers = [];
             foreach( $this->json->get( 'amount' )->asArray() as $value )
             {
-                $json = Value::asValue( $value )->asJson();
+                $json = Value::as( $value )->asJson();
                 $recipient = $json->get( 'recipient' )->asRecipient();
                 $amount = $json->get( 'amount' )->asInt();
                 $transfers[] = new Transfer( $recipient, $amount );

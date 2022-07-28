@@ -9,6 +9,7 @@ use wavesplatform\Common\Base58String;
 use wavesplatform\Account\PublicKey;
 use wavesplatform\Common\ExceptionCode;
 use wavesplatform\Common\Json;
+use wavesplatform\Model\AssetId;
 use wavesplatform\Model\ChainId;
 use wavesplatform\Model\WavesConfig;
 
@@ -87,7 +88,7 @@ class TransferTransaction extends Transaction
     function amount(): Amount
     {
         if( !isset( $this->amount ) )
-            $this->amount = Amount::of( $this->json->get( 'amount' )->asInt(), $this->json->get( 'assetId' )->asAssetId() );
+            $this->amount = Amount::fromJson( $this->json );
         return $this->amount;
     }
 

@@ -25,10 +25,10 @@ class DataEntry extends JsonBase
             throw new Exception( __FUNCTION__ . ' value expected but not set', ExceptionCode::UNEXPECTED );
         else
         if( $type === EntryType::BINARY )
-            $json = [ 'key' => $key, 'type' => 'binary', 'value' => Base64String::fromBytes( Value::asValue( $value )->asString() )->toString() ];
+            $json = [ 'key' => $key, 'type' => 'binary', 'value' => Base64String::fromBytes( Value::as( $value )->asString() )->toString() ];
         else
             $json = [ 'key' => $key, 'type' => DataEntry::typeToString( $type ), 'value' => $value ];
-        return new DataEntry( Value::asValue( $json )->asJson() );
+        return new DataEntry( Value::as( $json )->asJson() );
     }
 
     static function stringToType( string $stringType ): int
