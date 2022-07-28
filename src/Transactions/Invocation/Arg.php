@@ -35,7 +35,7 @@ class Arg
             $args = [];
             foreach( $json->get( 'value' )->asArray() as $arg )
                 $args[] = Arg::fromJson( Value::as( $arg )->asJson() );
-            $value = $args;
+            $value = Value::as( $args );
         }
         else
         if( $type === Arg::BINARY )
@@ -91,7 +91,10 @@ class Arg
         return $this->value;
     }
 
-    function valueAsJson()
+    /**
+     * @return mixed
+     */
+    private function valueAsJson()
     {
         switch( $this->type() )
         {
@@ -103,14 +106,16 @@ class Arg
             {
                 $values = [];
                 foreach( $this->value()->asArray() as $arg )
-                    if( is_object( $arg ) && get_class( $this ) === get_class( $arg ) )
-                        $values[] = $arg->toJsonValue();
+                    $values[] = $arg->toJsonValue(); // @phpstan-ignore-line // assume Arg object
                 return $values;
             }
             default: throw new Exception( __FUNCTION__ . ' failed to detect type `' . serialize( $this->type() ) . '`', ExceptionCode::UNKNOWN_TYPE );
         }
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     function toJsonValue(): array
     {
         return [ 'type' => $this->typeAsString(), 'value' => $this->valueAsJson() ];

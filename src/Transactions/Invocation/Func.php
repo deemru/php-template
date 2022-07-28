@@ -57,6 +57,9 @@ class Func
         return $this->args;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     function toJsonValue(): array
     {
         $args = [];
@@ -70,7 +73,7 @@ class Func
     }
 
     /**
-     * @param array<int, Arg>
+     * @param array<int, Arg> $args
      * @return string
      */
     static function argsBodyBytes( array $args ): string

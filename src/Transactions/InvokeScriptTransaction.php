@@ -33,9 +33,9 @@ class InvokeScriptTransaction extends Transaction
 
     /**
      * @param PublicKey $sender
-     * @param AssetId $assetId
-     * @param array<int, Transfer> $transfers
-     * @param Base58String $attachment
+     * @param Recipient $dApp
+     * @param Func $function
+     * @param array<int, Amount> $payments
      * @return CurrentTransaction
      */
     static function build( PublicKey $sender, Recipient $dApp, Func $function = null, array $payments = null ): CurrentTransaction
