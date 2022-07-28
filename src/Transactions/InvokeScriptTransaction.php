@@ -34,8 +34,8 @@ class InvokeScriptTransaction extends Transaction
     /**
      * @param PublicKey $sender
      * @param Recipient $dApp
-     * @param Func $function
-     * @param array<int, Amount> $payments
+     * @param Func|null $function
+     * @param array<int, Amount>|null $payments
      * @return CurrentTransaction
      */
     static function build( PublicKey $sender, Recipient $dApp, Func $function = null, array $payments = null ): CurrentTransaction
@@ -108,8 +108,9 @@ class InvokeScriptTransaction extends Transaction
         return $this->function;
     }
 
-    function setFunction( Func $function ): CurrentTransaction
+    function setFunction( Func $function = null ): CurrentTransaction
     {
+        $function = $function ?? Func::as();
         $this->function = $function;
         $this->json->put( 'call', $function->toJsonValue() );
         return $this;
@@ -131,12 +132,12 @@ class InvokeScriptTransaction extends Transaction
     }
 
     /**
-     * @param array<int, Amount> $payments
+     * @param array<int, Amount>|null $payments
      * @return CurrentTransaction
      */
-    function setPayments( array $payments ): CurrentTransaction
+    function setPayments( array $payments = null ): CurrentTransaction
     {
-        $this->payments = $payments;
+        $this->payments = $payments ?? [];
         
         $payments = [];
         foreach( $this->payments as $payment )

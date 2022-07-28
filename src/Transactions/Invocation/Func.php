@@ -18,15 +18,15 @@ class Func
     private array $args;
     
     /**
-     * @param string $name
-     * @param array<int, Arg> $args
+     * @param string|null $name
+     * @param array<int, Arg>|null $args
      * @return Func
      */
-    static function as( string $name, array $args ): Func
+    static function as( string $name = null, array $args = null ): Func
     {
         $func = new Func;
-        $func->name = $name;
-        $func->args = $args;
+        $func->name = $name ?? Func::DEFAULT_NAME;
+        $func->args = $args ?? [];
         return $func;
     }
 
