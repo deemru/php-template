@@ -51,7 +51,7 @@ class SetAssetScriptTransaction extends Transaction
 
         // SET_ASSET_SCRIPT TRANSACTION
         {
-            $pb_TransactionData = new \wavesplatform\Protobuf\SetAssetScriptTransactionData();
+            $pb_TransactionData = new \wavesplatform\Protobuf\SetAssetScriptTransactionData;
             // ASSET
             {
                 $pb_TransactionData->setAssetId( $this->assetId()->bytes() );

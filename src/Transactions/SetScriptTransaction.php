@@ -7,45 +7,37 @@ use Exception;
 use wavesplatform\Account\PrivateKey;
 use wavesplatform\Common\Base58String;
 use wavesplatform\Account\PublicKey;
+use wavesplatform\Common\Base64String;
 use wavesplatform\Common\ExceptionCode;
 use wavesplatform\Common\Json;
 use wavesplatform\Common\Value;
 use wavesplatform\Model\AssetId;
 use wavesplatform\Model\ChainId;
-use wavesplatform\Model\DataEntry;
 use wavesplatform\Model\WavesConfig;
 
-use wavesplatform\Transactions\DataTransaction as CurrentTransaction;
+use wavesplatform\Transactions\SetScriptTransaction as CurrentTransaction;
 
-class DataTransaction extends Transaction
+class SetScriptTransaction extends Transaction
 {
-    const TYPE = 12;
+    const TYPE = 13;
     const LATEST_VERSION = 2;
     const MIN_FEE = 100_000;
 
-    /**
-     * @var array<int, DataEntry>
-     */
-    private array $data;
+    private Base64String $script;
 
-    /**
-     * @param PublicKey $sender
-     * @param array<int, DataEntry> $data
-     * @return CurrentTransaction
-     */
-    static function build( PublicKey $sender, array $data ): CurrentTransaction
+    static function build( PublicKey $sender, Base64String $script ): CurrentTransaction
     {
         $tx = new CurrentTransaction;
         $tx->setBase( $sender, CurrentTransaction::TYPE, CurrentTransaction::LATEST_VERSION, CurrentTransaction::MIN_FEE );
 
-        // DATA TRANSACTION
+        // SET_SCRIPT TRANSACTION
         {
-            $tx->setData( $data );
+            $tx->setScript( $script );
         }
 
         // ADDITIONAL FEE CALCULATION
-        $tx->setFee( Amount::of( CurrentTransaction::calculateFee( strlen( $tx->bodyBytes() ) ) ) );
-        
+        $tx->setFee( Amount::of( CurrentTransaction::calculateFee( strlen( $tx->bodyBytes() ) ) ) );     
+
         return $tx;
     }
 
@@ -63,45 +55,32 @@ class DataTransaction extends Transaction
         // BASE
         $pb_Transaction = $this->getProtobufTransactionBase();
 
-        // DATA TRANSACTION
+        // SET_SCRIPT TRANSACTION
         {
-            $pb_TransactionData = new \wavesplatform\Protobuf\DataTransactionData;
-            // DATA
+            $pb_TransactionData = new \wavesplatform\Protobuf\SetScriptTransactionData;
+            // SCRIPT
             {
-                $pb_Data = [];
-                foreach( $this->data() as $dataEntry )
-                    $pb_Data[] = $dataEntry->toProtobuf();
-                $pb_TransactionData->setData( $pb_Data );
+                $pb_TransactionData->setScript( $this->script()->bytes() );
             }
         }        
 
-        // DATA TRANSACTION
-        $this->setBodyBytes( $pb_Transaction->setDataTransaction( $pb_TransactionData )->serializeToString() );
+        // SET_SCRIPT TRANSACTION
+        $this->setBodyBytes( $pb_Transaction->setSetScript( $pb_TransactionData )->serializeToString() );
         return $this;
     }
 
-    /**
-     * @return array<int, DataEntry>
-     */
-    function data(): array
+    function script(): Base64String
     {
-        if( !isset( $this->data ) )
-            $this->data = $this->json->get( 'data' )->asJson()->asArrayDataEntry();
-        return $this->data;
+        if( !isset( $this->script ) )
+            $this->script = $this->json->exists( 'script' ) ? $this->json->get( 'script' )->asBase64String() : Base64String::emptyString();
+        return $this->script;
     }
 
-    /**
-     * @param array<int, DataEntry> $data
-     * @return CurrentTransaction
-     */
-    function setData( array $data ): CurrentTransaction
+    function setScript( Base64String $script = null ): CurrentTransaction
     {
-        $this->data = $data;
-        
-        $data = [];
-        foreach( $this->data as $dataEntry )
-            $data[] = $dataEntry->json()->toArray();
-        $this->json->put( 'data', $data );
+        $script = $script ?? Base64String::emptyString();
+        $this->script = $script;
+        $this->json->put( 'script', $script->toJsonValue() );
         return $this;
     }
 
