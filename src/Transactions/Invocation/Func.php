@@ -73,7 +73,7 @@ class Func
     }
 
     /**
-     * @param array<int, Arg> $args
+     * @param array<mixed, mixed> $args
      * @return string
      */
     static function argsBodyBytes( array $args ): string
@@ -81,6 +81,8 @@ class Func
         $bytes = pack( 'N', count( $args ) );
         foreach( $args as $arg )
         {
+            if( !( $arg instanceof Arg ) )
+                throw new Exception( __FUNCTION__ . ' failed to detect Arg class', ExceptionCode::UNEXPECTED );
             $value = $arg->value();
             switch( $arg->type() )
             {

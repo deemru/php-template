@@ -106,7 +106,11 @@ class Arg
             {
                 $values = [];
                 foreach( $this->value()->asArray() as $arg )
-                    $values[] = $arg->toJsonValue(); // @phpstan-ignore-line // assume Arg object
+                {
+                    if( !( $arg instanceof Arg ) )
+                        throw new Exception( __FUNCTION__ . ' failed to detect Arg class', ExceptionCode::UNEXPECTED );
+                    $values[] = $arg->toJsonValue();
+                }
                 return $values;
             }
             default: throw new Exception( __FUNCTION__ . ' failed to detect type `' . serialize( $this->type() ) . '`', ExceptionCode::UNKNOWN_TYPE );
