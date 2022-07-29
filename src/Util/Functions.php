@@ -1,13 +1,13 @@
 <?php declare( strict_types = 1 );
 
-namespace wavesplatform\Util;
+namespace Waves\Util;
 
 use Exception;
-use wavesplatform\Common\ExceptionCode;
+use Waves\Common\ExceptionCode;
 
 use deemru\ABCode;
 use deemru\WavesKit;
-use wavesplatform\Model\Id;
+use Waves\Model\Id;
 
 class Functions
 {

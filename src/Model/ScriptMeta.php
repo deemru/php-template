@@ -1,9 +1,9 @@
 <?php declare( strict_types = 1 );
 
-namespace wavesplatform\Model;
+namespace Waves\Model;
 
-use wavesplatform\Common\JsonBase;
-use wavesplatform\Common\Value;
+use Waves\Common\JsonBase;
+use Waves\Common\Value;
 
 class ScriptMeta extends JsonBase
 {

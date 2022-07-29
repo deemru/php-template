@@ -1,20 +1,20 @@
 <?php declare( strict_types = 1 );
 
-namespace wavesplatform\Transactions;
+namespace Waves\Transactions;
 
 use deemru\WavesKit;
 use Exception;
-use wavesplatform\Account\PrivateKey;
-use wavesplatform\Common\Base58String;
-use wavesplatform\Account\PublicKey;
-use wavesplatform\Common\Base64String;
-use wavesplatform\Common\ExceptionCode;
-use wavesplatform\Common\Json;
-use wavesplatform\Common\Value;
-use wavesplatform\Model\ChainId;
-use wavesplatform\Model\WavesConfig;
+use Waves\Account\PrivateKey;
+use Waves\Common\Base58String;
+use Waves\Account\PublicKey;
+use Waves\Common\Base64String;
+use Waves\Common\ExceptionCode;
+use Waves\Common\Json;
+use Waves\Common\Value;
+use Waves\Model\ChainId;
+use Waves\Model\WavesConfig;
 
-use wavesplatform\Transactions\BurnTransaction as CurrentTransaction;
+use Waves\Transactions\BurnTransaction as CurrentTransaction;
 
 class BurnTransaction extends Transaction
 {
@@ -48,7 +48,7 @@ class BurnTransaction extends Transaction
 
         // BURN TRANSACTION
         {
-            $pb_TransactionData = new \wavesplatform\Protobuf\BurnTransactionData;
+            $pb_TransactionData = new \Waves\Protobuf\BurnTransactionData;
             // AMOUNT
             {
                 $pb_TransactionData->setAssetAmount( $this->amount()->toProtobuf() );

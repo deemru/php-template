@@ -1,19 +1,19 @@
 <?php declare( strict_types = 1 );
 
-namespace wavesplatform\Transactions;
+namespace Waves\Transactions;
 
 use deemru\WavesKit;
 use Exception;
-use wavesplatform\Account\PrivateKey;
-use wavesplatform\Common\Base58String;
-use wavesplatform\Account\PublicKey;
-use wavesplatform\Common\ExceptionCode;
-use wavesplatform\Common\Json;
-use wavesplatform\Model\ChainId;
-use wavesplatform\Model\Id;
-use wavesplatform\Model\WavesConfig;
+use Waves\Account\PrivateKey;
+use Waves\Common\Base58String;
+use Waves\Account\PublicKey;
+use Waves\Common\ExceptionCode;
+use Waves\Common\Json;
+use Waves\Model\ChainId;
+use Waves\Model\Id;
+use Waves\Model\WavesConfig;
 
-use wavesplatform\Transactions\LeaseCancelTransaction as CurrentTransaction;
+use Waves\Transactions\LeaseCancelTransaction as CurrentTransaction;
 
 class LeaseCancelTransaction extends Transaction
 {
@@ -47,7 +47,7 @@ class LeaseCancelTransaction extends Transaction
 
         // LEASE_CANCEL TRANSACTION
         {
-            $pb_TransactionData = new \wavesplatform\Protobuf\LeaseCancelTransactionData;
+            $pb_TransactionData = new \Waves\Protobuf\LeaseCancelTransactionData;
             // ID
             {
                 $pb_TransactionData->setLeaseId( $this->leaseId()->bytes() );

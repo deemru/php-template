@@ -1,8 +1,8 @@
 <?php declare( strict_types = 1 );
 
-namespace wavesplatform\Common;
+namespace Waves\Common;
 
-use wavesplatform\Util\Functions;
+use Waves\Util\Functions;
 
 class Base58String
 {

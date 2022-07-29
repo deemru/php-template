@@ -1,12 +1,12 @@
 <?php declare( strict_types = 1 );
 
-namespace wavesplatform\Transactions\Invocation;
+namespace Waves\Transactions\Invocation;
 
 use Exception;
-use wavesplatform\Common\Base64String;
-use wavesplatform\Common\ExceptionCode;
-use wavesplatform\Common\Json;
-use wavesplatform\Common\Value;
+use Waves\Common\Base64String;
+use Waves\Common\ExceptionCode;
+use Waves\Common\Json;
+use Waves\Common\Value;
 
 class Arg
 {

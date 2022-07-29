@@ -1,8 +1,8 @@
 <?php declare( strict_types = 1 );
 
-namespace wavesplatform\Transactions;
+namespace Waves\Transactions;
 
-use wavesplatform\Account\PublicKey;
+use Waves\Account\PublicKey;
 
 class Transaction extends TransactionOrOrder
 {
@@ -37,9 +37,9 @@ class Transaction extends TransactionOrOrder
         $this->setProofs();
     }
 
-    function getProtobufTransactionBase(): \wavesplatform\Protobuf\Transaction
+    function getProtobufTransactionBase(): \Waves\Protobuf\Transaction
     {
-        $pb_Transaction = new \wavesplatform\Protobuf\Transaction();
+        $pb_Transaction = new \Waves\Protobuf\Transaction();
         $pb_Transaction->setSenderPublicKey( $this->sender()->bytes() );
         $pb_Transaction->setVersion( $this->version() );
         $pb_Transaction->setFee( $this->fee()->toProtobuf() );

@@ -1,8 +1,8 @@
 <?php declare( strict_types = 1 );
 
-namespace wavesplatform\Transactions\Mass;
+namespace Waves\Transactions\Mass;
 
-use wavesplatform\Transactions\Recipient;
+use Waves\Transactions\Recipient;
 
 class Transfer
 {

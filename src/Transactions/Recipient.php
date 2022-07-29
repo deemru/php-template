@@ -1,11 +1,11 @@
 <?php declare( strict_types = 1 );
 
-namespace wavesplatform\Transactions;
+namespace Waves\Transactions;
 
 use Exception;
-use wavesplatform\Account\Address;
-use wavesplatform\Common\ExceptionCode;
-use wavesplatform\Model\Alias;
+use Waves\Account\Address;
+use Waves\Common\ExceptionCode;
+use Waves\Model\Alias;
 
 class Recipient
 {
@@ -81,9 +81,9 @@ class Recipient
         return $this->alias;
     }
 
-    function toProtobuf(): \wavesplatform\Protobuf\Recipient
+    function toProtobuf(): \Waves\Protobuf\Recipient
     {
-        $pb_Recipient = new \wavesplatform\Protobuf\Recipient;
+        $pb_Recipient = new \Waves\Protobuf\Recipient;
         if( $this->isAlias() )
             $pb_Recipient->setAlias( $this->alias()->name() );
         else

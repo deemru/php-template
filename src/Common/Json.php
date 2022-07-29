@@ -1,31 +1,31 @@
 <?php declare( strict_types = 1 );
 
-namespace wavesplatform\Common;
+namespace Waves\Common;
 
 use Exception;
-use wavesplatform\Common\ExceptionCode;
+use Waves\Common\ExceptionCode;
 
-use wavesplatform\Transactions\Transaction;
-use wavesplatform\Account\Address;
-use wavesplatform\Model\Alias;
-use wavesplatform\Model\BalanceDetails;
-use wavesplatform\Model\DataEntry;
-use wavesplatform\Model\ScriptInfo;
-use wavesplatform\Model\BlockHeaders;
-use wavesplatform\Model\Balance;
-use wavesplatform\Model\AssetBalance;
-use wavesplatform\Model\AssetDetails;
-use wavesplatform\Model\AssetDistribution;
-use wavesplatform\Model\BlockchainRewards;
-use wavesplatform\Model\Block;
-use wavesplatform\Model\ScriptDetails;
-use wavesplatform\Model\ScriptMeta;
-use wavesplatform\Model\LeaseInfo;
-use wavesplatform\Model\TransactionInfo;
-use wavesplatform\Model\TransactionWithStatus;
-use wavesplatform\Model\TransactionStatus;
-use wavesplatform\Model\Votes;
-use wavesplatform\Transactions\Invocation\Arg;
+use Waves\Transactions\Transaction;
+use Waves\Account\Address;
+use Waves\Model\Alias;
+use Waves\Model\BalanceDetails;
+use Waves\Model\DataEntry;
+use Waves\Model\ScriptInfo;
+use Waves\Model\BlockHeaders;
+use Waves\Model\Balance;
+use Waves\Model\AssetBalance;
+use Waves\Model\AssetDetails;
+use Waves\Model\AssetDistribution;
+use Waves\Model\BlockchainRewards;
+use Waves\Model\Block;
+use Waves\Model\ScriptDetails;
+use Waves\Model\ScriptMeta;
+use Waves\Model\LeaseInfo;
+use Waves\Model\TransactionInfo;
+use Waves\Model\TransactionWithStatus;
+use Waves\Model\TransactionStatus;
+use Waves\Model\Votes;
+use Waves\Transactions\Invocation\Arg;
 
 class Json
 {

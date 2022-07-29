@@ -1,12 +1,12 @@
 <?php declare( strict_types = 1 );
 
-namespace wavesplatform\Model;
+namespace Waves\Model;
 
 use Exception;
-use wavesplatform\Common\Base64String;
-use wavesplatform\Common\ExceptionCode;
-use wavesplatform\Common\JsonBase;
-use wavesplatform\Common\Value;
+use Waves\Common\Base64String;
+use Waves\Common\ExceptionCode;
+use Waves\Common\JsonBase;
+use Waves\Common\Value;
 
 class DataEntry extends JsonBase
 {
@@ -82,9 +82,9 @@ class DataEntry extends JsonBase
         }
     }
 
-    function toProtobuf(): \wavesplatform\Protobuf\DataTransactionData\DataEntry
+    function toProtobuf(): \Waves\Protobuf\DataTransactionData\DataEntry
     {
-        $pb_DataEntry = new \wavesplatform\Protobuf\DataTransactionData\DataEntry;
+        $pb_DataEntry = new \Waves\Protobuf\DataTransactionData\DataEntry;
         $pb_DataEntry->setKey( $this->key() );
         switch( $this->type() )
         {

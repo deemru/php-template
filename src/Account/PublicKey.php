@@ -1,10 +1,10 @@
 <?php declare( strict_types = 1 );
 
-namespace wavesplatform\Account;
+namespace Waves\Account;
 
 use deemru\WavesKit;
-use wavesplatform\Common\Base58String;
-use wavesplatform\Model\ChainId;
+use Waves\Common\Base58String;
+use Waves\Model\ChainId;
 
 class PublicKey
 {

@@ -1,19 +1,19 @@
 <?php declare( strict_types = 1 );
 
-namespace wavesplatform\Transactions;
+namespace Waves\Transactions;
 
 use deemru\WavesKit;
 use Exception;
-use wavesplatform\Account\PrivateKey;
-use wavesplatform\Common\Base58String;
-use wavesplatform\Account\PublicKey;
-use wavesplatform\Common\ExceptionCode;
-use wavesplatform\Common\Json;
-use wavesplatform\Model\AssetId;
-use wavesplatform\Model\ChainId;
-use wavesplatform\Model\WavesConfig;
+use Waves\Account\PrivateKey;
+use Waves\Common\Base58String;
+use Waves\Account\PublicKey;
+use Waves\Common\ExceptionCode;
+use Waves\Common\Json;
+use Waves\Model\AssetId;
+use Waves\Model\ChainId;
+use Waves\Model\WavesConfig;
 
-use wavesplatform\Transactions\TransferTransaction as CurrentTransaction;
+use Waves\Transactions\TransferTransaction as CurrentTransaction;
 
 class TransferTransaction extends Transaction
 {
@@ -51,7 +51,7 @@ class TransferTransaction extends Transaction
 
         // TRANSFER TRANSACTION
         {
-            $pb_TransactionData = new \wavesplatform\Protobuf\TransferTransactionData;
+            $pb_TransactionData = new \Waves\Protobuf\TransferTransactionData;
             // RECIPIENT
             {
                 $pb_TransactionData->setRecipient( $this->recipient()->toProtobuf() );

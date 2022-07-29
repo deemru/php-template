@@ -1,20 +1,20 @@
 <?php declare( strict_types = 1 );
 
-namespace wavesplatform\Transactions;
+namespace Waves\Transactions;
 
 use deemru\WavesKit;
 use Exception;
-use wavesplatform\Account\PrivateKey;
-use wavesplatform\Common\Base58String;
-use wavesplatform\Account\PublicKey;
-use wavesplatform\Common\Base64String;
-use wavesplatform\Common\ExceptionCode;
-use wavesplatform\Common\Json;
-use wavesplatform\Common\Value;
-use wavesplatform\Model\ChainId;
-use wavesplatform\Model\WavesConfig;
+use Waves\Account\PrivateKey;
+use Waves\Common\Base58String;
+use Waves\Account\PublicKey;
+use Waves\Common\Base64String;
+use Waves\Common\ExceptionCode;
+use Waves\Common\Json;
+use Waves\Common\Value;
+use Waves\Model\ChainId;
+use Waves\Model\WavesConfig;
 
-use wavesplatform\Transactions\IssueTransaction as CurrentTransaction;
+use Waves\Transactions\IssueTransaction as CurrentTransaction;
 
 class IssueTransaction extends Transaction
 {
@@ -62,7 +62,7 @@ class IssueTransaction extends Transaction
 
         // ISSUE TRANSACTION
         {
-            $pb_TransactionData = new \wavesplatform\Protobuf\IssueTransactionData;
+            $pb_TransactionData = new \Waves\Protobuf\IssueTransactionData;
             // NAME
             {
                 $pb_TransactionData->setName( $this->name() );

@@ -1,9 +1,9 @@
 <?php declare( strict_types = 1 );
 
-namespace wavesplatform\Model;
+namespace Waves\Model;
 
 use Exception;
-use wavesplatform\Common\ExceptionCode;
+use Waves\Common\ExceptionCode;
 
 class ChainId
 {

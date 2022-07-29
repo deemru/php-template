@@ -1,17 +1,17 @@
 <?php declare( strict_types = 1 );
 
-namespace wavesplatform\Transactions;
+namespace Waves\Transactions;
 
 use deemru\WavesKit;
-use wavesplatform\Common\Json;
-use wavesplatform\Common\JsonBase;
-use wavesplatform\Account\PublicKey;
-use wavesplatform\Common\Value;
-use wavesplatform\Model\AssetId;
-use wavesplatform\Model\ChainId;
-use wavesplatform\Model\Id;
-use wavesplatform\Model\WavesConfig;
-use wavesplatform\Util\Functions;
+use Waves\Common\Json;
+use Waves\Common\JsonBase;
+use Waves\Account\PublicKey;
+use Waves\Common\Value;
+use Waves\Model\AssetId;
+use Waves\Model\ChainId;
+use Waves\Model\Id;
+use Waves\Model\WavesConfig;
+use Waves\Util\Functions;
 
 class TransactionOrOrder extends JsonBase
 {

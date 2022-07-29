@@ -1,6 +1,6 @@
 <?php declare( strict_types = 1 );
 
-namespace wavesplatform\Model;
+namespace Waves\Model;
 
 class Block extends BlockHeaders
 {

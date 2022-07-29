@@ -1,10 +1,10 @@
 <?php declare( strict_types = 1 );
 
-namespace wavesplatform\Model;
+namespace Waves\Model;
 
 use Exception;
-use wavesplatform\Common\ExceptionCode;
-use wavesplatform\Common\Base58String;
+use Waves\Common\ExceptionCode;
+use Waves\Common\Base58String;
 
 class AssetId
 {

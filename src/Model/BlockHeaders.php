@@ -1,10 +1,10 @@
 <?php declare( strict_types = 1 );
 
-namespace wavesplatform\Model;
+namespace Waves\Model;
 
-use wavesplatform\Account\Address;
-use wavesplatform\Common\Json;
-use wavesplatform\Common\JsonBase;
+use Waves\Account\Address;
+use Waves\Common\Json;
+use Waves\Common\JsonBase;
 
 class BlockHeaders extends JsonBase
 {

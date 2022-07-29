@@ -1,34 +1,34 @@
 <?php declare( strict_types = 1 );
 
-namespace wavesplatform\API;
+namespace Waves\API;
 
 use Exception;
-use wavesplatform\Common\ExceptionCode;
+use Waves\Common\ExceptionCode;
 
 use deemru\WavesKit;
 
-use wavesplatform\Common\Json;
-use wavesplatform\Account\Address;
-use wavesplatform\Model\AssetId;
-use wavesplatform\Model\AssetDistribution;
-use wavesplatform\Model\AssetBalance;
-use wavesplatform\Model\AssetDetails;
-use wavesplatform\Model\Alias;
-use wavesplatform\Model\Balance;
-use wavesplatform\Model\BalanceDetails;
-use wavesplatform\Model\Block;
-use wavesplatform\Model\Id;
-use wavesplatform\Model\LeaseInfo;
-use wavesplatform\Model\BlockHeaders;
-use wavesplatform\Model\BlockchainRewards;
-use wavesplatform\Model\ChainId;
-use wavesplatform\Model\DataEntry;
-use wavesplatform\Model\ScriptInfo;
-use wavesplatform\Model\ScriptMeta;
-use wavesplatform\Model\TransactionInfo;
-use wavesplatform\Model\TransactionStatus;
-use wavesplatform\Transactions\Amount;
-use wavesplatform\Transactions\Transaction;
+use Waves\Common\Json;
+use Waves\Account\Address;
+use Waves\Model\AssetId;
+use Waves\Model\AssetDistribution;
+use Waves\Model\AssetBalance;
+use Waves\Model\AssetDetails;
+use Waves\Model\Alias;
+use Waves\Model\Balance;
+use Waves\Model\BalanceDetails;
+use Waves\Model\Block;
+use Waves\Model\Id;
+use Waves\Model\LeaseInfo;
+use Waves\Model\BlockHeaders;
+use Waves\Model\BlockchainRewards;
+use Waves\Model\ChainId;
+use Waves\Model\DataEntry;
+use Waves\Model\ScriptInfo;
+use Waves\Model\ScriptMeta;
+use Waves\Model\TransactionInfo;
+use Waves\Model\TransactionStatus;
+use Waves\Transactions\Amount;
+use Waves\Transactions\Transaction;
 
 class Node
 {

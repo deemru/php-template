@@ -1,10 +1,10 @@
 <?php declare( strict_types = 1 );
 
-namespace wavesplatform\Model;
+namespace Waves\Model;
 
-use wavesplatform\Account\Address;
-use wavesplatform\Account\PublicKey;
-use wavesplatform\Common\JsonBase;
+use Waves\Account\Address;
+use Waves\Account\PublicKey;
+use Waves\Common\JsonBase;
 
 class AssetDetails extends JsonBase
 {

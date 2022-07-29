@@ -1,8 +1,8 @@
 <?php declare( strict_types = 1 );
 
-namespace wavesplatform\Model;
+namespace Waves\Model;
 
-use wavesplatform\Transactions\Transaction;
+use Waves\Transactions\Transaction;
 
 class TransactionWithStatus extends Transaction
 {

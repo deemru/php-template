@@ -1,19 +1,19 @@
 <?php declare( strict_types = 1 );
 
-namespace wavesplatform\Common;
+namespace Waves\Common;
 
 use Exception;
-use wavesplatform\Common\ExceptionCode;
-use wavesplatform\Model\ArgMeta;
-use wavesplatform\Account\Address;
-use wavesplatform\Account\PublicKey;
-use wavesplatform\Model\AssetId;
-use wavesplatform\Model\Id;
-use wavesplatform\Model\ChainId;
-use wavesplatform\Model\ApplicationStatus;
-use wavesplatform\Model\Status;
-use wavesplatform\Transactions\Invocation\Arg;
-use wavesplatform\Transactions\Recipient;
+use Waves\Common\ExceptionCode;
+use Waves\Model\ArgMeta;
+use Waves\Account\Address;
+use Waves\Account\PublicKey;
+use Waves\Model\AssetId;
+use Waves\Model\Id;
+use Waves\Model\ChainId;
+use Waves\Model\ApplicationStatus;
+use Waves\Model\Status;
+use Waves\Transactions\Invocation\Arg;
+use Waves\Transactions\Recipient;
 
 class Value
 {

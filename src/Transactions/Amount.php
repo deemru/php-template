@@ -1,9 +1,9 @@
 <?php declare( strict_types = 1 );
 
-namespace wavesplatform\Transactions;
+namespace Waves\Transactions;
 
-use wavesplatform\Common\Json;
-use wavesplatform\Model\AssetId;
+use Waves\Common\Json;
+use Waves\Model\AssetId;
 
 class Amount
 {
@@ -41,9 +41,9 @@ class Amount
         return serialize( $this );
     }
 
-    function toProtobuf(): \wavesplatform\Protobuf\Amount
+    function toProtobuf(): \Waves\Protobuf\Amount
     {
-        $pb_Amount = new \wavesplatform\Protobuf\Amount;
+        $pb_Amount = new \Waves\Protobuf\Amount;
         $pb_Amount->setAmount( $this->value() );
         if( !$this->assetId()->isWaves() )
             $pb_Amount->setAssetId( $this->assetId()->bytes() );

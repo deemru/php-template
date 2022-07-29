@@ -1,8 +1,8 @@
 {
-    "name": "deemru/template",
-    "description": "PHP template",
-    "keywords": [ "template" ],
-    "homepage": "https://github.com/deemru/php-template",
+    "name": "waves/waves",
+    "description": "Waves Platform PHP client library",
+    "keywords": [ "waves", "wavesplatform", "client" ],
+    "homepage": "https://github.com/wavesplatform/waves-php",
     "type": "library",
     "license": "MIT",
     "authors": [
@@ -13,9 +13,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "wavesplatform\\": "src/",
-            "wavesplatform\\Protobuf\\": "protobuf/wavesplatform/Protobuf/",
-            "wavesplatform\\ProtobufMetadata\\": "protobuf/wavesplatform/ProtobufMetadata/"
+            "Waves\\": "src/"
         }
     },
     "require-dev": {
@@ -23,8 +21,8 @@
         "phpstan/phpstan": "^1.7"
     },
     "require": {
-        "google/protobuf": "^3.21",
         "deemru/waveskit": "^1.0",
-        "deemru/abcode": "^1.0"
+        "deemru/abcode": "^1.0",
+        "waves/protobuf": "^1.4"
     }
 }

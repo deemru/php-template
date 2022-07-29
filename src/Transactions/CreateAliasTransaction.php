@@ -1,20 +1,20 @@
 <?php declare( strict_types = 1 );
 
-namespace wavesplatform\Transactions;
+namespace Waves\Transactions;
 
 use deemru\WavesKit;
 use Exception;
-use wavesplatform\Account\PrivateKey;
-use wavesplatform\Common\Base58String;
-use wavesplatform\Account\PublicKey;
-use wavesplatform\Common\ExceptionCode;
-use wavesplatform\Common\Json;
-use wavesplatform\Model\Alias;
-use wavesplatform\Model\ChainId;
-use wavesplatform\Model\Id;
-use wavesplatform\Model\WavesConfig;
+use Waves\Account\PrivateKey;
+use Waves\Common\Base58String;
+use Waves\Account\PublicKey;
+use Waves\Common\ExceptionCode;
+use Waves\Common\Json;
+use Waves\Model\Alias;
+use Waves\Model\ChainId;
+use Waves\Model\Id;
+use Waves\Model\WavesConfig;
 
-use wavesplatform\Transactions\CreateAliasTransaction as CurrentTransaction;
+use Waves\Transactions\CreateAliasTransaction as CurrentTransaction;
 
 class CreateAliasTransaction extends Transaction
 {
@@ -48,7 +48,7 @@ class CreateAliasTransaction extends Transaction
 
         // ALIAS TRANSACTION
         {
-            $pb_TransactionData = new \wavesplatform\Protobuf\CreateAliasTransactionData;
+            $pb_TransactionData = new \Waves\Protobuf\CreateAliasTransactionData;
             // ID
             {
                 $pb_TransactionData->setAlias( $this->alias()->name() );

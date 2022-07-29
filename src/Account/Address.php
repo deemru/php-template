@@ -1,13 +1,13 @@
 <?php declare( strict_types = 1 );
 
-namespace wavesplatform\Account;
+namespace Waves\Account;
 
 use deemru\WavesKit;
 use Exception;
-use wavesplatform\Common\ExceptionCode;
-use wavesplatform\Common\Base58String;
-use wavesplatform\Model\ChainId;
-use wavesplatform\Model\WavesConfig;
+use Waves\Common\ExceptionCode;
+use Waves\Common\Base58String;
+use Waves\Model\ChainId;
+use Waves\Model\WavesConfig;
 
 class Address
 {

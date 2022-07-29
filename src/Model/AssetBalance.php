@@ -1,10 +1,10 @@
 <?php declare( strict_types = 1 );
 
-namespace wavesplatform\Model;
+namespace Waves\Model;
 
-use wavesplatform\Common\Json;
-use wavesplatform\Common\JsonBase;
-use wavesplatform\Transactions\Transaction;
+use Waves\Common\Json;
+use Waves\Common\JsonBase;
+use Waves\Transactions\Transaction;
 
 class AssetBalance extends JsonBase
 {

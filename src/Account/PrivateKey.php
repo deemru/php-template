@@ -1,9 +1,9 @@
 <?php declare( strict_types = 1 );
 
-namespace wavesplatform\Account;
+namespace Waves\Account;
 
 use deemru\WavesKit;
-use wavesplatform\Common\Base58String;
+use Waves\Common\Base58String;
 
 class PrivateKey
 {

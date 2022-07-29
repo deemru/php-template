@@ -1,21 +1,21 @@
 <?php declare( strict_types = 1 );
 
-namespace wavesplatform\Transactions;
+namespace Waves\Transactions;
 
 use deemru\WavesKit;
 use Exception;
-use wavesplatform\Account\PrivateKey;
-use wavesplatform\Common\Base58String;
-use wavesplatform\Account\PublicKey;
-use wavesplatform\Common\Base64String;
-use wavesplatform\Common\ExceptionCode;
-use wavesplatform\Common\Json;
-use wavesplatform\Common\Value;
-use wavesplatform\Model\AssetId;
-use wavesplatform\Model\ChainId;
-use wavesplatform\Model\WavesConfig;
+use Waves\Account\PrivateKey;
+use Waves\Common\Base58String;
+use Waves\Account\PublicKey;
+use Waves\Common\Base64String;
+use Waves\Common\ExceptionCode;
+use Waves\Common\Json;
+use Waves\Common\Value;
+use Waves\Model\AssetId;
+use Waves\Model\ChainId;
+use Waves\Model\WavesConfig;
 
-use wavesplatform\Transactions\SponsorFeeTransaction as CurrentTransaction;
+use Waves\Transactions\SponsorFeeTransaction as CurrentTransaction;
 
 class SponsorFeeTransaction extends Transaction
 {
@@ -51,7 +51,7 @@ class SponsorFeeTransaction extends Transaction
 
         // SPONSORSHIP TRANSACTION
         {
-            $pb_TransactionData = new \wavesplatform\Protobuf\SponsorFeeTransactionData;
+            $pb_TransactionData = new \Waves\Protobuf\SponsorFeeTransactionData;
             // MINFEE
             {
                 $pb_TransactionData->setMinFee( Amount::of( $this->minSponsoredFee(), $this->assetId() )->toProtobuf() );

@@ -1,21 +1,21 @@
 <?php declare( strict_types = 1 );
 
-namespace wavesplatform\Transactions;
+namespace Waves\Transactions;
 
 use deemru\WavesKit;
 use Exception;
-use wavesplatform\Account\PrivateKey;
-use wavesplatform\Common\Base58String;
-use wavesplatform\Account\PublicKey;
-use wavesplatform\Common\ExceptionCode;
-use wavesplatform\Common\Json;
-use wavesplatform\Common\Value;
-use wavesplatform\Model\AssetId;
-use wavesplatform\Model\ChainId;
-use wavesplatform\Model\WavesConfig;
-use wavesplatform\Transactions\Mass\Transfer;
+use Waves\Account\PrivateKey;
+use Waves\Common\Base58String;
+use Waves\Account\PublicKey;
+use Waves\Common\ExceptionCode;
+use Waves\Common\Json;
+use Waves\Common\Value;
+use Waves\Model\AssetId;
+use Waves\Model\ChainId;
+use Waves\Model\WavesConfig;
+use Waves\Transactions\Mass\Transfer;
 
-use wavesplatform\Transactions\MassTransferTransaction as CurrentTransaction;
+use Waves\Transactions\MassTransferTransaction as CurrentTransaction;
 
 class MassTransferTransaction extends Transaction
 {
@@ -68,13 +68,13 @@ class MassTransferTransaction extends Transaction
 
         // MASS_TRANSFER TRANSACTION
         {
-            $pb_TransactionData = new \wavesplatform\Protobuf\MassTransferTransactionData;
+            $pb_TransactionData = new \Waves\Protobuf\MassTransferTransactionData;
             // TRANSFERS
             {
                 $pb_Transfers = [];
                 foreach( $this->transfers() as $transfer )
                 {
-                    $pb_Transfer = new \wavesplatform\Protobuf\MassTransferTransactionData\Transfer;
+                    $pb_Transfer = new \Waves\Protobuf\MassTransferTransactionData\Transfer;
                     $pb_Transfer->setRecipient( $transfer->recipient()->toProtobuf() );
                     $pb_Transfer->setAmount( $transfer->amount() );
                     $pb_Transfers[] = $pb_Transfer;

@@ -1,29 +1,29 @@
 <?php
 
-namespace wavesplatform;
+namespace Waves;
 
 require_once 'common.php';
 
 use deemru\WavesKit;
 use Exception;
-use wavesplatform\Common\ExceptionCode;
+use Waves\Common\ExceptionCode;
 
-use wavesplatform\Account\Address;
-use wavesplatform\Account\PrivateKey;
-use wavesplatform\Account\PublicKey;
-use wavesplatform\API\Node;
-use wavesplatform\Common\Base64String;
-use wavesplatform\Model\Alias;
-use wavesplatform\Model\AssetId;
-use wavesplatform\Model\ChainId;
-use wavesplatform\Model\LeaseStatus;
-use wavesplatform\Model\Id;
-use wavesplatform\Model\WavesConfig;
-use wavesplatform\Transactions\Amount;
-use wavesplatform\Transactions\IssueTransaction;
-use wavesplatform\Transactions\Recipient;
-use wavesplatform\Transactions\TransferTransaction;
-use wavesplatform\Util\Functions;
+use Waves\Account\Address;
+use Waves\Account\PrivateKey;
+use Waves\Account\PublicKey;
+use Waves\API\Node;
+use Waves\Common\Base64String;
+use Waves\Model\Alias;
+use Waves\Model\AssetId;
+use Waves\Model\ChainId;
+use Waves\Model\LeaseStatus;
+use Waves\Model\Id;
+use Waves\Model\WavesConfig;
+use Waves\Transactions\Amount;
+use Waves\Transactions\IssueTransaction;
+use Waves\Transactions\Recipient;
+use Waves\Transactions\TransferTransaction;
+use Waves\Util\Functions;
 
 class NodeTest extends \PHPUnit\Framework\TestCase
 {

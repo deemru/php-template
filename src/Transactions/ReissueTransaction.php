@@ -1,20 +1,20 @@
 <?php declare( strict_types = 1 );
 
-namespace wavesplatform\Transactions;
+namespace Waves\Transactions;
 
 use deemru\WavesKit;
 use Exception;
-use wavesplatform\Account\PrivateKey;
-use wavesplatform\Common\Base58String;
-use wavesplatform\Account\PublicKey;
-use wavesplatform\Common\Base64String;
-use wavesplatform\Common\ExceptionCode;
-use wavesplatform\Common\Json;
-use wavesplatform\Common\Value;
-use wavesplatform\Model\ChainId;
-use wavesplatform\Model\WavesConfig;
+use Waves\Account\PrivateKey;
+use Waves\Common\Base58String;
+use Waves\Account\PublicKey;
+use Waves\Common\Base64String;
+use Waves\Common\ExceptionCode;
+use Waves\Common\Json;
+use Waves\Common\Value;
+use Waves\Model\ChainId;
+use Waves\Model\WavesConfig;
 
-use wavesplatform\Transactions\ReissueTransaction as CurrentTransaction;
+use Waves\Transactions\ReissueTransaction as CurrentTransaction;
 
 class ReissueTransaction extends Transaction
 {
@@ -50,7 +50,7 @@ class ReissueTransaction extends Transaction
 
         // REISSUE TRANSACTION
         {
-            $pb_TransactionData = new \wavesplatform\Protobuf\ReissueTransactionData;
+            $pb_TransactionData = new \Waves\Protobuf\ReissueTransactionData;
             // AMOUNT
             {
                 $pb_TransactionData->setAssetAmount( $this->amount()->toProtobuf() );

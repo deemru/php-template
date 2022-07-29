@@ -1,22 +1,22 @@
 <?php declare( strict_types = 1 );
 
-namespace wavesplatform\Transactions;
+namespace Waves\Transactions;
 
 use deemru\WavesKit;
 use Exception;
-use wavesplatform\Account\PrivateKey;
-use wavesplatform\Common\Base58String;
-use wavesplatform\Account\PublicKey;
-use wavesplatform\Common\ExceptionCode;
-use wavesplatform\Common\Json;
-use wavesplatform\Common\Value;
-use wavesplatform\Model\AssetId;
-use wavesplatform\Model\ChainId;
-use wavesplatform\Model\WavesConfig;
-use wavesplatform\Transactions\Invocation\Func;
-use wavesplatform\Transactions\Mass\Transfer;
+use Waves\Account\PrivateKey;
+use Waves\Common\Base58String;
+use Waves\Account\PublicKey;
+use Waves\Common\ExceptionCode;
+use Waves\Common\Json;
+use Waves\Common\Value;
+use Waves\Model\AssetId;
+use Waves\Model\ChainId;
+use Waves\Model\WavesConfig;
+use Waves\Transactions\Invocation\Func;
+use Waves\Transactions\Mass\Transfer;
 
-use wavesplatform\Transactions\InvokeScriptTransaction as CurrentTransaction;
+use Waves\Transactions\InvokeScriptTransaction as CurrentTransaction;
 
 class InvokeScriptTransaction extends Transaction
 {
@@ -64,7 +64,7 @@ class InvokeScriptTransaction extends Transaction
 
         // INVOKE TRANSACTION
         {
-            $pb_TransactionData = new \wavesplatform\Protobuf\InvokeScriptTransactionData;
+            $pb_TransactionData = new \Waves\Protobuf\InvokeScriptTransactionData;
             // DAPP
             {
                 $pb_TransactionData->setDApp( $this->dApp()->toProtobuf() );

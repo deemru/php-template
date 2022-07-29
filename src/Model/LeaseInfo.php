@@ -1,10 +1,10 @@
 <?php declare( strict_types = 1 );
 
-namespace wavesplatform\Model;
+namespace Waves\Model;
 
-use wavesplatform\Account\Address;
-use wavesplatform\Common\JsonBase;
-use wavesplatform\Transactions\Recipient;
+use Waves\Account\Address;
+use Waves\Common\JsonBase;
+use Waves\Transactions\Recipient;
 
 class LeaseInfo extends JsonBase
 {

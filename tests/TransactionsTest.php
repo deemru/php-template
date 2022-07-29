@@ -1,50 +1,50 @@
 <?php
 
-namespace wavesplatform;
+namespace Waves;
 
 require_once 'common.php';
 
 use deemru\WavesKit;
 use Exception;
 use Waves\SetScriptTransactionData;
-use wavesplatform\Common\ExceptionCode;
+use Waves\Common\ExceptionCode;
 
-use wavesplatform\Account\Address;
-use wavesplatform\Account\PrivateKey;
-use wavesplatform\Account\PublicKey;
-use wavesplatform\API\Node;
-use wavesplatform\Common\Base58String;
-use wavesplatform\Common\Base64String;
-use wavesplatform\Common\Value;
-use wavesplatform\Model\Alias;
-use wavesplatform\Model\ApplicationStatus;
-use wavesplatform\Model\AssetId;
-use wavesplatform\Model\ChainId;
-use wavesplatform\Model\DataEntry;
-use wavesplatform\Model\EntryType;
-use wavesplatform\Model\LeaseStatus;
-use wavesplatform\Model\Id;
-use wavesplatform\Model\WavesConfig;
-use wavesplatform\Transactions\Amount;
-use wavesplatform\Transactions\BurnTransaction;
-use wavesplatform\Transactions\CreateAliasTransaction;
-use wavesplatform\Transactions\DataTransaction;
-use wavesplatform\Transactions\Invocation\Arg;
-use wavesplatform\Transactions\Invocation\Func;
-use wavesplatform\Transactions\InvokeScriptTransaction;
-use wavesplatform\Transactions\IssueTransaction;
-use wavesplatform\Transactions\LeaseCancelTransaction;
-use wavesplatform\Transactions\LeaseTransaction;
-use wavesplatform\Transactions\Mass\Transfer;
-use wavesplatform\Transactions\MassTransferTransaction;
-use wavesplatform\Transactions\Recipient;
-use wavesplatform\Transactions\ReissueTransaction;
-use wavesplatform\Transactions\SetAssetScriptTransaction;
-use wavesplatform\Transactions\SetScriptTransaction;
-use wavesplatform\Transactions\SponsorFeeTransaction;
-use wavesplatform\Transactions\TransferTransaction;
-use wavesplatform\Transactions\UpdateAssetInfoTransaction;
-use wavesplatform\Util\Functions;
+use Waves\Account\Address;
+use Waves\Account\PrivateKey;
+use Waves\Account\PublicKey;
+use Waves\API\Node;
+use Waves\Common\Base58String;
+use Waves\Common\Base64String;
+use Waves\Common\Value;
+use Waves\Model\Alias;
+use Waves\Model\ApplicationStatus;
+use Waves\Model\AssetId;
+use Waves\Model\ChainId;
+use Waves\Model\DataEntry;
+use Waves\Model\EntryType;
+use Waves\Model\LeaseStatus;
+use Waves\Model\Id;
+use Waves\Model\WavesConfig;
+use Waves\Transactions\Amount;
+use Waves\Transactions\BurnTransaction;
+use Waves\Transactions\CreateAliasTransaction;
+use Waves\Transactions\DataTransaction;
+use Waves\Transactions\Invocation\Arg;
+use Waves\Transactions\Invocation\Func;
+use Waves\Transactions\InvokeScriptTransaction;
+use Waves\Transactions\IssueTransaction;
+use Waves\Transactions\LeaseCancelTransaction;
+use Waves\Transactions\LeaseTransaction;
+use Waves\Transactions\Mass\Transfer;
+use Waves\Transactions\MassTransferTransaction;
+use Waves\Transactions\Recipient;
+use Waves\Transactions\ReissueTransaction;
+use Waves\Transactions\SetAssetScriptTransaction;
+use Waves\Transactions\SetScriptTransaction;
+use Waves\Transactions\SponsorFeeTransaction;
+use Waves\Transactions\TransferTransaction;
+use Waves\Transactions\UpdateAssetInfoTransaction;
+use Waves\Util\Functions;
 
 class TransactionsTest extends \PHPUnit\Framework\TestCase
 {
