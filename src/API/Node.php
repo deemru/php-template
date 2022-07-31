@@ -27,6 +27,7 @@ use Waves\Model\ScriptInfo;
 use Waves\Model\ScriptMeta;
 use Waves\Model\TransactionInfo;
 use Waves\Model\TransactionStatus;
+use Waves\Model\Validation;
 use Waves\Transactions\Amount;
 use Waves\Transactions\Transaction;
 
@@ -456,16 +457,21 @@ class Node
     //===============
     // DEBUG
     //===============
-/*
-    public List<HistoryBalance> getBalanceHistory(Address address) throws IOException, NodeException {
-        return asType(get("/debug/balances/history/" + address.toString()), TypeRef.HISTORY_BALANCES);
+
+    /**
+     * @param Address $address
+     * @return array<int, HistoryBalance>
+     */
+    function getBalanceHistory( Address $address ): array
+    {
+        return $this->get( '/debug/balances/history/' . $address->toString() )->asArrayHistoryBalance();
     }
 
-    public <T extends Transaction> Validation validateTransaction(T transaction) throws IOException, NodeException {
-        return asType(post("/debug/validate")
-                .setEntity(new StringEntity(transaction.toJson(), ContentType.APPLICATION_JSON)), TypeRef.VALIDATION);
+    function validateTransaction( Transaction $transaction ): Validation
+    {
+        return $this->post( '/debug/validate', $transaction->json() )->asValidation();
     }
-*/
+
     //===============
     // LEASING
     //===============

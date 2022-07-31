@@ -100,7 +100,7 @@ class DataTransaction extends Transaction
 
         $data = [];
         foreach( $this->data as $dataEntry )
-            $data[] = $dataEntry->json()->toArray();
+            $data[] = $dataEntry->json()->data();
         $this->json->put( 'data', $data );
         return $this;
     }

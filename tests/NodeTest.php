@@ -9,20 +9,11 @@ use Exception;
 use Waves\Common\ExceptionCode;
 
 use Waves\Account\Address;
-use Waves\Account\PrivateKey;
-use Waves\Account\PublicKey;
 use Waves\API\Node;
-use Waves\Common\Base64String;
-use Waves\Model\Alias;
 use Waves\Model\AssetId;
 use Waves\Model\ChainId;
 use Waves\Model\LeaseStatus;
 use Waves\Model\Id;
-use Waves\Model\WavesConfig;
-use Waves\Transactions\Amount;
-use Waves\Transactions\IssueTransaction;
-use Waves\Transactions\Recipient;
-use Waves\Transactions\TransferTransaction;
 use Waves\Util\Functions;
 
 class NodeTest extends \PHPUnit\Framework\TestCase
@@ -63,9 +54,15 @@ class NodeTest extends \PHPUnit\Framework\TestCase
         $scriptInfo = $nodeW->compileScript( $someScript, true );
         $script2 = $scriptInfo->script();
         $this->assertNotEquals( $script1, $script2 );
-        $this->assertLessThan( strlen( $script1 ), strlen( $script2 ) );
+        $this->assertLessThan( strlen( $script1->bytes() ), strlen( $script2->bytes() ) );
 
         $address = Address::fromString( '3P5dg6PtSAQmdH1qCGKJWu7bkzRG27mny5i' );
+        $historyBalances = $nodeW->getBalanceHistory( $address );
+        foreach( $historyBalances as $historyBalance )
+        {
+            $historyBalance->height();
+            $historyBalance->balance();
+        }
 
         $txs = $nodeW->getTransactionsByAddress( $address, 2 );
         foreach( $txs as $tx )
@@ -189,6 +186,14 @@ class NodeTest extends \PHPUnit\Framework\TestCase
             $tx->timestamp();
             $tx->type();
             $tx->version();
+
+            if( !isset( $validation ) )
+            {
+                $validation = $nodeT->validateTransaction( $tx );
+                $validation->isValid();
+                $validation->validationTime();
+                $validation->error();
+            }
         }
 
         $blockchainRewards1 = $nodeT->getBlockchainRewards();

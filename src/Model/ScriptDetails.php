@@ -2,12 +2,13 @@
 
 namespace Waves\Model;
 
+use Waves\Common\Base64String;
 use Waves\Common\JsonBase;
 
 class ScriptDetails extends JsonBase
 {
     const EMPTY = [ 'script' => '', 'scriptComplexity' => 0 ];
 
-    function script(): string { return $this->json->get( 'script' )->asString(); } // TODO: Base64String
+    function script(): Base64String { return $this->json->get( 'script' )->asBase64String(); }
     function complexity(): int { return $this->json->get( 'scriptComplexity' )->asInt(); }
 }

@@ -18,41 +18,42 @@ use Waves\Model\AssetDetails;
 use Waves\Model\AssetDistribution;
 use Waves\Model\BlockchainRewards;
 use Waves\Model\Block;
+use Waves\Model\HistoryBalance;
 use Waves\Model\ScriptDetails;
 use Waves\Model\ScriptMeta;
 use Waves\Model\LeaseInfo;
 use Waves\Model\TransactionInfo;
 use Waves\Model\TransactionWithStatus;
 use Waves\Model\TransactionStatus;
+use Waves\Model\Validation;
 use Waves\Model\Votes;
-use Waves\Transactions\Invocation\Arg;
 
 class Json
 {
     /**
      * @var array<mixed, mixed>
      */
-    private array $json;
+    private array $data;
 
     /**
     * Json constructor
     *
-    * @param array<mixed, mixed> $json
+    * @param array<mixed, mixed> $data
     */
-    private function __construct( array $json = [] )
+    private function __construct( array $data = [] )
     {
-        $this->json = $json;
+        $this->data = $data;
     }
 
     /**
     * Json function constructor
     *
-    * @param array<mixed, mixed> $json
+    * @param array<mixed, mixed> $data
     * @return Json
     */
-    static function as( array $json ): Json
+    static function as( array $data ): Json
     {
-        return new Json( $json );
+        return new Json( $data );
     }
 
     static function emptyJson(): Json
@@ -60,20 +61,22 @@ class Json
         return new Json;
     }
 
-    function toString(): string
-    {
-        $string = json_encode( $this->json );
-        if( $string === false )
-            throw new Exception( __FUNCTION__ . ' failed to encode internal array `' . serialize( $this->json) . '`', ExceptionCode::JSON_ENCODE );
-        return $string;
-    }
-
     /**
+     * Gets native underlying data array
+     *
      * @return array<mixed, mixed>
      */
-    function toArray(): array
+    function data(): array
     {
-        return $this->json;
+        return $this->data;
+    }
+
+    function toString(): string
+    {
+        $string = json_encode( $this->data );
+        if( $string === false )
+            throw new Exception( __FUNCTION__ . ' failed to encode internal array `' . serialize( $this->data) . '`', ExceptionCode::JSON_ENCODE );
+        return $string;
     }
 
     /**
@@ -84,9 +87,9 @@ class Json
      */
     function get( $key ): Value
     {
-        if( !isset( $this->json[$key] ) )
+        if( !isset( $this->data[$key] ) )
             throw new Exception( __FUNCTION__ . ' failed to find key `' . $key . '`', ExceptionCode::KEY_MISSING );
-        return Value::as( $this->json[$key] );
+        return Value::as( $this->data[$key] );
     }
 
     /**
@@ -109,7 +112,7 @@ class Json
      */
     function exists( $key ): bool
     {
-        return isset( $this->json[$key] );
+        return isset( $this->data[$key] );
     }
 
     /**
@@ -121,7 +124,7 @@ class Json
      */
     function put( $key, $value ): Json
     {
-        $this->json[$key] = $value;
+        $this->data[$key] = $value;
         return $this;
     }
 
@@ -143,6 +146,11 @@ class Json
     function asBalance(): Balance
     {
         return new Balance( $this );
+    }
+
+    function asHistoryBalance(): HistoryBalance
+    {
+        return new HistoryBalance( $this );
     }
 
     /**
@@ -235,6 +243,11 @@ class Json
         return new Transaction( $this );
     }
 
+    function asValidation(): Validation
+    {
+        return new Validation( $this );
+    }
+
     function asVotes(): Votes
     {
         return new Votes( $this );
@@ -248,7 +261,7 @@ class Json
     function asArrayBlockHeaders(): array
     {
         $array = [];
-        foreach( $this->json as $headers )
+        foreach( $this->data as $headers )
             $array[] = Value::as( $headers )->asJson()->asBlockHeaders();
         return $array;
     }
@@ -261,7 +274,7 @@ class Json
     function asArrayBlock(): array
     {
         $array = [];
-        foreach( $this->json as $headers )
+        foreach( $this->data as $headers )
             $array[] = Value::as( $headers )->asJson()->asBlock();
         return $array;
     }
@@ -274,7 +287,7 @@ class Json
     function asArrayLeaseInfo(): array
     {
         $array = [];
-        foreach( $this->json as $info )
+        foreach( $this->data as $info )
             $array[] = Value::as( $info )->asJson()->asLeaseInfo();
         return $array;
     }
@@ -287,7 +300,7 @@ class Json
     function asArrayAddress(): array
     {
         $array = [];
-        foreach( $this->json as $address )
+        foreach( $this->data as $address )
             $array[] = Address::fromString( Value::as( $address )->asString() );
         return $array;
     }
@@ -300,7 +313,7 @@ class Json
     function asArrayAlias(): array
     {
         $array = [];
-        foreach( $this->json as $alias )
+        foreach( $this->data as $alias )
             $array[] = Alias::fromFullAlias( Value::as( $alias )->asString() );
         return $array;
     }
@@ -313,8 +326,21 @@ class Json
     function asArrayBalance(): array
     {
         $array = [];
-        foreach( $this->json as $balance )
+        foreach( $this->data as $balance )
             $array[] = Value::as( $balance )->asJson()->asBalance();
+        return $array;
+    }
+
+    /**
+    * Gets an array value
+    *
+    * @return array<int, HistoryBalance>
+    */
+    function asArrayHistoryBalance(): array
+    {
+        $array = [];
+        foreach( $this->data as $balance )
+            $array[] = Value::as( $balance )->asJson()->asHistoryBalance();
         return $array;
     }
 
@@ -326,7 +352,7 @@ class Json
     function asArrayAssetBalance(): array
     {
         $array = [];
-        foreach( $this->json as $assetBalance )
+        foreach( $this->data as $assetBalance )
             $array[] = Value::as( $assetBalance )->asJson()->asAssetBalance();
         return $array;
     }
@@ -339,7 +365,7 @@ class Json
     function asArrayAssetDetails(): array
     {
         $array = [];
-        foreach( $this->json as $assetDetails )
+        foreach( $this->data as $assetDetails )
             $array[] = Value::as( $assetDetails )->asJson()->asAssetDetails();
         return $array;
     }
@@ -352,7 +378,7 @@ class Json
     function asArrayDataEntry(): array
     {
         $array = [];
-        foreach( $this->json as $data )
+        foreach( $this->data as $data )
             $array[] = Value::as( $data )->asJson()->asDataEntry();
         return $array;
     }
@@ -365,7 +391,7 @@ class Json
     function asArrayTransactionWithStatus(): array
     {
         $array = [];
-        foreach( $this->json as $tx )
+        foreach( $this->data as $tx )
             $array[] = Value::as( $tx )->asJson()->asTransactionWithStatus();
         return $array;
     }
@@ -378,7 +404,7 @@ class Json
     function asArrayTransactionInfo(): array
     {
         $array = [];
-        foreach( $this->json as $tx )
+        foreach( $this->data as $tx )
             $array[] = Value::as( $tx )->asJson()->asTransactionInfo();
         return $array;
     }
@@ -389,7 +415,7 @@ class Json
     function asArrayTransactionStatus(): array
     {
         $array = [];
-        foreach( $this->json as $tx )
+        foreach( $this->data as $tx )
             $array[] = Value::as( $tx )->asJson()->asTransactionStatus();
         return $array;
     }
@@ -400,7 +426,7 @@ class Json
     function asArrayTransaction(): array
     {
         $array = [];
-        foreach( $this->json as $tx )
+        foreach( $this->data as $tx )
             $array[] = Value::as( $tx )->asJson()->asTransaction();
         return $array;
     }

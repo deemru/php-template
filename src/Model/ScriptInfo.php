@@ -2,11 +2,12 @@
 
 namespace Waves\Model;
 
+use Waves\Common\Base64String;
 use Waves\Common\JsonBase;
 
 class ScriptInfo extends JsonBase
 {
-    function script(): string { return $this->json->get( 'script' )->asString(); }
+    function script(): Base64String { return $this->json->get( 'script' )->asBase64String(); }
     function complexity(): int { return $this->json->get( 'complexity' )->asInt(); }
     function verifierComplexity(): int { return $this->json->get( 'verifierComplexity' )->asInt(); }
     function extraFee(): int { return $this->json->get( 'extraFee' )->asInt(); }
