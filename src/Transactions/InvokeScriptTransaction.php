@@ -10,7 +10,7 @@ use Waves\Common\ExceptionCode;
 use Waves\Common\Json;
 use Waves\Common\Value;
 use Waves\Model\ChainId;
-use Waves\Transactions\Invocation\Func;
+use Waves\Transactions\Invocation\FunctionCall;
 
 use Waves\Transactions\InvokeScriptTransaction as CurrentTransaction;
 
@@ -21,7 +21,7 @@ class InvokeScriptTransaction extends Transaction
     const MIN_FEE = 500_000;
 
     private Recipient $dApp;
-    private Func $function;
+    private FunctionCall $function;
     /**
      * @var array<int, Amount>
      */
@@ -30,11 +30,11 @@ class InvokeScriptTransaction extends Transaction
     /**
      * @param PublicKey $sender
      * @param Recipient $dApp
-     * @param Func|null $function
+     * @param FunctionCall|null $function
      * @param array<int, Amount>|null $payments
      * @return CurrentTransaction
      */
-    static function build( PublicKey $sender, Recipient $dApp, Func $function = null, array $payments = null ): CurrentTransaction
+    static function build( PublicKey $sender, Recipient $dApp, FunctionCall $function = null, array $payments = null ): CurrentTransaction
     {
         $tx = new CurrentTransaction;
         $tx->setBase( $sender, CurrentTransaction::TYPE, CurrentTransaction::LATEST_VERSION, CurrentTransaction::MIN_FEE );
@@ -98,16 +98,16 @@ class InvokeScriptTransaction extends Transaction
         return $this;
     }
 
-    function function(): Func
+    function function(): FunctionCall
     {
         if( !isset( $this->function ) )
-            $this->function = Func::fromJson( $this->json->get( 'call' )->asJson() );
+            $this->function = FunctionCall::fromJson( $this->json->get( 'call' )->asJson() );
         return $this->function;
     }
 
-    function setFunction( Func $function = null ): CurrentTransaction
+    function setFunction( FunctionCall $function = null ): CurrentTransaction
     {
-        $function = $function ?? Func::as();
+        $function = $function ?? FunctionCall::as();
         $this->function = $function;
         $this->json->put( 'call', $function->toJsonValue() );
         return $this;

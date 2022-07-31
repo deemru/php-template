@@ -23,7 +23,7 @@ use Waves\Transactions\BurnTransaction;
 use Waves\Transactions\CreateAliasTransaction;
 use Waves\Transactions\DataTransaction;
 use Waves\Transactions\Invocation\Arg;
-use Waves\Transactions\Invocation\Func;
+use Waves\Transactions\Invocation\FunctionCall;
 use Waves\Transactions\InvokeScriptTransaction;
 use Waves\Transactions\IssueTransaction;
 use Waves\Transactions\LeaseCancelTransaction;
@@ -858,7 +858,7 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
         $args[] = Arg::as( Arg::INTEGER, Value::as( 1000 ) );
         $args[] = Arg::as( Arg::BINARY, Value::as( hash( 'sha256', $sender->address()->toString(), true ) ) );
         $args[] = Arg::as( Arg::BOOLEAN, Value::as( true ) );
-        $function = Func::as( 'retransmit', $args );
+        $function = FunctionCall::as( 'retransmit', $args );
         $payments = [];
         $payments[] = Amount::of( 1000 );
 

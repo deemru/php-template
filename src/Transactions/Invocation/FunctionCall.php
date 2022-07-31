@@ -7,7 +7,7 @@ use Waves\Common\ExceptionCode;
 use Waves\Common\Json;
 use Waves\Common\Value;
 
-class Func
+class FunctionCall
 {
     const DEFAULT_NAME = 'default';
 
@@ -20,23 +20,23 @@ class Func
     /**
      * @param string|null $name
      * @param array<int, Arg>|null $args
-     * @return Func
+     * @return FunctionCall
      */
-    static function as( string $name = null, array $args = null ): Func
+    static function as( string $name = null, array $args = null ): FunctionCall
     {
-        $func = new Func;
-        $func->name = $name ?? Func::DEFAULT_NAME;
+        $func = new FunctionCall;
+        $func->name = $name ?? FunctionCall::DEFAULT_NAME;
         $func->args = $args ?? [];
         return $func;
     }
 
-    static function fromJson( Json $json ): Func
+    static function fromJson( Json $json ): FunctionCall
     {
-        $name = $json->getOr( 'function', Func::DEFAULT_NAME )->asString();
+        $name = $json->getOr( 'function', FunctionCall::DEFAULT_NAME )->asString();
         $args = [];
         foreach( $json->get( 'args' )->asArray() as $arg )
             $args[] = Arg::fromJson( Value::as( $arg )->asJson() );
-        return Func::as( $name, $args );
+        return FunctionCall::as( $name, $args );
     }
 
     function name(): string
@@ -46,7 +46,7 @@ class Func
 
     function isDefault(): bool
     {
-        return $this->name == Func::DEFAULT_NAME;
+        return $this->name == FunctionCall::DEFAULT_NAME;
     }
 
     /**
@@ -105,7 +105,7 @@ class Func
                     break;
 
                 case Arg::LIST:
-                    $bytes .= chr( 11 ) . Func::argsBodyBytes( $value->asArray() );
+                    $bytes .= chr( 11 ) . FunctionCall::argsBodyBytes( $value->asArray() );
                     break;
 
                 default:
@@ -122,7 +122,7 @@ class Func
 
         $bytes = chr( 1 ) . chr( 9 ). chr( 1 );
         $bytes .= pack( 'N', strlen( $this->name() ) ) . $this->name();
-        $bytes .= Func::argsBodyBytes( $this->args() );
+        $bytes .= FunctionCall::argsBodyBytes( $this->args() );
         return $bytes;
     }
 }
