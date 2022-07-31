@@ -56,9 +56,9 @@ class Alias
         return $alias === (new Alias( $alias, $chainId ))->name();
     }
 
-    function chainId(): string
+    function chainId(): ChainId
     {
-        return $this->fullAlias[6];
+        return ChainId::fromString( $this->fullAlias[6] );
     }
 
     function name(): string
