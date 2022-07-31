@@ -4,7 +4,6 @@ namespace Waves\Common;
 
 use Exception;
 use Waves\Common\ExceptionCode;
-
 use Waves\Transactions\Transaction;
 use Waves\Account\Address;
 use Waves\Model\Alias;

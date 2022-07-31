@@ -888,6 +888,11 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
         $this->assertSame( $id->toString(), $tx1->id()->toString() );
         $this->assertSame( $tx1->applicationStatus(), ApplicationStatus::SUCCEEDED );
 
+        $txFromJson = new InvokeScriptTransaction( $tx1->json() );
+        $this->assertSame( $tx->dApp()->toString(), $txFromJson->dApp()->toString() );
+        $this->assertSame( serialize( $tx->payments() ), serialize( $txFromJson->payments() ) );
+        $this->assertSame( serialize( $tx->function() ), serialize( $txFromJson->function() ) );
+
         $tx2 = $node->waitForTransaction(
             $node->broadcast(
                 (new InvokeScriptTransaction)
@@ -914,8 +919,8 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
 if( DO_LOCAL_DEBUG )
 {
     $test = new TransactionsTest;
-    $test->testSponsorship();
     $test->testInvoke();
+    $test->testSponsorship();
     $test->testRename();
     $test->testSetScript();
     $test->testData();

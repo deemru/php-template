@@ -6,7 +6,6 @@ require_once 'common.php';
 
 use Exception;
 use Waves\Common\ExceptionCode;
-
 use Waves\Account\Address;
 use Waves\API\Node;
 use Waves\Model\AssetId;
