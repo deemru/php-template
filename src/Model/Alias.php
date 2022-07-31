@@ -8,7 +8,6 @@ use Waves\Common\ExceptionCode;
 class Alias
 {
     const PREFIX = 'alias:';
-    const TYPE = 2;
     const MIN_LENGTH = 4;
     const MAX_LENGTH = 30;
     const BYTES_LENGTH = 1 + 1 + Alias::MAX_LENGTH;
@@ -16,7 +15,6 @@ class Alias
     const ALPHABET = '-.0-9@_a-z';
     const MATCH = '/[' . Alias::ALPHABET . ']{' . Alias::MIN_LENGTH . ',' . Alias::MAX_LENGTH . '}/';
 
-    private string $bytes;
     private string $name;
     private string $fullAlias;
 
@@ -29,7 +27,6 @@ class Alias
         if( !isset( $chainId ) )
             $chainId = WavesConfig::chainId();
         $this->name = $alias;
-        $this->bytes = Alias::TYPE . $chainId->asString() . $alias;
         $this->fullAlias = Alias::PREFIX . $chainId->asString() . ':' . $alias;
     }
 
@@ -59,24 +56,14 @@ class Alias
         return $alias === (new Alias( $alias, $chainId ))->name();
     }
 
-    function type(): int
-    {
-        return Alias::TYPE;
-    }
-
     function chainId(): string
     {
-        return $this->bytes[1];
+        return $this->fullAlias[6];
     }
 
     function name(): string
     {
         return $this->name;
-    }
-
-    function bytes(): string
-    {
-        return $this->bytes;
     }
 
     function toString(): string

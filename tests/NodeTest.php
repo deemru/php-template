@@ -12,6 +12,7 @@ use Waves\Model\AssetId;
 use Waves\Model\ChainId;
 use Waves\Model\LeaseStatus;
 use Waves\Model\Id;
+use Waves\Transactions\Recipient;
 use Waves\Util\Functions;
 
 class NodeTest extends \PHPUnit\Framework\TestCase
@@ -270,7 +271,6 @@ class NodeTest extends \PHPUnit\Framework\TestCase
         foreach( $aliases as $alias )
         {
             $alias->name();
-            $alias->bytes();
             $alias->toString();
             $this->assertSame( $addressT->encoded(), $nodeT->getAddressByAlias( $alias )->encoded() );
         }
@@ -409,13 +409,15 @@ class NodeTest extends \PHPUnit\Framework\TestCase
         $node = new Node( Node::MAINNET );
         $json = $node->get( '/blocks/headers/last' );
 
-        $this->catchExceptionOrFail( ExceptionCode::BASE58_DECODE, function(){ Functions::base58Decode( 'ill' ); } );
         $this->catchExceptionOrFail( ExceptionCode::FETCH_URI, function() use ( $node ){ $node->get( '/test' ); } );
         $this->catchExceptionOrFail( ExceptionCode::JSON_DECODE, function() use ( $node ){ $node->get( '/api-docs/favicon-16x16.png' ); } );
         $this->catchExceptionOrFail( ExceptionCode::KEY_MISSING, function() use ( $json ){ $json->get( 'x' ); } );
         $this->catchExceptionOrFail( ExceptionCode::INT_EXPECTED, function() use ( $json ){ $json->get( 'signature' )->asInt(); } );
         $this->catchExceptionOrFail( ExceptionCode::STRING_EXPECTED, function() use ( $json ){ $json->get( 'height' )->asString(); } );
         $this->catchExceptionOrFail( ExceptionCode::ARRAY_EXPECTED, function() use ( $json ){ $json->get( 'height' )->asArrayInt(); } );
+
+        $this->catchExceptionOrFail( ExceptionCode::BAD_ALIAS, function(){ Recipient::fromAddressOrAlias( '123' ); } );
+        $this->catchExceptionOrFail( ExceptionCode::BASE58_DECODE, function(){ Functions::base58Decode( 'ill' ); } );
     }
 }
 

@@ -38,9 +38,6 @@ class Recipient
         }
         catch( Exception $e )
         {
-            if( $e->getCode() !== ExceptionCode::BAD_ALIAS )
-                throw $e;
-
             return Recipient::fromAlias( Alias::fromString( $addressOrAlias ) );
         }
     }
@@ -48,20 +45,6 @@ class Recipient
     function isAlias(): bool
     {
         return isset( $this->alias );
-    }
-
-    function bytes(): string
-    {
-        if( $this->isAlias() )
-            return $this->alias->bytes();
-        return $this->address->bytes();
-    }
-
-    function toShortString(): string
-    {
-        if( $this->isAlias() )
-            return $this->alias->name();
-        return $this->address->toString();
     }
 
     function toString(): string
