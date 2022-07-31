@@ -165,7 +165,7 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
                 ->addProof( $account )
             )->id()
         );
-        
+
         $this->assertNotSame( $tx1->id(), $tx2->id() );
         $this->assertSame( $tx2->applicationStatus(), ApplicationStatus::SUCCEEDED );
     }
@@ -222,7 +222,7 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
                 ->addProof( $account )
             )->id()
         );
-        
+
         $this->assertNotSame( $tx1->id(), $tx2->id() );
         $this->assertSame( $tx2->applicationStatus(), ApplicationStatus::SUCCEEDED );
 
@@ -265,7 +265,7 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
                 ->addProof( $account )
             )->id()
         );
-        
+
         $this->assertNotSame( $tx1->id(), $tx2->id() );
         $this->assertSame( $tx2->applicationStatus(), ApplicationStatus::SUCCEEDED );
     }
@@ -317,7 +317,7 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
                 ->addProof( $account )
             )->id()
         );
-        
+
         $this->assertNotSame( $tx1->id(), $tx2->id() );
         $this->assertSame( $tx2->applicationStatus(), ApplicationStatus::SUCCEEDED );
     }
@@ -381,7 +381,7 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
                 ->addProof( $account )
             )->id()
         );
-        
+
         $this->assertNotSame( $tx1->id(), $tx2->id() );
         $this->assertSame( $tx2->applicationStatus(), ApplicationStatus::SUCCEEDED );
     }
@@ -434,7 +434,7 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
                 ->addProof( $account )
             )->id()
         );
-        
+
         $this->assertNotSame( $tx1->id(), $tx2->id() );
         $this->assertSame( $tx2->applicationStatus(), ApplicationStatus::SUCCEEDED );
     }
@@ -484,7 +484,7 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
                 ->addProof( $account )
             )->id()
         );
-        
+
         $this->assertNotSame( $tx1->id(), $tx2->id() );
         $this->assertSame( $tx2->applicationStatus(), ApplicationStatus::SUCCEEDED );
     }
@@ -547,7 +547,7 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
                 ->addProof( $account )
             )->id()
         );
-        
+
         $this->assertNotSame( $tx1->id(), $tx2->id() );
         $this->assertSame( $tx2->applicationStatus(), ApplicationStatus::SUCCEEDED );
     }
@@ -611,7 +611,7 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
                 ->addProof( $account )
             )->id()
         );
-        
+
         $this->assertNotSame( $tx1->id(), $tx2->id() );
         $this->assertSame( $tx2->applicationStatus(), ApplicationStatus::SUCCEEDED );
     }
@@ -666,7 +666,7 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
                 ->addProof( $account )
             )->id()
         );
-        
+
         $this->assertNotSame( $tx1->id(), $tx2->id() );
         $this->assertSame( $tx2->applicationStatus(), ApplicationStatus::SUCCEEDED );
     }
@@ -723,7 +723,7 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
                 ->addProof( $account )
             )->id()
         );
-        
+
         $this->assertNotSame( $tx1->id(), $tx2->id() );
         $this->assertSame( $tx2->applicationStatus(), ApplicationStatus::SUCCEEDED );
     }
@@ -785,7 +785,7 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
                 ->addProof( $account )
             )->id()
         );
-        
+
         $this->assertNotSame( $tx1->id(), $tx2->id() );
         $this->assertSame( $tx2->applicationStatus(), ApplicationStatus::SUCCEEDED );
     }
@@ -844,7 +844,7 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
                 ->addProof( $account )
             )->id()
         );
-        
+
         $this->assertNotSame( $tx1->id(), $tx2->id() );
         $this->assertSame( $tx2->applicationStatus(), ApplicationStatus::SUCCEEDED );
     }
@@ -910,7 +910,7 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
                 ->addProof( $account )
             )->id()
         );
-        
+
         $this->assertNotSame( $tx1->id(), $tx2->id() );
         $this->assertSame( $tx2->applicationStatus(), ApplicationStatus::SUCCEEDED );
     }

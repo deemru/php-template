@@ -31,7 +31,7 @@ class LeaseCancelTransaction extends Transaction
         // LEASE_CANCEL TRANSACTION
         {
             $tx->setLeaseId( $leaseId );
-        }       
+        }
 
         return $tx;
     }
@@ -52,7 +52,7 @@ class LeaseCancelTransaction extends Transaction
             {
                 $pb_TransactionData->setLeaseId( $this->leaseId()->bytes() );
             }
-        }        
+        }
 
         // LEASE_CANCEL TRANSACTION
         $this->setBodyBytes( $pb_Transaction->setLeaseCancel( $pb_TransactionData )->serializeToString() );

@@ -22,4 +22,4 @@ class AssetDetails extends JsonBase
     function minSponsoredAssetFee(): int { return $this->json->getOr( 'minSponsoredAssetFee', 0 )->asInt(); }
     function originTransactionId(): Id { return $this->json->get( 'originTransactionId' )->asId(); }
     function scriptDetails(): ScriptDetails { return $this->json->getOr( 'scriptDetails', ScriptDetails::EMPTY )->asJson()->asScriptDetails(); }
-}   
+}

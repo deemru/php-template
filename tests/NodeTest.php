@@ -260,7 +260,7 @@ class NodeTest extends \PHPUnit\Framework\TestCase
             foreach( $assetsDetails as $assetDetails )
                 if( $assetDetails->assetId()->toString() === $details->assetId()->toString() )
                     $this->assertSame( $assetDetails->toString(), $details->toString() );
-        }        
+        }
 
         $aliases = $nodeT->getAliasesByAddress( $addressT );
         foreach( $aliases as $alias )
@@ -350,7 +350,7 @@ class NodeTest extends \PHPUnit\Framework\TestCase
         $this->assertSame( $balanceDetails->available(), $balance1->getBalance() );
         $balanceDetails->effective();
         $balanceDetails->generating();
-        $balanceDetails->regular();        
+        $balanceDetails->regular();
 
         $headers = $nodeW->getLastBlockHeaders();
         $headers = $nodeW->getBlockHeadersByHeight( $headers->height() - 10 );

@@ -34,7 +34,7 @@ class ReissueTransaction extends Transaction
         {
             $tx->setAmount( $amount );
             $tx->setIsReissuable( $isReissuable );
-        }       
+        }
 
         return $tx;
     }
@@ -59,7 +59,7 @@ class ReissueTransaction extends Transaction
             {
                 $pb_TransactionData->setReissuable( $this->isReissuable() );
             }
-        }        
+        }
 
         // REISSUE TRANSACTION
         $this->setBodyBytes( $pb_Transaction->setReissue( $pb_TransactionData )->serializeToString() );

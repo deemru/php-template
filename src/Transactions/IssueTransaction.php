@@ -46,7 +46,7 @@ class IssueTransaction extends Transaction
             $tx->setDecimals( $decimals );
             $tx->setIsReissuable( $isReissuable );
             $tx->setScript( $script );
-        }       
+        }
 
         return $tx;
     }
@@ -87,7 +87,7 @@ class IssueTransaction extends Transaction
             {
                 $pb_TransactionData->setScript( $this->script()->bytes() );
             }
-        }        
+        }
 
         // ISSUE TRANSACTION
         $this->setBodyBytes( $pb_Transaction->setIssue( $pb_TransactionData )->serializeToString() );

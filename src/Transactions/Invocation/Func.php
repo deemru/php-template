@@ -16,7 +16,7 @@ class Func
      * @var array<int, Arg>
      */
     private array $args;
-    
+
     /**
      * @param string|null $name
      * @param array<int, Arg>|null $args

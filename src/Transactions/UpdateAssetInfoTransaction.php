@@ -37,7 +37,7 @@ class UpdateAssetInfoTransaction extends Transaction
             $tx->setAssetId( $assetId );
             $tx->setName( $name );
             $tx->setDescription( $description );
-        }       
+        }
 
         return $tx;
     }
@@ -66,7 +66,7 @@ class UpdateAssetInfoTransaction extends Transaction
             {
                 $pb_TransactionData->setDescription( $this->description() );
             }
-        }        
+        }
 
         // RENAME TRANSACTION
         $this->setBodyBytes( $pb_Transaction->setUpdateAssetInfo( $pb_TransactionData )->serializeToString() );

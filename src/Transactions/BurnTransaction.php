@@ -32,7 +32,7 @@ class BurnTransaction extends Transaction
         // BURN TRANSACTION
         {
             $tx->setAmount( $amount );
-        }       
+        }
 
         return $tx;
     }
@@ -53,7 +53,7 @@ class BurnTransaction extends Transaction
             {
                 $pb_TransactionData->setAssetAmount( $this->amount()->toProtobuf() );
             }
-        }        
+        }
 
         // BURN TRANSACTION
         $this->setBodyBytes( $pb_Transaction->setBurn( $pb_TransactionData )->serializeToString() );

@@ -48,7 +48,7 @@ class InvokeScriptTransaction extends Transaction
             $tx->setDApp( $dApp );
             $tx->setFunction( $function );
             $tx->setPayments( $payments );
-        }       
+        }
 
         return $tx;
     }
@@ -64,6 +64,7 @@ class InvokeScriptTransaction extends Transaction
 
         // INVOKE TRANSACTION
         {
+
             $pb_TransactionData = new \Waves\Protobuf\InvokeScriptTransactionData;
             // DAPP
             {
@@ -80,7 +81,7 @@ class InvokeScriptTransaction extends Transaction
                     $pb_Payments[] = $payment->toProtobuf();
                 $pb_TransactionData->setPayments( $pb_Payments );
             }
-        }        
+        }
 
         // INVOKE TRANSACTION
         $this->setBodyBytes( $pb_Transaction->setInvokeScript( $pb_TransactionData )->serializeToString() );
@@ -138,14 +139,14 @@ class InvokeScriptTransaction extends Transaction
     function setPayments( array $payments = null ): CurrentTransaction
     {
         $this->payments = $payments ?? [];
-        
+
         $payments = [];
         foreach( $this->payments as $payment )
             $payments[] = [ 'amount' => $payment->value(), 'assetId' => $payment->assetId()->toJsonValue() ];
         $this->json->put( 'payment', $payments );
         return $this;
     }
-    
+
     // COMMON
 
     function __construct( Json $json = null )

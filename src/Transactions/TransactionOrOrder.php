@@ -44,7 +44,7 @@ class TransactionOrOrder extends JsonBase
         $this->id = $id;
         $this->json->put( 'id', $id->toString() );
     }
-    
+
     function version(): int
     {
         if( !isset( $this->version ) )
@@ -87,7 +87,7 @@ class TransactionOrOrder extends JsonBase
         $this->json->put( 'chainId', $chainId->asInt() );
         return $this;
     }
-    
+
     function sender(): PublicKey
     {
         if( !isset( $this->sender ) )
@@ -150,7 +150,7 @@ class TransactionOrOrder extends JsonBase
     /**
      * @return array<int, string>
      */
-    function proofs(): array 
+    function proofs(): array
     {
         if( !isset( $this->proofs ) )
             $this->proofs = $this->json->getOr( 'proofs', [] )->asArrayString();

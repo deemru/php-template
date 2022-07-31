@@ -36,7 +36,7 @@ class SetScriptTransaction extends Transaction
         }
 
         // ADDITIONAL FEE CALCULATION
-        $tx->setFee( Amount::of( CurrentTransaction::calculateFee( strlen( $tx->bodyBytes() ) ) ) );     
+        $tx->setFee( Amount::of( CurrentTransaction::calculateFee( strlen( $tx->bodyBytes() ) ) ) );
 
         return $tx;
     }
@@ -62,7 +62,7 @@ class SetScriptTransaction extends Transaction
             {
                 $pb_TransactionData->setScript( $this->script()->bytes() );
             }
-        }        
+        }
 
         // SET_SCRIPT TRANSACTION
         $this->setBodyBytes( $pb_Transaction->setSetScript( $pb_TransactionData )->serializeToString() );

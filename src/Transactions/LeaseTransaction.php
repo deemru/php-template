@@ -32,7 +32,7 @@ class LeaseTransaction extends Transaction
         {
             $tx->setRecipient( $recipient );
             $tx->setAmount( $amount );
-        }       
+        }
 
         return $tx;
     }
@@ -57,7 +57,7 @@ class LeaseTransaction extends Transaction
             {
                 $pb_TransactionData->setAmount( $this->amount() );
             }
-        }        
+        }
 
         // LEASE TRANSACTION
         $this->setBodyBytes( $pb_Transaction->setLease( $pb_TransactionData )->serializeToString() );

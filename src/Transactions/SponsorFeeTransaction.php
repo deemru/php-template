@@ -35,7 +35,7 @@ class SponsorFeeTransaction extends Transaction
         {
             $tx->setAssetId( $assetId );
             $tx->setMinSponsoredFee( $minSponsoredFee );
-        }       
+        }
 
         return $tx;
     }
@@ -56,7 +56,7 @@ class SponsorFeeTransaction extends Transaction
             {
                 $pb_TransactionData->setMinFee( Amount::of( $this->minSponsoredFee(), $this->assetId() )->toProtobuf() );
             }
-        }        
+        }
 
         // SPONSORSHIP TRANSACTION
         $this->setBodyBytes( $pb_Transaction->setSponsorFee( $pb_TransactionData )->serializeToString() );

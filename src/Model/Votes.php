@@ -8,4 +8,4 @@ class Votes extends JsonBase
 {
     function increase(): int { return $this->json->get( 'increase' )->asInt(); }
     function decrease(): int { return $this->json->get( 'decrease' )->asInt(); }
-}   
+}

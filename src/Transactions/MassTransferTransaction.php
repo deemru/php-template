@@ -47,7 +47,7 @@ class MassTransferTransaction extends Transaction
             $tx->setAssetId( $assetId );
             $tx->setTransfers( $transfers );
             $tx->setAttachment( $attachment );
-        }       
+        }
 
         return $tx;
     }
@@ -79,7 +79,7 @@ class MassTransferTransaction extends Transaction
                     $pb_Transfer->setAmount( $transfer->amount() );
                     $pb_Transfers[] = $pb_Transfer;
                 }
-                
+
                 $pb_TransactionData->setTransfers( $pb_Transfers );
             }
             // ASSET
@@ -90,7 +90,7 @@ class MassTransferTransaction extends Transaction
             {
                 $pb_TransactionData->setAttachment( $this->attachment()->bytes() );
             }
-        }        
+        }
 
         // MASS_TRANSFER TRANSACTION
         $this->setBodyBytes( $pb_Transaction->setMassTransfer( $pb_TransactionData )->serializeToString() );
@@ -138,7 +138,7 @@ class MassTransferTransaction extends Transaction
     function setTransfers( array $transfers ): CurrentTransaction
     {
         $this->transfers = $transfers;
-        
+
         $transfers = [];
         foreach( $this->transfers as $transfer )
             $transfers[] = [ 'recipient' => $transfer->recipient()->toString(), 'amount' => $transfer->amount() ];
@@ -160,7 +160,7 @@ class MassTransferTransaction extends Transaction
         $this->json->put( 'attachment', $attachment->toString() );
         return $this;
     }
-    
+
     // COMMON
 
     function __construct( Json $json = null )

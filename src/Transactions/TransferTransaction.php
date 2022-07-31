@@ -35,7 +35,7 @@ class TransferTransaction extends Transaction
             $tx->setRecipient( $recipient );
             $tx->setAmount( $amount );
             $tx->setAttachment( $attachment );
-        }       
+        }
 
         return $tx;
     }
@@ -64,7 +64,7 @@ class TransferTransaction extends Transaction
             {
                 $pb_TransactionData->setAttachment( $this->attachment()->bytes() );
             }
-        }        
+        }
 
         // TRANSFER TRANSACTION
         $this->setBodyBytes( $pb_Transaction->setTransfer( $pb_TransactionData )->serializeToString() );
@@ -114,7 +114,7 @@ class TransferTransaction extends Transaction
         $this->json->put( 'attachment', $attachment->toString() );
         return $this;
     }
-    
+
     // COMMON
 
     function __construct( Json $json = null )

@@ -45,7 +45,7 @@ class DataTransaction extends Transaction
 
         // ADDITIONAL FEE CALCULATION
         $tx->setFee( Amount::of( CurrentTransaction::calculateFee( strlen( $tx->bodyBytes() ) ) ) );
-        
+
         return $tx;
     }
 
@@ -73,7 +73,7 @@ class DataTransaction extends Transaction
                     $pb_Data[] = $dataEntry->toProtobuf();
                 $pb_TransactionData->setData( $pb_Data );
             }
-        }        
+        }
 
         // DATA TRANSACTION
         $this->setBodyBytes( $pb_Transaction->setDataTransaction( $pb_TransactionData )->serializeToString() );
@@ -97,7 +97,7 @@ class DataTransaction extends Transaction
     function setData( array $data ): CurrentTransaction
     {
         $this->data = $data;
-        
+
         $data = [];
         foreach( $this->data as $dataEntry )
             $data[] = $dataEntry->json()->toArray();

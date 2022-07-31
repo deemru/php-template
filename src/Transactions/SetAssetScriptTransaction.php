@@ -35,7 +35,7 @@ class SetAssetScriptTransaction extends Transaction
         {
             $tx->setAssetId( $assetId );
             $tx->setScript( $script );
-        }       
+        }
 
         return $tx;
     }
@@ -60,7 +60,7 @@ class SetAssetScriptTransaction extends Transaction
             {
                 $pb_TransactionData->setScript( $this->script()->bytes() );
             }
-        }        
+        }
 
         // SET_ASSET_SCRIPT TRANSACTION
         $this->setBodyBytes( $pb_Transaction->setSetAssetScript( $pb_TransactionData )->serializeToString() );

@@ -32,7 +32,7 @@ class CreateAliasTransaction extends Transaction
         // ALIAS TRANSACTION
         {
             $tx->setAlias( $alias );
-        }       
+        }
 
         return $tx;
     }
@@ -53,7 +53,7 @@ class CreateAliasTransaction extends Transaction
             {
                 $pb_TransactionData->setAlias( $this->alias()->name() );
             }
-        }        
+        }
 
         // ALIAS TRANSACTION
         $this->setBodyBytes( $pb_Transaction->setCreateAlias( $pb_TransactionData )->serializeToString() );

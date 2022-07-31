@@ -18,7 +18,7 @@ class Arg
 
     private int $type;
     private Value $value;
-    
+
     static function as( int $type, Value $value ): Arg
     {
         $arg = new Arg;

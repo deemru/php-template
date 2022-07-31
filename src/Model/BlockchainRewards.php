@@ -16,4 +16,4 @@ class BlockchainRewards extends JsonBase
     function votingInterval(): int { return $this->json->get( 'votingInterval' )->asInt(); }
     function votingThreshold(): int { return $this->json->get( 'votingThreshold' )->asInt(); }
     function votes(): Votes { return $this->json->get( 'votes' )->asJson()->asVotes(); }
-}   
+}
