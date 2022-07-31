@@ -2,16 +2,13 @@
 
 namespace Waves\Transactions;
 
-use deemru\WavesKit;
 use Exception;
 use Waves\Account\PrivateKey;
 use Waves\Common\Base58String;
 use Waves\Account\PublicKey;
 use Waves\Common\ExceptionCode;
 use Waves\Common\Json;
-use Waves\Model\AssetId;
 use Waves\Model\ChainId;
-use Waves\Model\WavesConfig;
 
 use Waves\Transactions\TransferTransaction as CurrentTransaction;
 
@@ -124,7 +121,7 @@ class TransferTransaction extends Transaction
 
     function addProof( PrivateKey $privateKey, int $index = null ): CurrentTransaction
     {
-        $proof = (new WavesKit)->sign( $this->bodyBytes(), $privateKey->bytes() );
+        $proof = (new \deemru\WavesKit)->sign( $this->bodyBytes(), $privateKey->bytes() );
         if( $proof === false )
             throw new Exception( __FUNCTION__ . ' unexpected sign() error', ExceptionCode::UNEXPECTED );
         $proof = Base58String::fromBytes( $proof )->encoded();

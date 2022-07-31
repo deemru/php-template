@@ -2,7 +2,6 @@
 
 namespace Waves\Account;
 
-use deemru\WavesKit;
 use Waves\Common\Base58String;
 use Waves\Model\ChainId;
 
@@ -33,7 +32,7 @@ class PublicKey
     static function fromPrivateKey( PrivateKey $key ): PublicKey
     {
         $publicKey = new PublicKey;
-        $wk = new WavesKit;
+        $wk = new \deemru\WavesKit;
         $wk->setPrivateKey( $key->bytes(), true );
         $publicKey->key = Base58String::fromBytes( $wk->getPublicKey( true ) );
         return $publicKey;

@@ -4,9 +4,6 @@ namespace Waves\Util;
 
 use Exception;
 use Waves\Common\ExceptionCode;
-
-use deemru\ABCode;
-use deemru\WavesKit;
 use Waves\Model\Id;
 
 class Functions
@@ -19,7 +16,7 @@ class Functions
     */
     static function base58Decode( string $string ): string
     {
-        $decoded = ABCode::base58()->decode( $string );
+        $decoded = \deemru\ABCode::base58()->decode( $string );
         if( $decoded === false )
             throw new Exception( __FUNCTION__ . ' failed to decode string: ' . $string, ExceptionCode::BASE58_DECODE );
         return $decoded;
@@ -33,7 +30,7 @@ class Functions
     */
     static function base58Encode( string $bytes ): string
     {
-        $encoded = ABCode::base58()->encode( $bytes );
+        $encoded = \deemru\ABCode::base58()->encode( $bytes );
         if( $encoded === false )
             // Unreachable for binary encodings
             throw new Exception( __FUNCTION__ . ' failed to encode bytes: ' . bin2hex( $bytes ), ExceptionCode::BASE58_ENCODE ); // @codeCoverageIgnore
@@ -42,6 +39,6 @@ class Functions
 
     static function calculateTransactionId( string $bodyBytes ): Id
     {
-        return Id::fromBytes( (new WavesKit)->blake2b256( $bodyBytes ) );
+        return Id::fromBytes( (new \deemru\WavesKit)->blake2b256( $bodyBytes ) );
     }
 }

@@ -2,7 +2,6 @@
 
 namespace Waves\Model;
 
-use Waves\Common\Json;
 use Waves\Common\JsonBase;
 use Waves\Transactions\Transaction;
 

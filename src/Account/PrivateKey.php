@@ -2,7 +2,6 @@
 
 namespace Waves\Account;
 
-use deemru\WavesKit;
 use Waves\Common\Base58String;
 
 class PrivateKey
@@ -17,7 +16,7 @@ class PrivateKey
     static function fromSeed( string $seed, int $nonce = 0 ): PrivateKey
     {
         $privateKey = new PrivateKey;
-        $privateKey->key = Base58String::fromBytes( ( new WavesKit )->getPrivateKey( true, $seed, pack( 'N', $nonce ) ) );
+        $privateKey->key = Base58String::fromBytes( ( new \deemru\WavesKit )->getPrivateKey( true, $seed, pack( 'N', $nonce ) ) );
         return $privateKey;
     }
 

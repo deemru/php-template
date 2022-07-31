@@ -2,12 +2,8 @@
 
 namespace Waves\Transactions;
 
-use deemru\WavesKit;
-use Waves\Common\Json;
 use Waves\Common\JsonBase;
 use Waves\Account\PublicKey;
-use Waves\Common\Value;
-use Waves\Model\AssetId;
 use Waves\Model\ChainId;
 use Waves\Model\Id;
 use Waves\Model\WavesConfig;

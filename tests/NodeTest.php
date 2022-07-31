@@ -4,7 +4,6 @@ namespace Waves;
 
 require_once 'common.php';
 
-use deemru\WavesKit;
 use Exception;
 use Waves\Common\ExceptionCode;
 

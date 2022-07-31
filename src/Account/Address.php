@@ -2,7 +2,6 @@
 
 namespace Waves\Account;
 
-use deemru\WavesKit;
 use Exception;
 use Waves\Common\ExceptionCode;
 use Waves\Common\Base58String;
@@ -37,7 +36,7 @@ class Address
     static function fromPublicKey( PublicKey $publicKey, ChainId $chainId = null ): Address
     {
         $address = new Address;
-        $wk = new WavesKit( ( isset( $chainId ) ? $chainId : WavesConfig::chainId() )->asString() );
+        $wk = new \deemru\WavesKit( ( isset( $chainId ) ? $chainId : WavesConfig::chainId() )->asString() );
         $wk->setPublicKey( $publicKey->bytes(), true );
         $address->address = Base58String::fromBytes( $wk->getAddress( true ) );
         return $address;

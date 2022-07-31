@@ -4,11 +4,6 @@ namespace Waves;
 
 require_once 'common.php';
 
-use deemru\WavesKit;
-use Exception;
-use Waves\SetScriptTransactionData;
-use Waves\Common\ExceptionCode;
-
 use Waves\Account\Address;
 use Waves\Account\PrivateKey;
 use Waves\Account\PublicKey;
@@ -22,8 +17,6 @@ use Waves\Model\AssetId;
 use Waves\Model\ChainId;
 use Waves\Model\DataEntry;
 use Waves\Model\EntryType;
-use Waves\Model\LeaseStatus;
-use Waves\Model\Id;
 use Waves\Model\WavesConfig;
 use Waves\Transactions\Amount;
 use Waves\Transactions\BurnTransaction;
@@ -44,7 +37,6 @@ use Waves\Transactions\SetScriptTransaction;
 use Waves\Transactions\SponsorFeeTransaction;
 use Waves\Transactions\TransferTransaction;
 use Waves\Transactions\UpdateAssetInfoTransaction;
-use Waves\Util\Functions;
 
 class TransactionsTest extends \PHPUnit\Framework\TestCase
 {
@@ -864,7 +856,7 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
         $args = [];
         $args[] = Arg::as( Arg::STRING, Value::as( $sender->address()->toString() ) );
         $args[] = Arg::as( Arg::INTEGER, Value::as( 1000 ) );
-        $args[] = Arg::as( Arg::BINARY, Value::as( (new WavesKit)->sha256( $sender->address()->toString() ) ) );
+        $args[] = Arg::as( Arg::BINARY, Value::as( hash( 'sha256', $sender->address()->toString(), true ) ) );
         $args[] = Arg::as( Arg::BOOLEAN, Value::as( true ) );
         $function = Func::as( 'retransmit', $args );
         $payments = [];

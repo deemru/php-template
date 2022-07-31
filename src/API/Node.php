@@ -4,9 +4,6 @@ namespace Waves\API;
 
 use Exception;
 use Waves\Common\ExceptionCode;
-
-use deemru\WavesKit;
-
 use Waves\Common\Json;
 use Waves\Account\Address;
 use Waves\Model\AssetId;
@@ -23,6 +20,7 @@ use Waves\Model\BlockHeaders;
 use Waves\Model\BlockchainRewards;
 use Waves\Model\ChainId;
 use Waves\Model\DataEntry;
+use Waves\Model\HistoryBalance;
 use Waves\Model\ScriptInfo;
 use Waves\Model\ScriptMeta;
 use Waves\Model\Status;
@@ -39,7 +37,7 @@ class Node
     const STAGENET = "https://nodes-stagenet.wavesnodes.com";
     const LOCAL = "http://127.0.0.1:6869";
 
-    private WavesKit $wk;
+    private \deemru\WavesKit $wk;
     private ChainId $chainId;
     private string $uri;
 
@@ -55,7 +53,7 @@ class Node
     function __construct( string $uri, ChainId $chainId = null )
     {
         $this->uri = $uri;
-        $this->wk = new WavesKit( '?', function( string $wklevel, string $wkmessage )
+        $this->wk = new \deemru\WavesKit( '?', function( string $wklevel, string $wkmessage )
         {
             $this->wklevel = $wklevel;
             $this->wkmessage = $wkmessage;

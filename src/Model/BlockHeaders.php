@@ -3,7 +3,6 @@
 namespace Waves\Model;
 
 use Waves\Account\Address;
-use Waves\Common\Json;
 use Waves\Common\JsonBase;
 
 class BlockHeaders extends JsonBase

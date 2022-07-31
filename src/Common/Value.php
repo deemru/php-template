@@ -12,7 +12,6 @@ use Waves\Model\Id;
 use Waves\Model\ChainId;
 use Waves\Model\ApplicationStatus;
 use Waves\Model\Status;
-use Waves\Transactions\Invocation\Arg;
 use Waves\Transactions\Recipient;
 
 class Value
