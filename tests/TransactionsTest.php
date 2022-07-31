@@ -645,7 +645,10 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
         $tx->assetId();
         $tx->minSponsoredFee();
 
-        $tx1 = $node->waitForTransaction( $node->broadcast( $tx->addProof( $account ) )->id() );
+        $tx1 = $node->broadcast( $tx->addProof( $account ) );
+        $node->waitForTransactions( [ $tx1->id() ] );
+
+        $tx1 = $node->waitForTransaction( $tx1->id() );
 
         $this->assertSame( $id->toString(), $tx1->id()->toString() );
         $this->assertSame( $tx1->applicationStatus(), ApplicationStatus::SUCCEEDED );

@@ -38,6 +38,7 @@ class NodeTest extends \PHPUnit\Framework\TestCase
         $nodeS = new Node( Node::STAGENET );
 
         $version = $nodeS->getVersion();
+        $nodeS->waitBlocks( 0 );
 
         $ethAsset = $nodeS->ethToWavesAsset( '0x7a087b3384447a48393eda243e630b07db443597' );
         $this->assertEquals( '9DNEvLFSSnSSaNCb5WEYMz64hsadDjx1THZw3z2hiyJe', $ethAsset );

@@ -25,6 +25,7 @@ use Waves\Model\ChainId;
 use Waves\Model\DataEntry;
 use Waves\Model\ScriptInfo;
 use Waves\Model\ScriptMeta;
+use Waves\Model\Status;
 use Waves\Model\TransactionInfo;
 use Waves\Model\TransactionStatus;
 use Waves\Model\Validation;
@@ -528,13 +529,6 @@ class Node
     {
         return $this->post( '/transactions/broadcast', $transaction->json() )->asTransaction();
     }
-/*
-    public EthRpcResponse broadcastEthTransaction(EthereumTransaction ethTransaction) throws IOException, NodeException {
-        HttpUriRequest rq = buildSendRawTransactionRq(ethTransaction.toRawHexString());
-        ObjectNode rs = sendEthRequest(rq);
-        return handleEthResponse(rs);
-    }
-*/
 
     function getTransactionInfo( Id $txId ): TransactionInfo
     {
@@ -640,91 +634,82 @@ class Node
 
         throw new Exception( __FUNCTION__ . ' could not wait for transaction `' . $id->toString() . '` in ' . $waitingInSeconds . ' seconds', ExceptionCode::TIMEOUT );
     }
-}
-/*
-    public TransactionInfo waitForTransaction(Id id) throws IOException {
-        return waitForTransaction(id, blockInterval);
-    }
 
-    public <T extends TransactionInfo> T waitForTransaction(Id id, Class<T> infoClass) throws IOException {
-        return infoClass.cast(waitForTransaction(id));
-    }
+    /**
+     * @param array<int, Id> $ids
+     * @param int $waitingInSeconds
+     * @return void
+     */
+    function waitForTransactions( array $ids, int $waitingInSeconds = Node::blockInterval ): void
+    {
+        if( $waitingInSeconds < 1 )
+            $waitingInSeconds = 1;
 
-    public void waitForTransactions(List<Id> ids, int waitingInSeconds) throws IOException, NodeException {
-        int pollingIntervalInMillis = 1000;
+        $pollingIntervalInMillis = 1000;
+        $pollingIntervalInMicros = $pollingIntervalInMillis * 1000;
+        $waitingInMillis = $waitingInSeconds * 1000;
 
-        if (waitingInSeconds < 1)
-            throw new IllegalStateException("waitForTransaction: waiting value must be positive. Current: " + waitingInSeconds);
+        for( $spentMillis = 0; $spentMillis < $waitingInMillis; $spentMillis += $pollingIntervalInMillis )
+        {
+            try
+            {
+                $isOK = true;
+                $statuses = $this->getTransactionsStatus( $ids );
+                foreach( $statuses as $status )
+                    if( $status->status() !== Status::CONFIRMED )
+                    {
+                        $isOK = false;
+                        break;
+                    }
 
-        Exception lastException = null;
-        for (long spentMillis = 0; spentMillis < waitingInSeconds * 1000L; spentMillis += pollingIntervalInMillis) {
-            try {
-                List<TransactionStatus> statuses = this.getTransactionsStatus(ids);
-                if (statuses.stream().allMatch(s -> CONFIRMED.equals(s.status())))
+                if( $isOK )
                     return;
-            } catch (Exception e) {
-                lastException = e;
-                try {
-                    Thread.sleep(pollingIntervalInMillis);
-                } catch (InterruptedException ignored) {
-                }
+
+                usleep( $pollingIntervalInMicros );
+            }
+            catch( Exception $e )
+            {
+                if( $e->getCode() !== ExceptionCode::FETCH_URI )
+                    throw new Exception( __FUNCTION__ . ' unexpected exception `' . $e->getCode() . '`:`' . $e->getMessage() . '`', ExceptionCode::UNEXPECTED );
+
+                usleep( $pollingIntervalInMicros );
             }
         }
 
-        List<TransactionStatus> statuses = this.getTransactionsStatus(ids);
-        List<TransactionStatus> unconfirmed =
-                statuses.stream().filter(s -> !CONFIRMED.equals(s.status())).collect(toList());
-        throw new IOException("Could not wait for " + unconfirmed.size() + " of " + ids.size() +
-                " transactions in " + waitingInSeconds + " seconds: " + unconfirmed, lastException);
+        throw new Exception( __FUNCTION__ . ' could not wait for transactions', ExceptionCode::TIMEOUT );
     }
 
-    public void waitForTransactions(List<Id> ids) throws IOException, NodeException {
-        waitForTransactions(ids, blockInterval);
-    }
+    function waitForHeight( int $target, int $waitingInSeconds = Node::blockInterval * 3 ): int
+    {
+        $start = $this->getHeight();
+        $prev = $start;
 
-    public void waitForTransactions(Id... ids) throws IOException, NodeException {
-        waitForTransactions(asList(ids));
-    }
+        if( $waitingInSeconds < 1 )
+            $waitingInSeconds = 1;
 
-    public int waitForHeight(int target, int waitingInSeconds) throws IOException, NodeException {
-        int start = this.getHeight();
-        int prev = start;
-        int pollingIntervalInMillis = 100;
+        $pollingIntervalInMillis = 100;
+        $pollingIntervalInMicros = $pollingIntervalInMillis * 1000;
+        $waitingInMillis = $waitingInSeconds * 1000;
 
-        if (waitingInSeconds < 1)
-            throw new IllegalStateException("waitForHeight: value must be positive. Current: " + waitingInSeconds);
-
-        for (long spentMillis = 0; spentMillis < waitingInSeconds * 1000L; spentMillis += pollingIntervalInMillis) {
-            int current = this.getHeight();
-
-            if (current >= target)
-                return current;
-            else if (current > prev) {
-                prev = current;
-                spentMillis = 0;
+        $current = $start;
+        for( $spentMillis = 0; $spentMillis < $waitingInMillis; $spentMillis += $pollingIntervalInMillis )
+        {
+            if( $current >= $target )
+                return $current;
+            else if( $current > $prev )
+            {
+                $prev = $current;
+                $spentMillis = 0;
             }
 
-            try {
-                Thread.sleep(pollingIntervalInMillis);
-            } catch (InterruptedException ignored) {
-            }
+            usleep( $pollingIntervalInMicros );
         }
-        throw new IllegalStateException("Could not wait for the height to rise from " + start + " to " + target +
-                ": height " + prev + " did not grow for " + waitingInSeconds + " seconds");
+
+        throw new Exception( __FUNCTION__ . ' could not wait for height `' . $target . '` in ' . $waitingInSeconds . ' seconds', ExceptionCode::TIMEOUT );
     }
 
-    public int waitForHeight(int expectedHeight) throws IOException, NodeException {
-        return waitForHeight(expectedHeight, blockInterval * 3);
-    }
-
-    public int waitBlocks(int blocksCount, int waitingInSeconds) throws IOException, NodeException {
-        if (waitingInSeconds < 1)
-            throw new IllegalStateException("waitBlocks: waiting value must be positive. Current: " + waitingInSeconds);
-        return waitForHeight(getHeight() + blocksCount, waitingInSeconds);
-    }
-
-    public int waitBlocks(int blocksCount) throws IOException, NodeException {
-        return waitBlocks(blocksCount, blockInterval * 3);
+    function waitBlocks( int $blocksCount, int $waitingInSeconds = Node::blockInterval * 3 ): int
+    {
+        return $this->waitForHeight( $this->getHeight() + $blocksCount, $waitingInSeconds );
     }
 }
-*/
