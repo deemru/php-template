@@ -1003,7 +1003,7 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
     }
 }
 
-if( DO_LOCAL_DEBUG )
+if( !defined( 'PHPUNIT_RUNNING' ) )
 {
     $test = new TransactionsTest;
     $test->testInvoke();

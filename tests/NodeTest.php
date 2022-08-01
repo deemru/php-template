@@ -421,7 +421,7 @@ class NodeTest extends \PHPUnit\Framework\TestCase
     }
 }
 
-if( \DO_LOCAL_DEBUG )
+if( !defined( 'PHPUNIT_RUNNING' ) )
 {
     $test = new NodeTest;
     $test->testNode();

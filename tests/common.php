@@ -4,13 +4,10 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 function prepare(): void
 {
-    define( 'DO_LOCAL_DEBUG', !defined( 'PHPUNIT_RUNNING' ) );
-
     if( file_exists( 'config.php' ) )
         require_once 'config.php';
 
     $wavesConfig = getenv( 'WAVES_CONFIG' );
-    var_dump( $wavesConfig );
     if( !is_string( $wavesConfig ) )
         return;
 
@@ -20,7 +17,7 @@ function prepare(): void
     if( !is_string( $wavesConfig ) )
         return;
 
-    $wavesConfig = json_decode( hex2bin( $wavesConfig ), true );
+    $wavesConfig = json_decode( $wavesConfig, true );
     if( $wavesConfig === false )
         return;
 
