@@ -31,27 +31,27 @@ class DataEntry extends JsonBase
         return new DataEntry( Value::as( $json )->asJson() );
     }
 
-    static function binary( string $key, string $value )
+    static function binary( string $key, string $value ): DataEntry
     {
         return DataEntry::build( $key, EntryType::BINARY, $value );
     }
 
-    static function string( string $key, string $value )
+    static function string( string $key, string $value ): DataEntry
     {
         return DataEntry::build( $key, EntryType::STRING, $value );
     }
 
-    static function int( string $key, int $value )
+    static function int( string $key, int $value ): DataEntry
     {
         return DataEntry::build( $key, EntryType::INTEGER, $value );
     }
 
-    static function boolean( string $key, bool $value )
+    static function boolean( string $key, bool $value ): DataEntry
     {
         return DataEntry::build( $key, EntryType::BOOLEAN, $value );
     }
 
-    static function delete( string $key )
+    static function delete( string $key ): DataEntry
     {
         return DataEntry::build( $key, EntryType::DELETE );
     }

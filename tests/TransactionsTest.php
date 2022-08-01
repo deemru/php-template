@@ -109,6 +109,8 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
         }
 
         $scriptCode = file_get_contents( 'retransmit.ride' );
+        if( $scriptCode === false )
+            throw new Exception( 'Missing `retransmit.ride` file', ExceptionCode::UNEXPECTED );
         $scriptCompiled = $node->compileScript( $scriptCode );
 
         $script = $this->fetchOr( function(){ return $this->node->getScriptInfo( $this->faucet->publicKey()->address() ); }, false );

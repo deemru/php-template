@@ -421,7 +421,7 @@ class NodeTest extends \PHPUnit\Framework\TestCase
     }
 }
 
-if( DO_LOCAL_DEBUG )
+if( \DO_LOCAL_DEBUG )
 {
     $test = new NodeTest;
     $test->testNode();
