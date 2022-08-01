@@ -43,7 +43,7 @@ use Waves\Transactions\UpdateAssetInfoTransaction;
 
 class TransactionsTest extends \PHPUnit\Framework\TestCase
 {
-    const WAVES_FOR_TEST = 1000000000;
+    const WAVES_FOR_TEST = 500000000;
     const SPONSOR_ID = 'SPONSOR_ID';
     const TOKEN_ID = 'TOKEN_ID';
 
@@ -68,18 +68,21 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
         if( !is_string( $WAVES_NODE ) || !is_string( $WAVES_FAUCET ) )
             throw new Exception( '$WAVES_NODE and $WAVES_FAUCET should be strings', ExceptionCode::UNEXPECTED );
 
+        $account = getenv( 'WAVES_ACCOUNT' );
+        if( is_string( $account ) )
+            $account = PrivateKey::fromString( $account );
+        else
+        {
+            $account = PrivateKey::fromBytes( random_bytes( 32 ) );
+            putenv( 'WAVES_ACCOUNT=' . $account->toString() );
+        }
+
         $node = new Node( $WAVES_NODE );
         $chainId = $node->chainId();
 
         WavesConfig::chainId( $chainId );
         $faucet = PrivateKey::fromSeed( $WAVES_FAUCET );
 
-        $runId = getenv( 'GITHUB_RUN_ID' );
-        $runNumber = getenv( 'GITHUB_RUN_NUMBER' );
-        if( is_string( $runId ) && is_string( $runNumber ) )
-            $account = PrivateKey::fromSeed( 'TEST_ID=' . $runId . $runNumber );
-        else
-            $account = PrivateKey::fromBytes( random_bytes( 32 ) );
         $publicKey = PublicKey::fromPrivateKey( $account );
         $address = Address::fromPublicKey( $publicKey );
 
@@ -145,11 +148,11 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
         if( $balance < self::WAVES_FOR_TEST )
             $node->waitForTransaction(
                 $node->broadcast(
-                    TransferTransaction::build( $faucet->publicKey(), Recipient::fromAddress( $address ), Amount::of( self::WAVES_FOR_TEST ) )->addProof( $faucet )
+                    TransferTransaction::build( $faucet->publicKey(), Recipient::fromAddress( $address ), Amount::of( self::WAVES_FOR_TEST * 2 ) )->addProof( $faucet )
                 )->id()
             );
 
-        $this->assertGreaterThanOrEqual( self::WAVES_FOR_TEST, $this->node->getBalance( $address ) );
+        $this->assertGreaterThan( self::WAVES_FOR_TEST, $this->node->getBalance( $address ) );
     }
 
     /**
