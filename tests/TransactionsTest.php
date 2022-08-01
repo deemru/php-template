@@ -75,8 +75,9 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
         $faucet = PrivateKey::fromSeed( $WAVES_FAUCET );
 
         $runId = getenv( 'GITHUB_RUN_ID' );
-        if( is_string( $runId ) )
-            $account = PrivateKey::fromSeed( 'GITHUB_RUN_ID=' . $runId );
+        $runNumber = getenv( 'GITHUB_RUN_NUMBER' );
+        if( is_string( $runId ) && is_string( $runNumber ) )
+            $account = PrivateKey::fromSeed( 'TEST_ID=' . $runId . $runNumber );
         else
             $account = PrivateKey::fromBytes( random_bytes( 32 ) );
         $publicKey = PublicKey::fromPrivateKey( $account );
@@ -644,7 +645,7 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
         $tokenId = $this->tokenId;
 
         $assetInfo = $node->getAssetDetails( $tokenId );
-        $node->waitForHeight( $assetInfo->issueHeight() + 3 );
+        $node->waitForHeight( $assetInfo->issueHeight() + 2 );
 
         $tx = UpdateAssetInfoTransaction::build(
             $sender,
@@ -672,7 +673,7 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
         $this->assertSame( $id->toString(), $tx1->id()->toString() );
         $this->assertSame( $tx1->applicationStatus(), ApplicationStatus::SUCCEEDED );
 
-        $node->waitBlocks( 3 );
+        $node->waitBlocks( 2 );
 
         $tx2 = $node->waitForTransaction(
             $node->broadcast(
