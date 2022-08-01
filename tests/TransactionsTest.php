@@ -644,7 +644,7 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
         $tokenId = $this->tokenId;
 
         $assetInfo = $node->getAssetDetails( $tokenId );
-        $node->waitForHeight( $assetInfo->issueHeight() + 2 );
+        $node->waitForHeight( $assetInfo->issueHeight() + 3 );
 
         $tx = UpdateAssetInfoTransaction::build(
             $sender,
@@ -672,7 +672,7 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
         $this->assertSame( $id->toString(), $tx1->id()->toString() );
         $this->assertSame( $tx1->applicationStatus(), ApplicationStatus::SUCCEEDED );
 
-        $node->waitBlocks( 2 );
+        $node->waitBlocks( 3 );
 
         $tx2 = $node->waitForTransaction(
             $node->broadcast(
