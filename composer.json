@@ -1,7 +1,7 @@
 {
-    "name": "waves/waves",
-    "description": "Waves Platform PHP client library",
-    "keywords": [ "waves", "wavesplatform", "client" ],
+    "name": "waves/client",
+    "description": "PHP client library for interacting with Waves blockchain platform",
+    "keywords": [ "waves", "wavesplatform", "blockchain", "client" ],
     "homepage": "https://github.com/wavesplatform/waves-php",
     "type": "library",
     "license": "MIT",

@@ -81,6 +81,26 @@ class Node
         $this->wk->chainId = $this->chainId->asString(); // @phpstan-ignore-line // accept workaround
     }
 
+    static function MAINNET(): Node
+    {
+        return new Node( Node::MAINNET );
+    }
+
+    static function TESTNET(): Node
+    {
+        return new Node( Node::TESTNET );
+    }
+
+    static function STAGENET(): Node
+    {
+        return new Node( Node::STAGENET );
+    }
+
+    static function LOCAL(): Node
+    {
+        return new Node( Node::LOCAL );
+    }
+
     function chainId(): ChainId
     {
         return $this->chainId;

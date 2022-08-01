@@ -32,9 +32,9 @@ class NodeTest extends \PHPUnit\Framework\TestCase
 
     function testNode(): void
     {
-        $nodeW = new Node( Node::MAINNET );
-        $nodeT = new Node( Node::TESTNET );
-        $nodeS = new Node( Node::STAGENET );
+        $nodeW = Node::MAINNET();
+        $nodeT = Node::TESTNET();
+        $nodeS = Node::STAGENET();
 
         $version = $nodeS->getVersion();
         $nodeS->waitBlocks( 0 );
