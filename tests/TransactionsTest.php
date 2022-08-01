@@ -74,8 +74,11 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
         WavesConfig::chainId( $chainId );
         $faucet = PrivateKey::fromSeed( $WAVES_FAUCET );
 
-        $account = PrivateKey::fromBytes( random_bytes( 32 ) );
-        //$account = PrivateKey::fromSeed( '1238751298758917590174590735873248905' );
+        $runId = getenv( 'GITHUB_RUN_ID' );
+        if( is_string( $runId ) )
+            $account = PrivateKey::fromSeed( 'GITHUB_RUN_ID=' . $runId );
+        else
+            $account = PrivateKey::fromBytes( random_bytes( 32 ) );
         $publicKey = PublicKey::fromPrivateKey( $account );
         $address = Address::fromPublicKey( $publicKey );
 
@@ -639,6 +642,9 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
         $sender = $account->publicKey();
 
         $tokenId = $this->tokenId;
+
+        $assetInfo = $node->getAssetDetails( $tokenId );
+        $node->waitForHeight( $assetInfo->issueHeight() + 1 );
 
         $tx = UpdateAssetInfoTransaction::build(
             $sender,
