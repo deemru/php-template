@@ -10,6 +10,7 @@ function prepare()
         require_once 'config.php';
 
     $wavesConfig = getenv( 'WAVES_CONFIG' );
+    var_dump( $wavesConfig );
     if( is_string( $wavesConfig ) )
     {
         //echo $wavesConfig;
