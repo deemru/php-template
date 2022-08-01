@@ -21,8 +21,12 @@ function prepare(): void
     if( $wavesConfig === false )
         return;
 
+    if( !is_array( $wavesConfig ) )
+        return;
+
     foreach( $wavesConfig as $key => $value )
-        define( $key, $value );
+        if( is_string( $key ) )
+            define( $key, $value );
 }
 
 prepare();
