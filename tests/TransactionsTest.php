@@ -130,7 +130,7 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
         foreach( $assets as $asset )
         {
             $amount = Amount::of( $asset->balance(), $asset->assetId() );
-            $node->broadcast( BurnTransaction::build( $faucet->publicKey(), $amount )->addProof( $faucet ) );
+            $this->fetchOr( function() use ( $node, $faucet, $amount ){ $node->broadcast( BurnTransaction::build( $faucet->publicKey(), $amount )->addProof( $faucet ) ); }, false );
         }
     }
 
