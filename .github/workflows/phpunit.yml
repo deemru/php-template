@@ -36,4 +36,6 @@ jobs:
       run: composer install
 
     - name: PHPUnit tests
+      env:
+        WAVES_CONFIG: ${{ secrets.WAVES_CONFIG }}
       run: php vendor/bin/phpunit tests

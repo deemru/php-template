@@ -34,6 +34,7 @@ jobs:
     - name: PHPUnit coverage
       env:
         XDEBUG_MODE: coverage
+        WAVES_CONFIG: ${{ secrets.WAVES_CONFIG }}
       run: php vendor/bin/phpunit tests --coverage-clover ./coverage.xml
 
     - name: Codecov
