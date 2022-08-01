@@ -4,8 +4,8 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 function prepare(): void
 {
-    if( file_exists( 'config.php' ) )
-        require_once 'config.php';
+    if( file_exists( __DIR__ . '/config.php' ) )
+        require_once __DIR__ . '/config.php';
 
     $wavesConfig = getenv( 'WAVES_CONFIG' );
     if( !is_string( $wavesConfig ) )
