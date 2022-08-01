@@ -98,7 +98,7 @@ class Arg
     {
         switch( $this->type() )
         {
-            case Arg::BINARY: return Base64String::fromBytes( $this->value()->asString() )->toJsonValue();
+            case Arg::BINARY: return Base64String::fromBytes( $this->value()->asString() )->encodedWithPrefix();
             case Arg::BOOLEAN: return $this->value()->asBoolean();
             case Arg::INTEGER: return $this->value()->asInt();
             case Arg::STRING: return $this->value()->asString();

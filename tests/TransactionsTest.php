@@ -4,12 +4,14 @@ namespace Waves;
 
 require_once 'common.php';
 
+use Exception;
 use Waves\Account\Address;
 use Waves\Account\PrivateKey;
 use Waves\Account\PublicKey;
 use Waves\API\Node;
 use Waves\Common\Base58String;
 use Waves\Common\Base64String;
+use Waves\Common\ExceptionCode;
 use Waves\Common\Value;
 use Waves\Model\Alias;
 use Waves\Model\ApplicationStatus;
@@ -17,6 +19,7 @@ use Waves\Model\AssetId;
 use Waves\Model\ChainId;
 use Waves\Model\DataEntry;
 use Waves\Model\EntryType;
+use Waves\Model\ScriptInfo;
 use Waves\Model\WavesConfig;
 use Waves\Transactions\Amount;
 use Waves\Transactions\BurnTransaction;
@@ -40,8 +43,13 @@ use Waves\Transactions\UpdateAssetInfoTransaction;
 
 class TransactionsTest extends \PHPUnit\Framework\TestCase
 {
+    const WAVES_FOR_TEST = 1000000000;
+    const SPONSOR_ID = 'SPONSOR_ID';
+    const TOKEN_ID = 'TOKEN_ID';
+
     private ChainId $chainId;
     private Node $node;
+    private PrivateKey $faucet;
     private PrivateKey $account;
     private AssetId $sponsorId;
     private AssetId $tokenId;
@@ -51,13 +59,23 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
         if( isset( $this->chainId ) )
             return;
 
-        $chainId = ChainId::TESTNET();
-        //$chainId = ChainId::STAGENET();
-        WavesConfig::chainId( $chainId );
+        if( !defined( 'WAVES_NODE' ) || !defined( 'WAVES_FAUCET' ) )
+            throw new Exception( 'Missing WAVES_NODE and WAVES_FAUCET definitions', ExceptionCode::UNEXPECTED );
 
-        $node = new Node( Node::TESTNET );
-        //$node = new Node( Node::STAGENET );
-        $account = PrivateKey::fromSeed( '10239486123587123659817234612897461289374618273461872468172436812736481274368921763489127436912873649128364' );
+        $WAVES_NODE = constant( 'WAVES_NODE' );
+        $WAVES_FAUCET = constant( 'WAVES_FAUCET' );
+
+        if( !is_string( $WAVES_NODE ) || !is_string( $WAVES_FAUCET ) )
+            throw new Exception( '$WAVES_NODE and $WAVES_FAUCET should be strings', ExceptionCode::UNEXPECTED );
+
+        $node = new Node( $WAVES_NODE );
+        $chainId = $node->chainId();
+
+        WavesConfig::chainId( $chainId );
+        $faucet = PrivateKey::fromSeed( $WAVES_FAUCET );
+
+        $account = PrivateKey::fromBytes( random_bytes( 32 ) );
+        $account = PrivateKey::fromSeed( '1238751298758917590174590735873248905' );
         $publicKey = PublicKey::fromPrivateKey( $account );
         $address = Address::fromPublicKey( $publicKey );
 
@@ -65,50 +83,122 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
         $this->assertSame( $account->publicKey()->address()->toString(), $address->toString() );
 
         $this->node = $node;
+        $this->faucet = $faucet;
         $this->account = $account;
         $this->chainId = $chainId;
 
+        $this->prepareRoot();
+        $this->prepareFunds();
         $this->prepareSponsor();
         $this->prepareToken();
     }
 
+    private function prepareRoot(): void
+    {
+        $node = $this->node;
+        $faucet = $this->faucet;
+
+        $address = $this->fetchOr( function(){ return $this->node->getAddressByAlias( Alias::fromString( 'root' ) ); }, false );
+        if( $address === false )
+        {
+            $node->waitForTransaction(
+                $node->broadcast(
+                    CreateAliasTransaction::build( $faucet->publicKey(), Alias::fromString( 'root' ) )->addProof( $faucet )
+                )->id()
+            );
+        }
+
+        $scriptCode = file_get_contents( 'retransmit.ride' );
+        $scriptCompiled = $node->compileScript( $scriptCode );
+
+        $script = $this->fetchOr( function(){ return $this->node->getScriptInfo( $this->faucet->publicKey()->address() ); }, false );
+        if( !( $script instanceof ScriptInfo ) || $script->script()->bytes() !== $scriptCompiled->script()->bytes() )
+        {
+            $node->waitForTransaction(
+                $node->broadcast(
+                    SetScriptTransaction::build( $faucet->publicKey(), $scriptCompiled->script() )->addProof( $faucet )
+                )->id()
+            );
+        }
+
+        $assets = $node->getAssetsBalance( $faucet->publicKey()->address() );
+        foreach( $assets as $asset )
+        {
+            $amount = Amount::of( $asset->balance(), $asset->assetId() );
+            $node->broadcast( BurnTransaction::build( $faucet->publicKey(), $amount )->addProof( $faucet ) );
+        }
+    }
+
+    private function prepareFunds(): void
+    {
+        $node = $this->node;
+        $address = $this->account->publicKey()->address();
+        $faucet = $this->faucet;
+
+        $balance = $this->node->getBalance( $address );
+        if( $balance < self::WAVES_FOR_TEST )
+            $node->waitForTransaction(
+                $node->broadcast(
+                    TransferTransaction::build( $faucet->publicKey(), Recipient::fromAddress( $address ), Amount::of( self::WAVES_FOR_TEST ) )->addProof( $faucet )
+                )->id()
+            );
+
+        $this->assertGreaterThanOrEqual( self::WAVES_FOR_TEST, $this->node->getBalance( $address ) );
+    }
+
+    /**
+     * @param callable $block
+     * @param mixed $default
+     * @return mixed
+     */
+    private function fetchOr( callable $block, $default )
+    {
+        try
+        {
+            return $block();
+        }
+        catch( Exception $e )
+        {
+            if( $e->getCode() & ExceptionCode::BASE )
+                return $default;
+            throw $e;
+        }
+    }
+
     private function prepareSponsor(): void
     {
-        if( 1 ) // @phpstan-ignore-line // fast/full test
-        {
-            $this->sponsorId = AssetId::fromString( '2exRLtCQNwnYpeP17MevNirHJp2u2mtLk7McxyPFcvp5' );
-            //$this->sponsorId = AssetId::fromString( '7WmVG9EXb6adXbySyGi313pbFeSCuoPHNVnPpEBy4aYh' ); // stage
-        }
+        $sponsorId = $this->fetchOr( function(){ return $this->node->getDataByKey( $this->account->publicKey()->address(), self::SPONSOR_ID )->stringValue(); }, false );
+        if( is_string( $sponsorId ) )
+            $this->sponsorId = AssetId::fromString( $sponsorId );
         else
         {
-            $this->prepare();
-            $chainId = $this->chainId;
             $node = $this->node;
             $account = $this->account;
             $sender = $account->publicKey();
 
             $tx = $node->waitForTransaction( $node->broadcast( IssueTransaction::build( $sender, 'SPONSOR', '', 1000, 0, false )->addProof( $account ) )->id() );
             $this->sponsorId = AssetId::fromString( $tx->id()->toString() );
+            $tx = $node->waitForTransaction( $node->broadcast( SponsorFeeTransaction::build( $sender, $this->sponsorId, 1 )->addProof( $account ) )->id() );
+
+            $node->waitForTransaction( $node->broadcast( DataTransaction::build( $sender, [ DataEntry::string( self::SPONSOR_ID, $this->sponsorId->toString() ) ] )->addProof( $account ) )->id() );
         }
     }
 
     private function prepareToken(): void
     {
-        if( 1 ) // @phpstan-ignore-line // fast/full test
-        {
-            $this->tokenId = AssetId::fromString( 'CcK2rmEDNET8iPSyXvZprRPsDt7mfJPbxuvkMRdsyESC' );
-            //$this->tokenId = AssetId::fromString( 'BmRLpCbcJ3Xtuev1yJRqzPYdqp9iPFTqW3RJeU4WZMKU' ); // stage
-        }
+        $tokenId = $this->fetchOr( function(){ return $this->node->getDataByKey( $this->account->publicKey()->address(), self::TOKEN_ID )->stringValue(); }, false );
+        if( is_string( $tokenId ) )
+            $this->tokenId = AssetId::fromString( $tokenId );
         else
         {
-            $this->prepare();
-            $chainId = $this->chainId;
             $node = $this->node;
             $account = $this->account;
             $sender = $account->publicKey();
 
             $tx = $node->waitForTransaction( $node->broadcast( IssueTransaction::build( $sender, 'TOKEN', '', 1000000, 6, true )->addProof( $account ) )->id() );
             $this->tokenId = AssetId::fromString( $tx->id()->toString() );
+
+            $node->waitForTransaction( $node->broadcast( DataTransaction::build( $sender, [ DataEntry::string( self::TOKEN_ID, $this->tokenId->toString() ) ] )->addProof( $account ) )->id() );
         }
     }
 
@@ -170,7 +260,7 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
         $account = $this->account;
         $sender = $account->publicKey();
 
-        $recipient = Recipient::fromAddressOrAlias( 'test' );
+        $recipient = Recipient::fromAddressOrAlias( 'root' );
 
         // LEASE
 
@@ -321,12 +411,6 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
         $node = $this->node;
         $account = $this->account;
         $sender = $account->publicKey();
-
-        if( $node->getBalance( $sender->address() ) < 10_00000000 ) // TODO: faucet
-        {
-            $this->assertNotSame( $this->tokenId->toString(), $this->sponsorId->toString() );
-            return;
-        }
 
         $script = Base64String::fromString( 'BQbtKNoM' );
 
@@ -492,7 +576,7 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
         $tx = IssueTransaction::build(
             $sender,
             'NFT-' . mt_rand( 100000, 999999 ),
-            'test  description',
+            'test description',
             1,
             0,
             false
@@ -552,12 +636,6 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
         $account = $this->account;
         $sender = $account->publicKey();
 
-        if( $node->getBalance( $sender->address() ) < 10_00000000 ) // TODO: private net
-        {
-            $this->assertNotSame( $this->tokenId->toString(), $this->sponsorId->toString() );
-            return;
-        }
-
         $tokenId = $this->tokenId;
 
         $tx = UpdateAssetInfoTransaction::build(
@@ -585,6 +663,8 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame( $id->toString(), $tx1->id()->toString() );
         $this->assertSame( $tx1->applicationStatus(), ApplicationStatus::SUCCEEDED );
+
+        $node->waitBlocks( 1 );
 
         $tx2 = $node->waitForTransaction(
             $node->broadcast(
@@ -732,10 +812,10 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
         $sender = $account->publicKey();
 
         $transfers = [];
-        $transfers[] = new Transfer( Recipient::fromAlias( Alias::fromString( 'test' ) ), 1 );
+        $transfers[] = new Transfer( Recipient::fromAlias( Alias::fromString( 'root' ) ), 1 );
         $transfers[] = new Transfer( Recipient::fromAddress( $sender->address() ), 2 );
 
-        $attachment = Base58String::fromBytes( 'test' );
+        $attachment = Base58String::fromBytes( 'root' );
 
         $tx = MassTransferTransaction::build(
             $sender,
@@ -793,9 +873,9 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
         $account = $this->account;
         $sender = $account->publicKey();
 
-        $recipient = Recipient::fromAlias( Alias::fromString( 'test' ) );
+        $recipient = Recipient::fromAlias( Alias::fromString( 'root' ) );
         $amount = new Amount( 1, AssetId::WAVES() );
-        $attachment = Base58String::fromBytes( 'test' );
+        $attachment = Base58String::fromBytes( 'root' );
 
         $tx = TransferTransaction::build(
             $sender,
@@ -826,7 +906,7 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
             $node->broadcast(
                 (new TransferTransaction)
                 ->setRecipient( Recipient::fromAddress( $node->getAddressByAlias( $recipient->alias() ) ) )
-                ->setAmount( $amount )
+                ->setAmount( Amount::of( 1000, $this->tokenId ) )
                 ->setAttachment( $attachment )
 
                 ->setSender( $sender )
@@ -852,12 +932,17 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
         $account = $this->account;
         $sender = $account->publicKey();
 
-        $dApp = Recipient::fromAddressOrAlias( '3N7uoMNjqNt1jf9q9f9BSr7ASk1QtzJABEY' );
+        $dApp = Recipient::fromAddressOrAlias( 'root' );
         $args = [];
         $args[] = Arg::as( Arg::STRING, Value::as( $sender->address()->toString() ) );
         $args[] = Arg::as( Arg::INTEGER, Value::as( 1000 ) );
-        $args[] = Arg::as( Arg::BINARY, Value::as( hash( 'sha256', $sender->address()->toString(), true ) ) );
+        $args[] = Arg::as( Arg::BINARY, Value::as( '' ) );
         $args[] = Arg::as( Arg::BOOLEAN, Value::as( true ) );
+        $list = [];
+        $list[] = Arg::as( Arg::STRING, Value::as( '0' ) );
+        $list[] = Arg::as( Arg::STRING, Value::as( '1' ) );
+        $list[] = Arg::as( Arg::STRING, Value::as( '2' ) );
+        $args[] = Arg::as( Arg::LIST, Value::as( $list ) );
         $function = FunctionCall::as( 'retransmit', $args );
         $payments = [];
         $payments[] = Amount::of( 1000 );

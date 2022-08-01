@@ -9,9 +9,9 @@ class WavesConfig
     static function chainId( ChainId $chainId = null ): ChainId
     {
         if( isset( $chainId ) )
-            WavesConfig::$chainId = $chainId;
-        else if( !isset( WavesConfig::$chainId ) )
-            WavesConfig::$chainId = ChainId::MAINNET();
-        return WavesConfig::$chainId;
+            self::$chainId = $chainId;
+        else if( !isset( self::$chainId ) )
+            self::$chainId = ChainId::MAINNET();
+        return self::$chainId;
     }
 }

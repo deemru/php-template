@@ -31,6 +31,31 @@ class DataEntry extends JsonBase
         return new DataEntry( Value::as( $json )->asJson() );
     }
 
+    static function binary( string $key, string $value )
+    {
+        return DataEntry::build( $key, EntryType::BINARY, $value );
+    }
+
+    static function string( string $key, string $value )
+    {
+        return DataEntry::build( $key, EntryType::STRING, $value );
+    }
+
+    static function int( string $key, int $value )
+    {
+        return DataEntry::build( $key, EntryType::INTEGER, $value );
+    }
+
+    static function boolean( string $key, bool $value )
+    {
+        return DataEntry::build( $key, EntryType::BOOLEAN, $value );
+    }
+
+    static function delete( string $key )
+    {
+        return DataEntry::build( $key, EntryType::DELETE );
+    }
+
     static function stringToType( string $stringType ): int
     {
         switch( $stringType )
@@ -80,6 +105,21 @@ class DataEntry extends JsonBase
             case EntryType::DELETE: return null;
             default: throw new Exception( __FUNCTION__ . ' failed to detect type `' . serialize( $this->type() ) . '`', ExceptionCode::UNKNOWN_TYPE ); // @codeCoverageIgnore
         }
+    }
+
+    function stringValue(): string
+    {
+        return Value::as( $this->value() )->asString();
+    }
+
+    function intValue(): int
+    {
+        return Value::as( $this->value() )->asInt();
+    }
+
+    function booleanValue(): bool
+    {
+        return Value::as( $this->value() )->asBoolean();
     }
 
     function toProtobuf(): \Waves\Protobuf\DataTransactionData\DataEntry

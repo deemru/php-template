@@ -721,6 +721,7 @@ class Node
             }
 
             usleep( $pollingIntervalInMicros );
+            $current = $this->getHeight();
         }
 
         throw new Exception( __FUNCTION__ . ' could not wait for height `' . $target . '` in ' . $waitingInSeconds . ' seconds', ExceptionCode::TIMEOUT );

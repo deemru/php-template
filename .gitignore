@@ -3,3 +3,4 @@
 /.vscode
 /coverage.xml
 /composer.lock
+/tests/config.php
