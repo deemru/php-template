@@ -75,7 +75,7 @@ class TransactionsTest extends \PHPUnit\Framework\TestCase
         $faucet = PrivateKey::fromSeed( $WAVES_FAUCET );
 
         $account = PrivateKey::fromBytes( random_bytes( 32 ) );
-        $account = PrivateKey::fromSeed( '1238751298758917590174590735873248905' );
+        //$account = PrivateKey::fromSeed( '1238751298758917590174590735873248905' );
         $publicKey = PublicKey::fromPrivateKey( $account );
         $address = Address::fromPublicKey( $publicKey );
 
